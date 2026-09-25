@@ -1053,6 +1053,19 @@ body{background:var(--ds3-bg)}
   outline:none; border-color:var(--accent,#5b5bd6);
   box-shadow:0 0 0 3px rgba(91,91,214,.14);
 }
+
+/* AI 设置里的模型 / 思考强度下拉
+   （这两个 <select> 是补丁加进页面自己的设置弹窗里的，所以用页面自己的类名） */
+.ai-set select{
+  width:100%; min-height:42px; padding:9px 11px; font:inherit; font-size:13.5px;
+  border:1px solid var(--line,#e5e7ec); border-radius:9px;
+  background:var(--surface,#fff); color:inherit; cursor:pointer;
+}
+.ai-set select:focus{
+  outline:none; border-color:var(--accent,#5b5bd6);
+  box-shadow:0 0 0 3px rgba(91,91,214,.14);
+}
+.ai-set input[type="text"]{ margin-top:8px }
 .wb-btn{
   min-height:40px; padding:0 16px; font:inherit; font-size:13px; font-weight:650;
   border:1px solid var(--line,#e5e7ec); border-radius:9px;
@@ -4579,6 +4592,180 @@ AI 助手
   }
 
   /* ==========================================================================
+     6. AI 参数：模型切换 + 思考强度
+     --------------------------------------------------------------------------
+     页面自带的 AI 设置里，「模型名」原来只是个文本框 —— 得自己记得住
+     deepseek-flash / deepseek-v4-pro 这种名字。这里给它换成下拉选择，
+     再加一个「思考强度」。
+
+     思考强度是 DeepSeek 官方的参数（api-docs.deepseek.com/guides/thinking_mode）：
+       · reasoning_effort: "low" | "high" | "max" 控制想多久
+       · reasoning_effort: "none" 等于关掉思考
+       · 非 none 时通常还要带上 thinking: {type:"enabled"}
+       · 每个模型支持哪几档，用 GET /models 查得到（effort.supported_levels）
+
+     兼容性：**默认「自动」一个参数都不加**，所以换成 OpenAI 或别家
+     OpenAI 兼容接口时，不会被这两个字段搞出 400。
+
+     这一节只负责"读/写选项"和"拼参数"；设置弹窗里那两个 <select>
+     由 离线版-补丁.js 里的补丁加进去。
+     ========================================================================== */
+  var AI_MODEL_LS = 'wb_ai_model_v1';     /* 页面本来就用这个键存模型名 */
+  var AI_URL_LS = 'wb_ai_url_v1';         /* 页面存接口地址 */
+  var AI_KEY_LS = 'wb_ai_key_v1';         /* 页面存 API Key */
+  var AI_EFF_LS = 'wb_ai_effort_v1';      /* 本层新增：思考强度 */
+  var AI_DEF_MODEL_NAME = 'deepseek-flash';
+
+  /* 兜底清单：连不上 /models 时也能选。按"推荐先用哪个"排序 */
+  var AI_MODELS = [
+    { id: 'deepseek-flash', name: 'deepseek-flash · V4.1-Flash（推荐，快）' },
+    { id: 'deepseek-v4-pro', name: 'deepseek-v4-pro · V4-Pro（更强，慢一些）' },
+    { id: 'deepseek-chat', name: 'deepseek-chat · V3（旧）' },
+    { id: 'deepseek-reasoner', name: 'deepseek-reasoner · R1（旧思考模型）' }
+  ];
+  var AI_EFFORTS = [
+    { v: '', name: '自动（不传这个参数）' },
+    { v: 'none', name: 'none · 不思考，最快' },
+    { v: 'low', name: 'low · 轻思考' },
+    { v: 'high', name: 'high · 默认强度' },
+    { v: 'max', name: 'max · 最强，最慢最贵' }
+  ];
+  var CUSTOM_MODEL = '__custom__';
+
+  function aiModelName() { return lsGet(AI_MODEL_LS) || AI_DEF_MODEL_NAME; }
+  function aiEffort() { return lsGet(AI_EFF_LS) || ''; }
+  function aiBaseUrl() {
+    var u = lsGet(AI_URL_LS) || 'https://api.deepseek.com/chat/completions';
+    return String(u).replace(/\/chat\/completions\/?$/, '').replace(/\/+$/, '');
+  }
+
+  /* 落到请求体里的参数。「自动」返回空对象 —— 一个字段都不加 */
+  function aiExtraParams() {
+    var e = aiEffort();
+    if (!e) return {};
+    if (e === 'none') return { reasoning_effort: 'none' };
+    return { reasoning_effort: e, thinking: { type: 'enabled' } };
+  }
+
+  /* 从 GET /models 拿真实模型清单和支持的思考档位。
+     拿不到就安静地用兜底清单 —— 这个功能不该因为网络问题而不可用。 */
+  function aiFetchModels() {
+    var key = lsGet(AI_KEY_LS);
+    if (!key || typeof fetch !== 'function') return Promise.resolve(null);
+    return fetch(aiBaseUrl() + '/models', { headers: { 'Authorization': 'Bearer ' + key } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var list = d && Array.isArray(d.data) ? d.data : null;
+        if (!list || !list.length) return null;
+        var out = { models: [], levels: null, defLevel: null };
+        list.forEach(function (m) {
+          if (!m || !m.id) return;
+          out.models.push({ id: m.id, name: m.id + (m.name ? ' · ' + m.name : '') });
+          if (m.effort && Array.isArray(m.effort.supported_levels) && !out.levels) {
+            out.levels = m.effort.supported_levels;
+            out.defLevel = m.effort.default_level || null;
+          }
+        });
+        return out.models.length ? out : null;
+      })
+      .catch(function () { return null; });
+  }
+
+  function aiFillSelects() {
+    var msel = document.getElementById('aiModelSel');
+    var esel = document.getElementById('aiEffortSel');
+    var minp = document.getElementById('aiModelIn');
+
+    function paintModels(list) {
+      if (!msel) return;
+      var cur = aiModelName(), found = false, h = '';
+      list.forEach(function (m) {
+        if (m.id === cur) found = true;
+        h += '<option value="' + esc(m.id) + '"' + (m.id === cur ? ' selected' : '') + '>'
+          + esc(m.name) + '</option>';
+      });
+      h += '<option value="' + CUSTOM_MODEL + '"' + (found ? '' : ' selected') + '>'
+        + '自定义…（别的 OpenAI 兼容模型）</option>';
+      msel.innerHTML = h;
+      if (minp) {
+        if (!found) minp.value = cur;
+        minp.style.display = (msel.value === CUSTOM_MODEL) ? '' : 'none';
+      }
+      msel.onchange = function () {
+        if (minp) minp.style.display = (msel.value === CUSTOM_MODEL) ? '' : 'none';
+        if (msel.value === CUSTOM_MODEL && minp) { try { minp.focus(); } catch (e) {} }
+      };
+    }
+    paintModels(AI_MODELS);
+
+    function paintEfforts(levels, defLevel) {
+      if (!esel) return;
+      var list = AI_EFFORTS;
+      if (levels && levels.length) {
+        /* 模型自己声明了支持哪几档 —— 只列它认的，免得选了报错 */
+        list = AI_EFFORTS.filter(function (o) { return o.v === '' || levels.indexOf(o.v) >= 0; });
+      }
+      var curE = aiEffort();
+      if (curE && !list.some(function (o) { return o.v === curE; })) curE = '';
+      var h = '';
+      list.forEach(function (o) {
+        var nm = o.name;
+        if (levels && defLevel && o.v === defLevel) nm = o.v + ' · 该模型默认';
+        h += '<option value="' + esc(o.v) + '"' + (o.v === curE ? ' selected' : '') + '>'
+          + esc(nm) + '</option>';
+      });
+      esel.innerHTML = h;
+      var hint = document.getElementById('aiEffortHint');
+      if (hint) {
+        hint.textContent = (levels && levels.length)
+          ? ('这个模型支持：' + levels.join(' / ') + (defLevel ? '，默认 ' + defLevel : '') + '。越强越慢越贵。')
+          : '越强越慢越贵；「自动」= 不传这个参数，兼容性最好。';
+      }
+    }
+    paintEfforts(null, null);
+
+    /* 顺手向服务端问一次真实清单（有 Key 才问，失败就算了） */
+    return aiFetchModels().then(function (r) {
+      if (!r) return;
+      var merged = r.models.slice();
+      /* 兜底清单里、服务端没返回的也留着（可能只是接口没列全） */
+      AI_MODELS.forEach(function (m) {
+        if (!merged.some(function (x) { return x.id === m.id; })) merged.push(m);
+      });
+      paintModels(merged);
+      paintEfforts(r.levels, r.defLevel);
+    });
+  }
+
+  /* 设置弹窗点保存时读这两个值 */
+  function aiReadModel() {
+    var msel = document.getElementById('aiModelSel');
+    var minp = document.getElementById('aiModelIn');
+    if (msel && msel.value && msel.value !== CUSTOM_MODEL) return msel.value;
+    if (minp && minp.value.trim()) return minp.value.trim();
+    return aiModelName();
+  }
+  function aiSaveEffort() {
+    var esel = document.getElementById('aiEffortSel');
+    var v = esel ? String(esel.value || '') : '';
+    if (v) lsSet(AI_EFF_LS, v);
+    else { try { localStorage.removeItem(AI_EFF_LS); } catch (e) {} }
+    return v;
+  }
+
+  window.__SMART_PAGE__ = window.__SMART_PAGE__ || {};
+  window.__SMART_PAGE__.ai = {
+    MODELS: AI_MODELS,
+    EFFORTS: AI_EFFORTS,
+    fillSelects: aiFillSelects,
+    readModel: aiReadModel,
+    saveEffort: aiSaveEffort,
+    effort: aiEffort,
+    baseUrl: aiBaseUrl,
+    extraParams: aiExtraParams
+  };
+
+  /* ==========================================================================
      5. 启动
      ========================================================================== */
   loadLocal();
@@ -4674,17 +4861,24 @@ function aiSettings(cb){
     +'<p>填入你自己的大模型 API Key。它只会存进这台电脑的浏览器，不会写进页面、也不会传给除模型服务商以外的任何人。</p>'
     +'<div class="ai-set"><label>API Key</label><input type="password" id="aiKeyIn" placeholder="sk-..." autocomplete="off"><p class="ai-hint">DeepSeek 的 Key 在 <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">platform.deepseek.com</a> 创建</p></div>'
     +'<div class="ai-set"><label>接口地址</label><input type="text" id="aiUrlIn" placeholder="'+AI_DEF_URL+'" autocomplete="off"><p class="ai-hint">兼容 OpenAI 格式的都可以换，默认 DeepSeek</p></div>'
-    +'<div class="ai-set"><label>模型名</label><input type="text" id="aiModelIn" placeholder="'+AI_DEF_MODEL+'" autocomplete="off"></div>'
+    +'<div class="ai-set"><label>模型</label><select id="aiModelSel"></select>'
+    +'<input type="text" id="aiModelIn" placeholder="自定义模型名" autocomplete="off" style="display:none">'
+    +'<p class="ai-hint">默认 DeepSeek。选「自定义」可以填任何 OpenAI 兼容服务的模型名。</p></div>'
+    +'<div class="ai-set"><label>思考强度</label><select id="aiEffortSel"></select>'
+    +'<p class="ai-hint" id="aiEffortHint"></p></div>'
     +'<div class="modal-acts"><button type="button" class="btn-plain" data-no>取消</button><button type="button" class="btn-main" data-yes>保存</button></div>'
     +'</div>';
   document.body.appendChild(mask);
   openMask=mask;
   var kIn=mask.querySelector("#aiKeyIn"),uIn=mask.querySelector("#aiUrlIn"),mIn=mask.querySelector("#aiModelIn");
   kIn.value=aiKey();uIn.value=aiUrl();mIn.value=aiModel();
+  try{window.__SMART_PAGE__.ai.fillSelects()}catch(e){}
   mask.querySelector("[data-no]").addEventListener("click",aiCloseMask);
   mask.addEventListener("click",function(e){if(e.target===mask)aiCloseMask()});
   mask.querySelector("[data-yes]").addEventListener("click",function(){
-    var k=kIn.value.trim(),u=uIn.value.trim(),mm=mIn.value.trim();
+    var k=kIn.value.trim(),u=uIn.value.trim();
+    var mm=mIn.value.trim();
+    try{ mm=window.__SMART_PAGE__.ai.readModel(); window.__SMART_PAGE__.ai.saveEffort(); }catch(e){}
     if(!k){aiToast("请先填 API Key");kIn.focus();return}
     aiSave(k,u,mm);
     aiCloseMask();
@@ -4784,6 +4978,11 @@ function aiAsk(text){
     temperature:0.6,
     messages:[{role:"system",content:AI_SYS+"\n\n【当前数据】\n"+aiContext()}].concat(aiHistory)
   };
+  /* 注入层：把「思考强度」带进请求体。默认「自动」时这里是空对象，一个字段都不加 */
+  try{
+    var wbExtra=window.__SMART_PAGE__.ai.extraParams()||{};
+    for(var wbK in wbExtra){ if(Object.prototype.hasOwnProperty.call(wbExtra,wbK)) body[wbK]=wbExtra[wbK]; }
+  }catch(e){}
   var acc="",first=true,ctrl=null;
   try{ctrl=new AbortController()}catch(e){}
   fetch(aiUrl(),{
