@@ -383,6 +383,250 @@ nav.mnav{ display:none }
 .timer .tt{ font-weight:700; font-size:13px; min-width:52px }
 .timer .tt.run{ color:var(--m-task) }
 
+/* ---------------- 项目卡 ---------------- */
+.prj{
+  border:1px solid var(--line); border-radius:var(--r-md); padding:15px;
+  margin-bottom:11px; background:var(--surface-2); position:relative; overflow:hidden;
+  transition:box-shadow .18s var(--ease), border-color .18s var(--ease), opacity .26s var(--ease);
+}
+.prj::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(180deg, var(--m-goal), color-mix(in srgb, var(--m-goal) 55%, var(--accent)));
+}
+.prj.done{ opacity:.55 }
+.prj.done::before{ background:var(--ok) }
+.prj:hover{ box-shadow:var(--sh-2); border-color:var(--line-strong) }
+.prj-t{ font-weight:680; font-size:15px; letter-spacing:-.018em; word-break:break-word }
+.prj-row{ display:flex; gap:9px; margin-top:8px; font-size:12.5px; line-height:1.7 }
+.prj-row .pk{ flex:none; color:var(--text-3); font-weight:650; min-width:42px }
+.prj-row .pv{ flex:1; min-width:0; color:var(--text-2); word-break:break-word }
+
+/* 任务 / 项目 切换 */
+.seg{
+  display:inline-flex; gap:3px; padding:3px; border-radius:var(--r-sm);
+  background:var(--surface-3); border:1px solid var(--line);
+}
+.seg-b{
+  border:0; background:transparent; border-radius:7px; padding:7px 14px;
+  font-size:13px; font-weight:650; color:var(--text-2); cursor:pointer;
+  transition:.16s var(--ease); min-height:36px;
+}
+.seg-b:hover{ color:var(--text) }
+.seg-b.on{ background:var(--surface); color:var(--accent); box-shadow:var(--sh-1) }
+.seg.sm .seg-b{ padding:5px 11px; font-size:12.5px; min-height:31px; border-radius:6px }
+
+/* 看板：一列一个状态，卡片能左右挪 —— 比列表更容易看出"堆在哪" */
+.board{ display:flex; gap:12px; overflow-x:auto; padding:2px 2px 8px; align-items:flex-start }
+.board-col{
+  flex:1 1 232px; min-width:228px; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:var(--r-md); padding:12px;
+}
+.board-hd{
+  display:flex; align-items:center; gap:8px; margin-bottom:11px;
+  font-size:12.5px; font-weight:700; color:var(--text-2); letter-spacing:.02em;
+}
+.board-hd .dot{ width:8px; height:8px; border-radius:99px; flex:none }
+.board-hd .n{
+  margin-left:auto; font-size:11.5px; font-weight:750; color:var(--text-3);
+  background:var(--surface-3); border-radius:99px; padding:2px 8px;
+}
+.board-empty{
+  font-size:12.5px; color:var(--text-3); text-align:center; padding:16px 6px;
+  border:1px dashed var(--line-strong); border-radius:var(--r-sm);
+}
+.bcard{
+  border:1px solid var(--line); border-left:3px solid transparent; border-radius:var(--r-sm);
+  padding:10px 11px; background:var(--surface); margin-bottom:8px;
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.bcard:hover{ border-color:var(--line-strong); box-shadow:var(--sh-2) }
+.bcard.late{ border-left-color:var(--bad) }
+.bcard.pin{ border-left-color:var(--accent) }
+.bcard-t{ font-size:13.5px; font-weight:640; line-height:1.5; word-break:break-word }
+.bcard-m{ display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; align-items:center }
+.bcard-d{ font-size:11.5px; color:var(--text-3); font-weight:650; font-variant-numeric:tabular-nums }
+.bcard-a{ display:flex; gap:4px; margin-top:8px; align-items:center }
+
+/* 日历：一周一屏。逾期单独一条泳道 —— 它们日期在过去，按周过滤就永远看不见 */
+.calbar{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:14px }
+.calbar .calt{ font-size:13.5px; font-weight:700; letter-spacing:-.01em }
+.cal{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px }
+.cal-d{
+  border:1px solid var(--line); border-radius:var(--r-md); background:var(--surface-2);
+  padding:9px 9px 10px; min-height:124px; display:flex; flex-direction:column; gap:6px;
+}
+.cal-d.wknd{ background:var(--surface-3) }
+.cal-d.today{ border-color:var(--accent-line); background:var(--accent-soft) }
+.cal-hd{ display:flex; align-items:baseline; gap:6px; flex-wrap:wrap }
+.cal-w{ font-size:11.5px; font-weight:700; color:var(--text-3) }
+.cal-n{ font-size:13px; font-weight:750; font-variant-numeric:tabular-nums }
+.cal-d.today .cal-n{ color:var(--accent) }
+.cal-hb{ font-size:11px; font-weight:650; color:var(--text-3); margin-left:auto }
+.cal-d.today .cal-hb{ color:var(--accent) }
+.cal-list{ display:flex; flex-direction:column; gap:5px; flex:1 }
+.cal-c{
+  font-size:12px; line-height:1.5; padding:5px 7px; border-radius:6px; text-align:left;
+  background:var(--surface); border:1px solid var(--line); word-break:break-word;
+  cursor:pointer; transition:.14s var(--ease); color:var(--text-2); font-weight:600;
+}
+.cal-c:hover{ border-color:var(--accent-line); color:var(--accent) }
+.cal-c.done{ color:var(--text-3); text-decoration:line-through; font-weight:500 }
+.cal-c.late{ border-color:var(--bad); color:var(--bad) }
+.cal-add{
+  border:1px dashed var(--line-strong); background:transparent; border-radius:6px;
+  color:var(--text-3); font-size:12px; padding:3px; cursor:pointer; transition:.14s var(--ease);
+}
+.cal-add:hover{ color:var(--accent); border-color:var(--accent-line) }
+.cal-more{ font-size:11px; color:var(--text-3); font-weight:650 }
+@media (max-width:820px){
+  .cal{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+  .cal-d{ min-height:auto }
+}
+@media (max-width:430px){ .cal{ grid-template-columns:1fr } }
+
+/* 多选 / 批量操作：只有开了多选才出现，不占平时的位置 */
+.selbox{
+  width:22px; height:22px; flex:none; margin-top:1px; border-radius:7px; cursor:pointer;
+  border:1.5px solid var(--line-strong); background:var(--surface); color:transparent;
+  font-size:13px; line-height:1; display:inline-flex; align-items:center; justify-content:center;
+  transition:.14s var(--ease);
+}
+.selbox:hover{ border-color:var(--accent-line) }
+.selbox.on{ background:var(--accent); border-color:var(--accent); color:#fff }
+.item.picked{ border-color:var(--accent-line); background:var(--accent-soft) }
+.item.picked::before{ opacity:1 }
+.selbar{
+  position:sticky; bottom:calc(env(safe-area-inset-bottom) + 12px); z-index:40;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-top:14px; padding:11px 14px; border-radius:var(--r-md);
+  background:var(--surface); border:1px solid var(--accent-line); box-shadow:var(--sh-2);
+}
+.selbar .sn{ font-size:13px; font-weight:750; margin-right:auto }
+@media (max-width:760px){
+  .selbar{ bottom:calc(var(--mnav-h) + env(safe-area-inset-bottom) + 12px) }
+}
+
+/* ---------------- 图片附件 ---------------- */
+.thumbs{ display:flex; gap:6px; flex-wrap:wrap; margin-top:9px }
+.thumb{
+  width:64px; height:64px; object-fit:cover; border-radius:9px; cursor:zoom-in;
+  border:1px solid var(--line); background:var(--surface-3); transition:.14s var(--ease);
+}
+.thumb:hover{ border-color:var(--accent-line); transform:translateY(-1px) }
+.imgbox{
+  margin-top:14px; padding:11px; border-radius:var(--r-md);
+  border:1.5px dashed var(--line-strong); background:var(--surface-2);
+  transition:.16s var(--ease);
+}
+.imgbox.over{ border-color:var(--accent); background:var(--accent-soft) }
+.imgbox.over::after{
+  content:'松手就加进来'; display:block; margin-top:9px; font-size:12px;
+  font-weight:650; color:var(--accent); text-align:center;
+}
+.imgstrip{ display:flex; gap:8px; flex-wrap:wrap }
+.imgcell{ position:relative; width:76px; height:76px; flex:none }
+.imgcell img{
+  width:76px; height:76px; object-fit:cover; border-radius:10px; cursor:zoom-in;
+  border:1px solid var(--line); background:var(--surface-3);
+}
+.imgcell img:not([src]){
+  background:var(--surface-3) center/22px no-repeat;
+}
+.imgx{
+  position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:99px;
+  border:1px solid var(--line-strong); background:var(--surface); color:var(--bad);
+  font-size:11px; font-weight:750; cursor:pointer; display:inline-flex;
+  align-items:center; justify-content:center; padding:0; line-height:1;
+}
+.imgx:hover{ background:var(--bad-soft); border-color:var(--bad) }
+.imgadd{
+  width:76px; height:76px; flex:none; border-radius:10px; border:1.5px dashed var(--line-strong);
+  background:transparent; color:var(--text-3); font-size:12px; font-weight:650;
+  cursor:pointer; display:inline-flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px; transition:.14s var(--ease); padding:0;
+}
+.imgadd:hover{ color:var(--accent); border-color:var(--accent-line) }
+.imgadd-n{ font-size:11px; opacity:.75; font-variant-numeric:tabular-nums }
+/* 图在这台设备上没有（记录从云端同步过来了，字节没有） */
+img[data-img].img-missing{
+  background:
+    repeating-linear-gradient(45deg, var(--surface-3), var(--surface-3) 6px,
+                              var(--surface-2) 6px, var(--surface-2) 12px);
+  border-style:dashed;
+  position:relative;
+}
+.imgcell-missing::after{
+  content:'本机没有'; position:absolute; inset:auto 0 6px 0; text-align:center;
+  font-size:10px; font-weight:700; color:var(--text-3); pointer-events:none;
+}
+
+/* ---------------- 看图器：缩放 / 拖动 / 翻页 ---------------- */
+.viewer{
+  position:fixed; inset:0; z-index:120; display:none; flex-direction:column;
+  background:rgba(8,10,16,.94); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  touch-action:none; overscroll-behavior:contain;
+}
+.viewer.show{ display:flex }
+body.vw-lock{ overflow:hidden }
+.vw-bar{
+  display:flex; align-items:center; gap:8px; padding:10px 12px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  color:#fff; flex:none;
+}
+.vw-name{
+  flex:1; min-width:0; font-size:13px; font-weight:650;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.vw-zoom{
+  font-size:12px; font-weight:700; font-variant-numeric:tabular-nums;
+  color:rgba(255,255,255,.75); min-width:46px; text-align:right;
+}
+.vw-b{
+  width:36px; height:36px; flex:none; border-radius:10px; cursor:pointer;
+  border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.08);
+  color:#fff; font-size:16px; display:inline-flex; align-items:center; justify-content:center;
+}
+.vw-b:hover{ background:rgba(255,255,255,.18) }
+.vw-stage{
+  flex:1; position:relative; overflow:hidden; cursor:grab;
+  display:flex; align-items:center; justify-content:center;
+}
+.vw-stage.zoomed{ cursor:grab }
+.vw-img{
+  max-width:100%; max-height:100%; transform-origin:center center;
+  will-change:transform; user-select:none; -webkit-user-drag:none;
+  transition:transform .06s linear;
+}
+.vw-img:not([src]){ opacity:0 }
+.vw-img.img-missing{ opacity:.35 }
+.vw-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:60px; border-radius:12px; cursor:pointer;
+  border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.08);
+  color:#fff; font-size:24px; display:inline-flex; align-items:center; justify-content:center;
+}
+.vw-nav:hover{ background:rgba(255,255,255,.2) }
+.vw-nav.prev{ left:10px }
+.vw-nav.next{ right:10px }
+.vw-tip{
+  flex:none; text-align:center; font-size:11.5px; color:rgba(255,255,255,.55);
+  padding:8px 12px calc(12px + env(safe-area-inset-bottom));
+}
+@media (max-width:560px){
+  .vw-tip{ font-size:10.5px }
+  .vw-nav{ width:38px; height:52px }
+}
+
+/* ---------------- 快照 ---------------- */
+.snap{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:11px 13px; border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--surface-2); margin-bottom:8px;
+}
+.snap-b{ flex:1; min-width:140px }
+.snap-t{ font-size:13px; font-weight:650 }
+.snap-m{ font-size:11.5px; color:var(--text-3); margin-top:2px; font-variant-numeric:tabular-nums }
+
 /* ---------------- 卡片 ---------------- */
 .card{
   background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
@@ -428,8 +672,45 @@ nav.mnav{ display:none }
 }
 .hero-body{ padding:18px 20px 20px }
 
-/* 今日记录摘要：让"点了一下"变成"看得见的一条记录" */
-.rec-line{
+/* ---------------- 「今天要处理」（借鉴每日工作台的 todayDigest） ---------------- */
+.agenda{
+  padding:14px 20px; background:var(--surface-2); border-bottom:1px solid var(--line);
+}
+.ag-alert{
+  margin-bottom:11px; padding:9px 12px; border-radius:9px;
+  font-size:12.5px; line-height:1.6; font-weight:600;
+  background:var(--bad-soft); color:var(--bad);
+}
+.ag-head{ font-size:12.5px; font-weight:700; color:var(--text-2); margin-bottom:4px }
+.ag-head b{ font-size:15.5px; color:var(--accent); letter-spacing:-.02em }
+.ag-lb{
+  font-size:11px; font-weight:700; color:var(--text-3);
+  letter-spacing:.04em; margin:12px 0 4px;
+}
+.ag{
+  display:flex; align-items:center; gap:10px; padding:9px 0;
+  border-bottom:1px solid var(--line);
+}
+.ag:last-child{ border-bottom:0 }
+.ag-x{
+  width:22px; height:22px; flex:none; border-radius:50%;
+  border:1.5px solid var(--line-strong); background:transparent;
+  color:transparent; font-size:11px; line-height:1; display:grid; place-items:center;
+  transition:.15s var(--ease); cursor:pointer;
+}
+.ag-x:hover{ border-color:var(--ok); color:var(--ok); background:var(--ok-soft) }
+.ag-b{ flex:1; min-width:0 }
+.ag-t{ font-size:13.5px; font-weight:620; word-break:break-word; line-height:1.45 }
+.ag.over .ag-t{ color:var(--bad) }
+.ag-m{
+  font-size:11.5px; color:var(--text-3); margin-top:3px;
+  display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+}
+.ag-empty{ font-size:13px; color:var(--text-3); padding:4px 0; line-height:1.8 }
+.ag-more{ font-size:11.5px; color:var(--text-3); padding-top:9px }
+.ag-pin{ color:var(--m-habit) !important }
+
+/* 今日记录摘要：让"点了一下"变成"看得见的一条记录" */.rec-line{
   padding:11px 20px; font-size:13px; font-weight:600; line-height:1.7;
   color:var(--text-2); background:var(--surface-2);
   border-bottom:1px solid var(--line);
@@ -974,6 +1255,9 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
 <nav class="mnav" id="mnav"></nav>
 <div class="toast" id="toast"></div>
 
+<!-- 看图：缩放 / 拖动 / 翻页。放成静态 DOM，手势期间直接改样式，不重画整页 -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="看大图"></div>
+
 <!-- 新建弹窗：任务 / 灵感 / 决策 共用 -->
 <div class="modal" id="modal">
   <div class="modal-box" role="dialog" aria-modal="true">
@@ -1066,7 +1350,9 @@ var storageOK = true;
 var DB = null;
 var TAB = 'today';
 var ui = { todayDate:null, habitDate:null, week:null, noteFilter:'all', taskFilter:'all',
-           taskShowFilter:false, aiSettings:false, searchQ:'' };
+           taskShowFilter:false, aiSettings:false, searchQ:'', taskMode:'tasks', taskLayout:'list',
+           calWeek:null, selMode:false, sel:{}, showTrash:false,
+           reviewMode:'week', reflectOpen:false };
 var CHARTS = {};   /* 图表元数据，供悬停提示使用 */
 
 /* ---------------- 工具 ---------------- */
@@ -1160,6 +1446,8 @@ function blankDB(){
     tasks: [],          /* [{id,date,title,type,status,output,blocker,minutes(实际耗时),estMin(预计),
                             project,drain,doneDate,deferCount,deleted,deletedAt,updatedAt}] */
     decisions: [],      /* [{id,date,title,options,conclusion,basis,status,review,deleted,deletedAt,updatedAt}] */
+    projects: [],       /* [{id,name,status,prio,start,due,progress,goal,milestone,risk,note,
+                            deleted,deletedAt,updatedAt}] */
     habits: {
       /* 出厂预置的习惯，updatedAt 故意设成 0：
          它们是"默认值"不是"用户改过的内容"。如果给它们盖当前时间，
@@ -1176,6 +1464,9 @@ function blankDB(){
       ts: {}            /* { 'YYYY-MM-DD': { habitId: 时间戳 } } 每格各自的修改时间 */
     },
     notes: [],          /* [{id,date,content,type,source,status,updatedAt}] */
+    /* 每日反省：一天可以写好几条（和「今日一句」不同，那句是一天的总纲，
+       反省是具体的一件事/一个念头，还能挂到某个决策上，回头看最有用） */
+    reflects: [],       /* [{id,date,content,decision,imgs,deleted,deletedAt,updatedAt}] */
     weekly: {},         /* { 'YYYY-Www': {gain,problem,oneThing,todos,updatedAt} } */
     goals: []           /* [{id,period,area,goal,krs,progress,status,review,updatedAt}] */
   };
@@ -1203,7 +1494,9 @@ function normalize(db){
       ts:  (db.habits && db.habits.ts  && typeof db.habits.ts==='object')  ? db.habits.ts  : {}
     },
     notes: Array.isArray(db.notes) ? db.notes : [],
+    reflects: Array.isArray(db.reflects) ? db.reflects : [],
     decisions: Array.isArray(db.decisions) ? db.decisions : [],
+    projects: Array.isArray(db.projects) ? db.projects : [],
     weekly: (db.weekly && typeof db.weekly==='object') ? db.weekly : {},
     goals: Array.isArray(db.goals) ? db.goals : []
   };
@@ -1213,7 +1506,7 @@ function normalize(db){
     var r = out.daily[k];
     if(r && typeof r==='object' && r.updatedAt==null) r.updatedAt = base;
   });
-  ['tasks','notes','goals','decisions'].forEach(function(kind){
+  ['tasks','notes','goals','decisions','projects','reflects'].forEach(function(kind){
     out[kind].forEach(function(r){
       if(r && typeof r==='object' && r.updatedAt==null) r.updatedAt = base;
     });
@@ -1390,9 +1683,10 @@ function hasDaily(date){
    只有"彻底删除"（回收站里手动删、或超过 30 天自动清理）才真的移出数组并立墓碑。
    ========================================================================== */
 var TRASH_DAYS = 30;
-var KIND_TABLE = { task:'tasks', note:'notes', goal:'goals', decision:'decisions' };
-var KIND_ICON  = { task:'✅', note:'💡', goal:'🎯', decision:'🧭' };
-var KIND_NAME  = { task:'任务', note:'灵感', goal:'目标', decision:'决策' };
+var KIND_TABLE = { task:'tasks', note:'notes', goal:'goals', decision:'decisions', project:'projects',
+                   reflect:'reflects' };
+var KIND_ICON  = { task:'✅', note:'💡', goal:'🎯', decision:'🧭', project:'📁', reflect:'🪞' };
+var KIND_NAME  = { task:'任务', note:'灵感', goal:'目标', decision:'决策', project:'项目', reflect:'反省' };
 
 function alive(list){
   return (list||[]).filter(function(r){ return r && !r.deleted; });
@@ -1422,8 +1716,11 @@ function undelete(kind, id){
 function purgeRecord(kind, id){
   var key = KIND_TABLE[kind];
   if(!key || !Array.isArray(DB[key])) return;
+  /* 记录真要没了，它独占的图片字节也一起回收 —— 否则 IndexedDB 只进不出 */
+  var r = findRec(kind, id);
+  if(r) imgsOf(r).forEach(function(im){ imgStore.del(im.id); });
   tombstone(kind, id);
-  DB[key] = DB[key].filter(function(r){ return !(r && r.id===id); });
+  DB[key] = DB[key].filter(function(x){ return !(x && x.id===id); });
 }
 /* 回收站里的东西，按类型和删除时间倒序 */
 function trashList(){
@@ -1454,6 +1751,104 @@ function purgeAllTrash(){
   if(n) save(true);
   return n;
 }
+
+/* ==========================================================================
+   快照 / 一键回退
+   回收站只救得了"删错了"，救不了"改错了"：批量改期、导入覆盖、
+   清空数据、同步时选错方向 —— 这些是把数据改成另一个样子，不是删掉。
+   所以再铺一层：把整个库序列化存一份在本地（不进云同步，它是本机保险）。
+   上限 5 份、每份 3MB，超了就丢最老的 —— 无限存等于没有上限，
+   迟早把 localStorage 撑爆，反而把主数据一起赔进去。
+   ========================================================================== */
+var SNAP_KEY = 'life_records_snapshots_v1';
+var SNAP_MAX = 5;
+var SNAP_MAX_KB = 3072;
+
+function snapshots(){
+  try{
+    var raw = localStorage.getItem(SNAP_KEY);
+    var list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  }catch(e){ return []; }
+}
+function saveSnapshots(list){
+  try{ localStorage.setItem(SNAP_KEY, JSON.stringify(list)); return true; }
+  catch(e){ return false; }
+}
+function countRecs(db){
+  var d = db || DB, n = 0;
+  ['tasks','notes','decisions','projects','goals'].forEach(function(k){ n += (d[k]||[]).length; });
+  n += Object.keys(d.daily||{}).length;
+  n += Object.keys(d.weekly||{}).length;
+  return n;
+}
+/* 存一份。返回 null 表示没存成（太大或存储满了），调用方不用管原因 */
+function takeSnapshot(label){
+  var data;
+  try{ data = JSON.stringify(DB); }catch(e){ return null; }
+  var kb = Math.round(data.length/1024);
+  if(kb > SNAP_MAX_KB) return null;
+  var list = snapshots();
+  list.unshift({
+    at: Date.now(), date: todayStr(), label: label || '', n: countRecs(DB), kb: kb, data: data
+  });
+  if(list.length > SNAP_MAX) list = list.slice(0, SNAP_MAX);
+  if(!saveSnapshots(list)) return null;
+  return list[0];
+}
+function findSnapshot(at){
+  var list = snapshots();
+  for(var i=0;i<list.length;i++){ if(list[i].at === at) return list[i]; }
+  return null;
+}
+function dropSnapshot(at){
+  saveSnapshots(snapshots().filter(function(s){ return s.at !== at; }));
+}
+/* 回退前先给"现在"也存一份 —— 否则回退错了就再也回不来 */
+function restoreSnapshot(at){
+  var s = findSnapshot(at);
+  if(!s){ toast('这份快照已经不在了','err'); return false; }
+  var db;
+  try{ db = JSON.parse(s.data); }catch(e){ toast('快照内容坏了，没法回退','err'); return false; }
+  takeSnapshot('回退前自动留存');
+  DB = normalize(db);
+  save(true);
+  render();
+  toast('已回到 ' + s.date + ' 的那一份（' + countRecs(DB) + ' 条）','ok');
+  return true;
+}
+/* 每天第一次打开自动存一份当天开头的状态：昨天搞砸的事，今天还能捞回来 */
+function autoDailySnapshot(){
+  if(!storageOK || !DB) return null;
+  var list = snapshots();
+  if(list.length && list[0].date === todayStr()) return null;
+  if(!countRecs(DB)) return null;
+  return takeSnapshot('每日自动');
+}
+function snapListHTML(){
+  var list = snapshots();
+  var h = '<section class="card">' + cardHead('🛟','快照 · 改错了能退回',
+    '<button class="btn sm" data-act="snap-take">现在存一份</button>');
+  h += '<div class="hint">回收站只救「删错了」；快照救「改错了」——批量改期、导入覆盖、'
+     + '同步选错方向这类把数据改成另一个样子的操作。快照只存在这台设备上，不参与云同步。'
+     + '最多留 ' + SNAP_MAX + ' 份。</div>';
+  if(!list.length){
+    h += '<div class="hint" style="margin-top:12px">还没有快照。每天第一次打开会自动存一份。</div>';
+    return h + '</section>';
+  }
+  h += '<div style="margin-top:14px">';
+  list.forEach(function(s){
+    h += '<div class="snap"><div class="snap-b">'
+       + '<div class="snap-t">' + esc(s.label || '快照') + '</div>'
+       + '<div class="snap-m">' + esc(s.date) + ' ' + esc(new Date(s.at).toTimeString().slice(0,5))
+       + ' · ' + (s.n != null ? s.n + ' 条' : '—') + ' · ' + s.kb + 'KB</div></div>'
+       + '<button class="btn sm" data-act="snap-restore" data-at="' + s.at + '">回退到这份</button>'
+       + '<button class="btn sm ghost" data-act="snap-drop" data-at="' + s.at + '">删掉</button>'
+       + '</div>';
+  });
+  h += '</div>';
+  return h + '</section>';
+}
 function tasksOn(date){ return alive(DB.tasks).filter(function(t){ return t.date===date; }); }
 function tasksIn(dates){
   var set = {}; dates.forEach(function(d){ set[d]=1; });
@@ -1471,6 +1866,68 @@ function decisionsAll(){
   return alive(DB.decisions).slice().sort(function(a,b){
     return (a.date||'') < (b.date||'') ? 1 : ((a.date||'') > (b.date||'') ? -1 : 0);
   });
+}
+
+/* ==========================================================================
+   「今天要处理」—— 借鉴 每日工作台的 todayDigest()
+   原来「今天」页只回答"我记了什么"，回答不了"我要做什么"。
+   这三个数字才是打开应用时第一个该看到的东西：
+     逾期几件 / 今天几件 / 钉选的三件是什么
+   ========================================================================== */
+var PRIOS = ['P0','P1','P2'];
+var PRIO_BADGE = { 'P0':'b-red', 'P1':'b-amber', 'P2':'b-gray' };
+var PRIO_RANK = { 'P0':0, 'P1':1, 'P2':2 };
+
+/* 逾期 = 计划日期已经过了、但还没完成 */
+function isOverdue(t){
+  return t.status !== '完成' && !!t.date && t.date < todayStr();
+}
+function isDueToday(t){
+  return t.status !== '完成' && t.date === todayStr();
+}
+function openTasks(){ return alive(DB.tasks).filter(function(t){ return t.status !== '完成'; }); }
+function pinnedTasks(){
+  return alive(DB.tasks).filter(function(t){ return t.pin && t.status !== '完成'; });
+}
+function overdueDays(t){ return daysBetween(t.date, todayStr()); }
+
+/* 排序：逾期最久的最前 → 优先级 → 计划日期 */
+function byUrgency(a, b){
+  /* 逾期的永远在最前，且拖得越久越靠前（用 -1 表示"没逾期"） */
+  var da = isOverdue(a) ? overdueDays(a) : -1;
+  var db2 = isOverdue(b) ? overdueDays(b) : -1;
+  if(da !== db2) return db2 - da;
+  var pa = PRIO_RANK[a.prio] != null ? PRIO_RANK[a.prio] : 9;
+  var pb = PRIO_RANK[b.prio] != null ? PRIO_RANK[b.prio] : 9;
+  if(pa !== pb) return pa - pb;
+  return (a.date || '') < (b.date || '') ? -1 : ((a.date || '') > (b.date || '') ? 1 : 0);
+}
+
+function todayDigest(){
+  var open = openTasks();
+  var over = open.filter(isOverdue).sort(byUrgency);
+  var due  = open.filter(isDueToday).sort(byUrgency);
+  var pinned = pinnedTasks().sort(byUrgency);
+  /* 钉选里可能同时是逾期或今天的，去重后再算"今天要处理"总数 */
+  var seen = {};
+  var all = over.concat(due, pinned).filter(function(t){
+    if(seen[t.id]) return false;
+    seen[t.id] = 1;
+    return true;
+  });
+  return { over: over, due: due, pinned: pinned, open: open.length, all: all };
+}
+
+/* 没手动钉选时，自动推荐三件：逾期优先 → P0 → P1 → 今天 */
+function suggestTop3(){
+  var d = todayDigest();
+  return d.all.slice(0, 3);
+}
+/* 第几条是"今日三件"里的（没有手动钉选就用推荐的前三条） */
+function top3Ids(){
+  var pin = pinnedTasks();
+  var list = pin.length ? pin.slice(0, 3) : suggestTop3();
+  return list.map(function(t){ return t.id; });
 }
 function habitRate(habitId, dates){
   var total = 0, ok = 0;
@@ -1507,6 +1964,7 @@ function weekSummary(wk){
   var fire = tasks.filter(function(t){ return t.type==='救火'; });
   var mins = tasks.reduce(function(a,t){ return a + (num(t.minutes)||0); }, 0);
   var notes = notesIn(dates);
+  var refs = reflectsIn(dates);
   var recorded = dates.filter(hasDaily).length;
   return {
     dates: dates,
@@ -1522,6 +1980,8 @@ function weekSummary(wk){
     minutes: mins,
     noteNew: notes.length,
     noteDone: notes.filter(function(n){ return n.status==='已用掉' || n.status==='已归档'; }).length,
+    reflectN: refs.length,
+    reflectDays: dates.filter(function(d){ return refs.some(function(r){ return r.date===d; }); }).length,
     habitRates: DB.habits.config.map(function(h){
       return { name:h.name, id:h.id, rate: habitRate(h.id, dates) };
     })
@@ -1671,6 +2131,12 @@ function mergeDB(a, b){
     tasks:  mergeArrays(a.tasks,     b.tasks,  'task',   tomb),
     notes:  mergeArrays(a.notes,     b.notes,  'note',   tomb),
     goals:  mergeArrays(a.goals,     b.goals,  'goal',   tomb),
+    /* 漏一张表 = 一同步那张表就没了：合并结果是"新对象"，
+       没被列出来的集合在里面根本不存在，normalize 再把它补成空数组就存下去了。
+       decisions / projects 曾经就这样漏在这儿 —— 补上，并在 [66] 加了逐表检查。 */
+    decisions: mergeArrays(a.decisions, b.decisions, 'decision', tomb),
+    projects:  mergeArrays(a.projects,  b.projects,  'project',  tomb),
+    reflects:  mergeArrays(a.reflects,  b.reflects,  'reflect',  tomb),
     weekly: mergeRecordMap(a.weekly, b.weekly, 'weekly', tomb),
     habits: {
       config: mergeArrays(a.habits&&a.habits.config, b.habits&&b.habits.config,
@@ -2461,6 +2927,62 @@ function chartLeave(box){
 /* ==========================================================================
    视图：今天
    ========================================================================== */
+/* 「今天要处理」列表项 */
+function agendaItemHTML(t, inTop3){
+  var over = isOverdue(t);
+  var h = '<div class="ag'+(over?' over':'')+'">';
+  h += '<button class="ag-x" data-act="task-done" data-id="'+esc(t.id)+'"'
+     + ' title="标记完成" aria-label="标记完成">✓</button>';
+  h += '<div class="ag-b">';
+  h += '<div class="ag-t">'+esc(t.title||'(无标题)')+'</div>';
+  h += '<div class="ag-m">';
+  if(over) h += '<span class="badge b-red">逾期 '+overdueDays(t)+' 天</span>';
+  else if(isDueToday(t)) h += '<span class="badge b-blue">今天</span>';
+  if(t.prio) h += '<span class="badge '+(PRIO_BADGE[t.prio]||'b-gray')+'">'+esc(t.prio)+'</span>';
+  if(t.project) h += '<span>'+esc(t.project)+'</span>';
+  h += '</div></div>';
+  h += '<button class="btn sm ico ghost'+(t.pin?' ag-pin':'')+'" data-act="task-pin"'
+     + ' data-id="'+esc(t.id)+'" title="'+(t.pin?'取消钉选':'钉为今日三件')+'"'
+     + ' aria-label="钉选">'+(t.pin?'★':'☆')+'</button>';
+  h += '</div>';
+  return h;
+}
+
+function todayAgendaHTML(){
+  var d = todayDigest();
+  if(!d.all.length){
+    return '<div class="agenda"><div class="ag-empty">'
+      + '<b>今天没有待处理的事。</b><br>'
+      + '去「任务」页记一条，或者直接放松。'
+      + '</div></div>';
+  }
+
+  var pinned = pinnedTasks();
+  var top3 = pinned.length ? pinned.slice(0, 3) : suggestTop3();
+
+  var h = '<div class="agenda">';
+  if(d.over.length){
+    h += '<div class="ag-alert">⚠️ 有 <b>' + d.over.length + '</b> 件逾期，最久的拖了 '
+       + overdueDays(d.over[0]) + ' 天 —— 要么做掉，要么明确放弃</div>';
+  }
+  h += '<div class="ag-head">今天要处理 <b>' + d.all.length + '</b> 件</div>';
+
+  h += '<div class="ag-lb">' + (pinned.length ? '你钉的三件' : '建议先做这三件') + '</div>';
+  top3.forEach(function(t){ h += agendaItemHTML(t, true); });
+
+  var rest = d.all.filter(function(t){ return top3.indexOf(t) < 0; });
+  if(rest.length){
+    h += '<div class="ag-lb">其它 ' + rest.length + ' 件</div>';
+    rest.slice(0, 5).forEach(function(t){ h += agendaItemHTML(t, false); });
+    if(rest.length > 5){
+      h += '<div class="ag-more">还有 ' + (rest.length - 5) + ' 件，'
+         + '<button class="btn sm ghost" data-act="go" data-tab="tasks">去任务页看 →</button></div>';
+    }
+  }
+  h += '</div>';
+  return h;
+}
+
 function viewToday(){
   var date = ui.todayDate || todayStr();
   /* 只读展示，不创建空记录（空记录在导出时会变成垃圾行） */
@@ -2498,6 +3020,11 @@ function viewToday(){
   h += '<div class="stat-d" id="tpFillHint">'+(filled===3 ? '✓ 三项都填好了' : '还差 '+(3-filled)+' 项必填')+'</div>';
   h += '</div>';
   h += '</div>';
+
+  /* ★ 打开应用第一个该看到的：今天要做什么。
+     原来这里直接就是"今日记录摘要"，回答的是"我记了什么"——
+     而那不解决"我现在该干嘛"。 */
+  h += todayAgendaHTML();
 
   /* 今日记录摘要 —— 点完心情/能量/一句话，这里立刻长出一条看得见的记录 */
   var recParts = recSummary(d);
@@ -2538,6 +3065,10 @@ function viewToday(){
      + '<textarea id="f_note" placeholder="想写就写，不写不扣分">'+esc(d.note||'')+'</textarea></div>';
   h += '</div></details>';
   h += '</div></section>';
+
+  /* ★ 反省紧跟在「今天记了什么」之后：白天记状态，晚上回过头看那件具体的事。
+     「今日一句」回答今天怎么样，「反省」回答今天做对了/错了什么 —— 后者才是改得动的东西。 */
+  h += todayReflectHTML();
 
   /* ---- 今日总览：今天打了什么卡、做了什么、想了什么，一屏看完 ---- */
   var dayWord = isToday ? '今天' : '这天';
@@ -2622,6 +3153,156 @@ function viewToday(){
 }
 
 /* ==========================================================================
+   项目 —— 借鉴 每日工作台的「项目」表
+   任务回答"我现在做什么"，项目回答"这条线走到哪了"。
+   两者是一张表的两个视角，所以放在任务页里切换，不额外占导航位。
+   ========================================================================== */
+var PROJ_STATUS = ['进行中','已完成','暂停','放弃'];
+var PROJ_BADGE = { '进行中':'b-blue','已完成':'b-green','暂停':'b-amber','放弃':'b-gray' };
+
+function projectsAll(){
+  return alive(DB.projects).slice().sort(function(a, b){
+    var sa = a.status === '已完成' ? 1 : 0, sb = b.status === '已完成' ? 1 : 0;
+    if(sa !== sb) return sa - sb;                       /* 完成的项目沉到底 */
+    var da = a.due || '9999-99-99', db2 = b.due || '9999-99-99';
+    return da < db2 ? -1 : (da > db2 ? 1 : 0);          /* 快到期的排前 */
+  });
+}
+function projectStats(name){
+  var list = alive(DB.tasks).filter(function(t){ return (t.project || '') === name; });
+  var done = list.filter(function(t){ return t.status === '完成'; }).length;
+  return {
+    total: list.length, done: done, open: list.length - done,
+    over: list.filter(isOverdue).length,
+    pct: list.length ? Math.round(done * 100 / list.length) : 0
+  };
+}
+function projDaysLeft(p){
+  return p.due ? daysBetween(todayStr(), p.due) : null;
+}
+function projProgress(p){
+  var v = num(p.progress);
+  if(v != null) return Math.max(0, Math.min(100, v));
+  return projectStats(p.name).pct;                      /* 没手填就按任务完成度算 */
+}
+/* 改项目名时，把关联任务的 project 字段一起改，否则链接会断 */
+function renameProjectTasks(oldName, newName){
+  if(!oldName || oldName === newName) return 0;
+  var n = 0;
+  alive(DB.tasks).forEach(function(t){
+    if((t.project || '') === oldName){ t.project = newName; touch(t); n++; }
+  });
+  if(n) save(true);
+  return n;
+}
+
+function projectHTML(p){
+  var st = projectStats(p.name);
+  var prog = projProgress(p);
+  var left = projDaysLeft(p);
+  var late = p.status !== '已完成' && p.status === '进行中' && left != null && left < 0;
+  var h = '<div class="prj' + (p.status === '已完成' ? ' done' : '') + '">';
+  h += '<div class="row" style="align-items:flex-start;gap:9px;flex-wrap:nowrap">';
+  h += '<div style="flex:1;min-width:0">';
+  h += '<div class="prj-t">' + esc(p.name || '(未命名)') + '</div>';
+  h += '<div class="row" style="gap:6px;margin-top:6px">';
+  h += '<span class="badge ' + (PROJ_BADGE[p.status] || 'b-gray') + '">' + esc(p.status || '进行中') + '</span>';
+  if(p.prio) h += '<span class="badge ' + (PRIO_BADGE[p.prio] || 'b-gray') + '">' + esc(p.prio) + '</span>';
+  if(left != null){
+    h += '<span class="badge ' + (late ? 'b-red' : (left <= 7 ? 'b-amber' : 'b-gray')) + '">'
+       + (late ? ('逾期 ' + (-left) + ' 天') : (left === 0 ? '今天截止' : ('还有 ' + left + ' 天')))
+       + '</span>';
+  }
+  h += '<span style="font-size:11.5px;color:var(--text-3);font-weight:600">任务 '
+     + st.done + '/' + st.total + '</span>';
+  if(st.over) h += '<span class="badge b-red">逾期 ' + st.over + '</span>';
+  h += '</div></div>';
+  h += '<button class="btn sm ico ghost" data-act="prj-edit" data-id="' + esc(p.id) + '" title="编辑" aria-label="编辑">✏️</button>';
+  h += '<button class="btn sm ico ghost" data-act="prj-del" data-id="' + esc(p.id) + '" title="删除" aria-label="删除">✕</button>';
+  h += '</div>';
+
+  if(p.goal) h += '<div class="prj-row"><span class="pk">目标</span><span class="pv">' + esc(p.goal) + '</span></div>';
+  if(p.milestone) h += '<div class="prj-row"><span class="pk">里程碑</span><span class="pv">' + esc(p.milestone) + '</span></div>';
+  if(p.risk) h += '<div class="prj-row"><span class="pk">风险</span><span class="pv" style="color:var(--warn)">' + esc(p.risk) + '</span></div>';
+  if(p.note) h += '<div class="prj-row"><span class="pk">备注</span><span class="pv">' + esc(p.note) + '</span></div>';
+
+  h += '<div class="row" style="margin-top:12px;flex-wrap:nowrap">';
+  h += '<input type="range" min="0" max="100" step="5" value="' + prog + '" data-act="prj-prog"'
+     + ' data-id="' + esc(p.id) + '" aria-label="进度" style="flex:1">';
+  h += '<span class="pv num" style="font-weight:750;min-width:46px;text-align:right;font-size:14px">' + prog + '%</span>';
+  h += '</div>';
+  h += '<div class="bar"><i style="width:' + prog + '%;' + (p.status === '已完成' ? 'background:var(--ok)' : '') + '"></i></div>';
+
+  h += '<div class="row" style="margin-top:11px;gap:7px">';
+  PROJ_STATUS.forEach(function(s){
+    if(s === p.status) return;
+    h += '<button class="btn sm" data-act="prj-status" data-id="' + esc(p.id) + '" data-st="' + esc(s) + '">标为' + esc(s) + '</button>';
+  });
+  h += '<button class="btn sm ghost" data-act="prj-tasks" data-name="' + esc(p.name) + '">看它的任务 →</button>';
+  h += '</div></div>';
+  return h;
+}
+
+function viewProjects(){
+  var list = projectsAll();
+  var active = list.filter(function(p){ return p.status === '进行中' || p.status === '暂停'; });
+  var h = '';
+  h += '<section class="card">'
+     + cardHead('📁','项目 · ' + list.length + ' 个',
+         '<button class="btn sm pri" data-act="new-project">＋ 新建项目</button>');
+  if(!list.length){
+    h += emptyHTML('📁','还没有项目',
+      '项目是用来回答"这条线走到哪了"的。比如「Q4 首页改版」下面挂 8 个任务，'
+      + '一眼就能看到完成到哪、卡在哪、什么时候该交付。',
+      '<button class="btn pri" data-act="new-project">建第一个项目</button>');
+    h += '</section>';
+    return h;
+  }
+  if(active.length){
+    h += '<div class="hint" style="margin-bottom:12px">'
+       + '进行中 ' + active.length + ' 个'
+       + (active.filter(function(p){ var l = projDaysLeft(p); return l != null && l < 0; }).length
+          ? ' · <b style="color:var(--bad)">'
+            + active.filter(function(p){ var l = projDaysLeft(p); return l != null && l < 0; }).length
+            + ' 个已逾期</b>' : '')
+       + '</div>';
+  }
+  list.forEach(function(p){ h += projectHTML(p); });
+  h += '</section>';
+  return h;
+}
+
+/* ==========================================================================
+   重复任务 & 延期次数
+   借鉴每日工作台的 nextRecurDate / 延期次数字段。
+   重复任务的价值在于"周期性的事不用每次重记" —— 完成后自动排出下一次。
+   ========================================================================== */
+var REPEATS = ['不重复','每天','每周','每月'];
+function nextRecurDate(date, repeat){
+  if(!repeat || repeat === '不重复') return null;
+  var d = parseD(date || todayStr());
+  if(repeat === '每天') d.setDate(d.getDate() + 1);
+  else if(repeat === '每周') d.setDate(d.getDate() + 7);
+  else if(repeat === '每月') d.setMonth(d.getMonth() + 1);
+  else return null;
+  return fmtDate(d);
+}
+/* 完成一个重复任务 → 生成下一次；返回新记录（没有则返回 null） */
+function rollRepeat(t){
+  if(!t || !t.repeat || t.repeat === '不重复') return null;
+  var next = nextRecurDate(t.date, t.repeat);
+  if(!next) return null;
+  var copy = {
+    id: uid(), date: next, title: t.title, type: t.type, status: '进行中',
+    prio: t.prio || '', project: t.project || '', repeat: t.repeat,
+    updatedAt: Date.now()
+  };
+  if(t.estMin != null) copy.estMin = t.estMin;
+  DB.tasks.push(copy);
+  return copy;
+}
+
+/* ==========================================================================
    视图：任务
    ========================================================================== */
 /* 任务计时器：点一下开始，再点一下停止，把实际耗时累加进去。
@@ -2666,16 +3347,31 @@ function startTimerTick(){
   }, 1000);
 }
 
-function taskItemHTML(t){
+function taskItemHTML(t, o){
+  o = o || {};
   var est = num(t.estMin), act = num(t.minutes);
   var running = !!t.timerStart;
-  var h = '<div class="item"' + (running ? ' style="border-color:var(--m-task)"' : '') + '>'
-        + '<div class="item-h"><div class="item-main">';
-  h += '<div class="item-t">'+esc(t.title||'(未填事项)')+'</div>';
+  var over = isOverdue(t);
+  var h = '<div class="item' + (o.sel ? ' picked' : '') + '"'
+        + (running ? ' style="border-color:var(--m-task)"'
+        : (over ? ' style="border-left-color:var(--bad)"' : '')) + '>'
+        + '<div class="item-h">';
+  /* 多选态：左边多一个勾选框。不开多选时它不存在，平时不多占一个像素 */
+  if(o.sel){
+    h += '<button class="selbox' + (o.picked ? ' on' : '') + '" data-act="task-sel"'
+       + ' data-id="' + esc(t.id) + '" aria-pressed="' + (o.picked ? 'true' : 'false') + '"'
+       + ' aria-label="选中这条">' + (o.picked ? '✓' : '') + '</button>';
+  }
+  h += '<div class="item-main">';
+  h += '<div class="item-t">'+(t.pin?'<span class="ag-pin">★ </span>':'')+esc(t.title||'(未填事项)')+'</div>';
   h += '<div class="item-m">';
+  if(over) h += '<span class="badge b-red">逾期 '+overdueDays(t)+' 天</span> ';
+  if(t.prio) h += '<span class="badge '+(PRIO_BADGE[t.prio]||'b-gray')+'">'+esc(t.prio)+'</span> ';
   h += '<span class="badge '+(TYPE_BADGE[t.type]||'b-gray')+'">'+esc(t.type||'未分类')+'</span> ';
   h += '<span class="badge '+(ST_BADGE[t.status]||'b-gray')+'">'+esc(t.status||'—')+'</span>';
   if(t.project) h += ' <span class="badge b-gray">'+esc(t.project)+'</span>';
+  if(t.repeat && t.repeat !== '不重复') h += ' <span class="badge b-blue">' + esc(t.repeat) + '</span>';
+  if(num(t.deferCount)) h += ' <span class="badge b-amber">延期 ' + num(t.deferCount) + ' 次</span>';
   if(running){
     h += ' <span class="timer"><span class="tt run" data-timer="'+t.timerStart+'">'
        + fmtDur(Date.now()-t.timerStart)+'</span>计时中</span>';
@@ -2695,13 +3391,210 @@ function taskItemHTML(t){
   if(num(t.drain)) h += ' <span style="color:var(--text-3);font-weight:600">耗能'+num(t.drain)+'</span>';
   if(t.output) h += '<div style="margin-top:6px">产出：<b>'+esc(t.output)+'</b></div>';
   if(t.blocker) h += '<div style="margin-top:4px;color:var(--warn);font-weight:600">卡点：'+esc(t.blocker)+'</div>';
+  h += thumbRowHTML(t, 'task');
   h += '</div></div>';
   h += '<div class="item-date">'+esc(fmtShort(t.date))+'</div>';
   h += '<button class="btn sm ico ghost" data-act="task-timer" data-id="'+esc(t.id)+'"'
      + ' title="'+(running?'停止计时':'开始计时')+'" aria-label="计时">'+(running?'⏹':'⏱')+'</button>';
+  h += '<button class="btn sm ico ghost'+(t.pin?' ag-pin':'')+'" data-act="task-pin" data-id="'+esc(t.id)+'"'
+     + ' title="'+(t.pin?'取消钉选':'钉为今日三件')+'" aria-label="钉选">'+(t.pin?'★':'☆')+'</button>';
   h += '<button class="btn sm ico ghost" data-act="task-edit" data-id="'+esc(t.id)+'" title="编辑" aria-label="编辑">✏️</button>';
   h += '<button class="btn sm ico ghost" data-act="task-del" data-id="'+esc(t.id)+'" title="删除" aria-label="删除">✕</button>';
   h += '</div></div>';
+  return h;
+}
+
+/* ==========================================================================
+   任务：三种视图（清单 / 看板 / 日历）+ 批量操作
+   同一批数据，三种看法：清单适合"逐条处理"，看板适合"看堆在哪"，
+   日历适合"看这周排得下排不下"。切换不额外占导航位。
+   ========================================================================== */
+var TASK_LAYOUTS = [['list','清单'],['board','看板'],['cal','日历']];
+var BOARD_ORDER = ['进行中','阻塞','完成'];
+var BOARD_COLS = [
+  { st:'进行中', color:'var(--accent)' },
+  { st:'阻塞',   color:'var(--bad)'    },
+  { st:'完成',   color:'var(--ok)'     }
+];
+
+/* 改状态统一入口：完成要补 doneDate、重复任务要排下一次，多处各写一遍早晚跑偏 */
+function setTaskStatus(id, st){
+  var t = findRec('task', id);
+  if(!t || !st) return null;
+  var wasDone = (t.status === '完成') && !!t.doneDate;
+  t.status = st;
+  if(st === '完成'){ if(!t.doneDate) t.doneDate = todayStr(); }
+  else { delete t.doneDate; }
+  touch(t);
+  var nx = (!wasDone && st === '完成') ? rollRepeat(t) : null;
+  save(true);
+  return { rec:t, nx:nx };
+}
+
+/* 选中集合 —— 只认还在库里的，避免删完之后残留 id 让批量操作报错 */
+function selIds(){
+  return Object.keys(ui.sel || {}).filter(function(id){
+    return ui.sel[id] && findRec('task', id);
+  });
+}
+function selBarHTML(){
+  var n = selIds().length;
+  var dis = n ? '' : ' disabled';
+  return '<div class="selbar">'
+    + '<span class="sn">已选 ' + n + ' 条</span>'
+    + '<button class="btn sm" data-act="task-sel-all">全选本页</button>'
+    + '<button class="btn sm pri" data-act="task-batch" data-op="done"' + dis + '>✓ 完成</button>'
+    + '<button class="btn sm" data-act="task-batch" data-op="date"' + dis + '>📅 改期</button>'
+    + '<button class="btn sm danger" data-act="task-batch" data-op="del"' + dis + '>✕ 删除</button>'
+    + '<button class="btn sm ghost" data-act="task-selmode">退出多选</button>'
+    + '</div>';
+}
+/* 批量删除：一次撤销把整批都收回来，而不是只撤销最后一条 */
+function batchDeleteTasks(ids){
+  var recs = ids.map(function(id){ return findRec('task', id); }).filter(Boolean);
+  if(!recs.length) return 0;
+  var snap = recs.map(function(r){
+    return { id:r.id, deleted:r.deleted, deletedAt:r.deletedAt, updatedAt:r.updatedAt };
+  });
+  recs.forEach(function(r){ softDelete('task', r.id); });
+  ui.sel = {};
+  save(true);
+  toast('已删除 ' + recs.length + ' 条', '', '撤销', function(){
+    snap.forEach(function(s){
+      var r = findRec('task', s.id);
+      if(!r) return;
+      if(s.deleted === undefined) delete r.deleted; else r.deleted = s.deleted;
+      if(s.deletedAt === undefined) delete r.deletedAt; else r.deletedAt = s.deletedAt;
+      r.updatedAt = s.updatedAt;
+    });
+    save(true); render(); toast('已恢复','ok');
+  });
+  return recs.length;
+}
+
+/* ---- 看板 ---- */
+function boardCardHTML(t){
+  var over = isOverdue(t);
+  var i = BOARD_ORDER.indexOf(t.status || '进行中');
+  if(i < 0) i = 0;
+  var h = '<div class="bcard' + (over ? ' late' : '') + (t.pin ? ' pin' : '') + '">';
+  h += '<div class="bcard-t">' + (t.pin ? '★ ' : '') + esc(t.title || '(未填事项)') + '</div>';
+  h += '<div class="bcard-m">';
+  if(over) h += '<span class="badge b-red">逾期 ' + overdueDays(t) + ' 天</span>';
+  if(t.prio) h += '<span class="badge ' + (PRIO_BADGE[t.prio] || 'b-gray') + '">' + esc(t.prio) + '</span>';
+  h += '<span class="badge ' + (TYPE_BADGE[t.type] || 'b-gray') + '">' + esc(t.type || '未分类') + '</span>';
+  if(t.project) h += '<span class="badge b-gray">' + esc(t.project) + '</span>';
+  h += '<span class="bcard-d">' + esc(fmtShort(t.date)) + '</span>';
+  h += '</div><div class="bcard-a">';
+  if(i > 0){
+    h += '<button class="btn sm ico ghost" data-act="task-status" data-id="' + esc(t.id) + '"'
+       + ' data-st="' + esc(BOARD_ORDER[i-1]) + '" title="移到「' + esc(BOARD_ORDER[i-1]) + '」"'
+       + ' aria-label="移到' + esc(BOARD_ORDER[i-1]) + '">‹</button>';
+  }
+  if(i < BOARD_ORDER.length-1){
+    h += '<button class="btn sm ico ghost" data-act="task-status" data-id="' + esc(t.id) + '"'
+       + ' data-st="' + esc(BOARD_ORDER[i+1]) + '" title="移到「' + esc(BOARD_ORDER[i+1]) + '」"'
+       + ' aria-label="移到' + esc(BOARD_ORDER[i+1]) + '">›</button>';
+  }
+  h += '<span style="flex:1"></span>';
+  h += '<button class="btn sm ico ghost" data-act="task-edit" data-id="' + esc(t.id) + '"'
+     + ' title="编辑" aria-label="编辑">✏️</button>';
+  h += '<button class="btn sm ico ghost" data-act="task-del" data-id="' + esc(t.id) + '"'
+     + ' title="删除" aria-label="删除">✕</button>';
+  h += '</div></div>';
+  return h;
+}
+function taskBoardHTML(rows){
+  var h = '<div class="row" style="margin-bottom:12px"><span class="hint">'
+        + '一个状态一列，卡片上的 ‹ › 直接挪列。堆在「阻塞」那一列的最值得先看。'
+        + '</span></div><div class="board">';
+  BOARD_COLS.forEach(function(c){
+    var list = rows.filter(function(t){ return (t.status || '进行中') === c.st; });
+    h += '<div class="board-col">';
+    h += '<div class="board-hd"><i class="dot" style="background:' + c.color + '"></i>'
+       + esc(c.st) + '<span class="n">' + list.length + '</span></div>';
+    if(!list.length){
+      h += '<div class="board-empty">这一列是空的</div>';
+    }else{
+      list.forEach(function(t){ h += boardCardHTML(t); });
+    }
+    h += '</div>';
+  });
+  return h + '</div>';
+}
+
+/* ---- 日历 ---- */
+function taskCalHTML(rows){
+  var wk = ui.calWeek || isoWeek(todayStr());
+  var nowWk = isoWeek(todayStr());
+  var today = todayStr();
+  var dates = weekDates(wk);
+  var byDate = {};
+  dates.forEach(function(d){ byDate[d] = []; });
+  var over = [], outside = 0;
+  rows.forEach(function(t){
+    if(isOverdue(t)){ over.push(t); return; }
+    if(byDate[t.date]) byDate[t.date].push(t);
+    else outside++;
+  });
+  var cfg = DB.habits.config;
+
+  var h = '<div class="calbar">'
+    + '<button class="btn sm ico" data-act="cal-prev" aria-label="上一周">‹</button>'
+    + '<button class="btn sm ico" data-act="cal-next" aria-label="下一周">›</button>'
+    + '<span class="calt">' + (+wk.split('-W')[1]) + ' 周 · '
+    + esc(fmtShort(dates[0])) + ' – ' + esc(fmtShort(dates[6])) + '</span>';
+  if(wk !== nowWk) h += '<button class="btn sm pri" data-act="cal-now">回到本周</button>';
+  h += '</div>';
+
+  if(over.length){
+    h += '<section class="card tight" style="margin-bottom:14px">'
+       + cardHead('⚠️','逾期未完成 · ' + over.length + ' 条',
+                  '<span class="hint">日期在过去，日历上已经翻不到了</span>');
+    h += '<div style="display:flex;flex-direction:column;gap:5px">';
+    over.forEach(function(t){
+      h += '<button class="cal-c late" data-act="task-edit" data-id="' + esc(t.id) + '">'
+         + esc(fmtShort(t.date)) + '　' + esc(t.title || '(未填事项)')
+         + '　· 逾期 ' + overdueDays(t) + ' 天</button>';
+    });
+    h += '</div></section>';
+  }
+
+  h += '<div class="cal">';
+  dates.forEach(function(d){
+    var list = byDate[d].slice().sort(byUrgency);
+    var dow = parseD(d).getDay();
+    var cls = 'cal-d' + (d === today ? ' today' : '') + ((dow === 0 || dow === 6) ? ' wknd' : '');
+    h += '<div class="' + cls + '">';
+    h += '<div class="cal-hd"><span class="cal-w">' + esc(dowCN(d)) + '</span>'
+       + '<span class="cal-n">' + esc(fmtShort(d)) + '</span>';
+    if(cfg.length){
+      var row = DB.habits.log[d] || {};
+      var done = cfg.filter(function(hb){ return row[hb.id] === true; }).length;
+      h += '<span class="cal-hb">' + done + '/' + cfg.length + '</span>';
+    }
+    h += '</div>';
+    h += '<div class="cal-list">';
+    var show = list.slice(0, 6);
+    show.forEach(function(t){
+      var over2 = isOverdue(t);
+      h += '<button class="cal-c' + (t.status === '完成' ? ' done' : '')
+         + (over2 ? ' late' : '') + '" data-act="task-edit" data-id="' + esc(t.id) + '">'
+         + (t.pin ? '★ ' : '') + esc(t.title || '(未填事项)') + '</button>';
+    });
+    if(list.length > show.length){
+      h += '<span class="cal-more">还有 ' + (list.length - show.length) + ' 条</span>';
+    }
+    h += '</div>';
+    h += '<button class="cal-add" data-act="new-task" data-date="' + d + '">＋ 加一条</button>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  if(outside){
+    h += '<div class="hint" style="margin-top:12px">另有 <b>' + outside
+       + '</b> 条排在别的日期，用上面的 ‹ › 翻到那一周。</div>';
+  }
   return h;
 }
 
@@ -2714,28 +3607,73 @@ function estAccuracy(tasks){
   return { n:n, est:est, act:act, ratio: est>0 ? act/est : null };
 }
 
-function viewTasks(){
+/* 列表 / 看板 / 日历三种视图共用同一批行 —— 只算一次，三处不会各算各的 */
+function taskRows(){
   var date = ui.todayDate || todayStr();
   var wk = isoWeek(date);
   var dates = weekDates(wk);
   var weekTasks = tasksIn(dates);
-  var rows = weekTasks.slice().sort(function(a,b){ return a.date<b.date?1:(a.date>b.date?-1:0); });
-  var allCount = rows.length;
+  /* 逾期的事必然在过去，只按"本周"过滤就永远看不到它们。
+     所以列表 = 所有未完成的 + 本周已完成的。 */
+  var seenIds = {}, rows = [];
+  openTasks().forEach(function(t){ if(!seenIds[t.id]){ seenIds[t.id]=1; rows.push(t); } });
+  weekTasks.forEach(function(t){ if(!seenIds[t.id]){ seenIds[t.id]=1; rows.push(t); } });
+  rows.sort(byUrgency);
+  var all = rows.slice();
+  if(ui.projectFilter) rows = rows.filter(function(t){ return (t.project || '') === ui.projectFilter; });
   if(ui.taskFilter!=='all') rows = rows.filter(function(t){ return t.type===ui.taskFilter; });
+  return { rows:rows, all:all, weekTasks:weekTasks, dates:dates, wk:wk };
+}
+
+function viewTasks(){
+  var tr = taskRows();
+  var rows = tr.rows, allCount = tr.all.length, weekTasks = tr.weekTasks, wk = tr.wk;
 
   var sum = weekSummary(wk);
   var fr = sum.fireRate;
   var ea = estAccuracy(weekTasks);
+  var dg = todayDigest();
   var showF = ui.taskShowFilter || ui.taskFilter !== 'all';
 
   /* 页头放主操作 —— 表单不再常驻占着首屏 */
+  var mode = ui.taskMode || 'tasks';
+  var layout = ui.taskLayout || 'list';
+  if(TASK_LAYOUTS.map(function(x){ return x[0]; }).indexOf(layout) < 0) layout = 'list';
   var h = pageHead('tasks', {
-    count: allCount + ' 条',
-    actions: '<button class="btn pri" data-act="new-task">＋ 记一条任务</button>'
+    count: mode === 'projects' ? (alive(DB.projects).length + ' 个项目') : (allCount + ' 条'),
+    purpose: mode === 'projects'
+      ? '任务回答"我现在做什么"，项目回答"这条线走到哪了"'
+      : null,
+    actions: mode === 'projects'
+      ? '<button class="btn pri" data-act="new-project">＋ 新建项目</button>'
+      : '<button class="btn pri" data-act="new-task">＋ 记一条任务</button>'
   });
 
+  /* 任务 / 项目 切换 —— 同一张表的两个视角，不额外占导航位。
+     右边再挂一组"怎么看"：清单 / 看板 / 日历，只在任务视角下出现。 */
+  h += '<div class="row" style="margin-bottom:16px;justify-content:space-between;gap:10px">'
+     + '<div class="seg">'
+     + '<button class="seg-b' + (mode === 'tasks' ? ' on' : '') + '" data-act="task-mode" data-m="tasks">任务</button>'
+     + '<button class="seg-b' + (mode === 'projects' ? ' on' : '') + '" data-act="task-mode" data-m="projects">项目</button>'
+     + '</div>';
+  if(mode === 'tasks'){
+    h += '<div class="seg sm">';
+    TASK_LAYOUTS.forEach(function(x){
+      h += '<button class="seg-b' + (layout === x[0] ? ' on' : '') + '" data-act="task-layout"'
+         + ' data-m="' + x[0] + '">' + x[1] + '</button>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
+
+  if(mode === 'projects') return h + viewProjects();
+
   h += '<div class="stats">';
-  h += statHTML({icon:'📋', k:'任务总数', v:sum.taskTotal,
+  if(dg.over.length){
+    h += statHTML({icon:'⚠️', k:'逾期', v:dg.over.length, tone:'bad',
+                   d:'最久的拖了 '+overdueDays(dg.over[0])+' 天'});
+  }
+  h += statHTML({icon:'📋', k:'本周任务', v:sum.taskTotal,
                  d:'完成 '+sum.taskDone+' · 阻塞 '+sum.taskBlocked});
   h += statHTML({icon:'✔️', k:'完成率', v:pct(sum.taskTotal?sum.taskDone/sum.taskTotal:null),
                  tone:(sum.taskTotal && sum.taskDone/sum.taskTotal>=0.7) ? 'good' : ''});
@@ -2763,13 +3701,26 @@ function viewTasks(){
        + '下次估时间的时候，先把这个系数加上。</span></div>';
   }
 
+  /* 看板 / 日历自带头部说明，不再套一层"未完成的 + 本周完成"卡片标题 */
+  var headText = layout === 'board' ? '看板 · 按状态分列'
+               : (layout === 'cal' ? '日历 · 一周一屏' : '未完成的 + 本周完成 · '+rows.length+' 条');
+
   h += '<section class="card" style="margin-top:22px">'
-     + cardHead('📋','本周任务 · '+rows.length+' 条','');
+     + cardHead('📋', headText,
+         layout === 'list'
+           ? '<button class="btn sm' + (ui.selMode ? ' pri' : '') + '" data-act="task-selmode">'
+             + (ui.selMode ? '退出多选' : '多选') + '</button>'
+           : '');
   /* 筛选条收起来只占一行 */
   h += '<div class="row" style="margin-bottom:'+(showF?'12px':'0')+'">'
      + '<button class="btn sm" data-act="task-toggle-filter">'
      + (showF ? '收起筛选' : '筛选' + (ui.taskFilter!=='all' ? '：'+esc(ui.taskFilter) : ''))
-     + '</button></div>';
+     + '</button>';
+  if(ui.projectFilter){
+    h += '<span class="badge b-blue">只看项目：' + esc(ui.projectFilter) + '</span>'
+       + '<button class="btn sm ghost" data-act="task-clear-prj">清除</button>';
+  }
+  h += '</div>';
   if(showF){
     h += '<div class="chips" style="margin-bottom:14px">';
     h += '<button class="chip'+(ui.taskFilter==='all'?' on':'')+'" data-act="task-filter" data-f="all">全部 '+allCount+'</button>';
@@ -2785,8 +3736,16 @@ function viewTasks(){
       allCount ? '换一个筛选条件看看'
                : '完成一件事、或者被卡住一件事的时候，回来记一条',
       allCount ? '' : '<button class="btn pri" data-act="new-task">现在记一条</button>');
+  }else if(layout === 'board'){
+    h += taskBoardHTML(rows);
+  }else if(layout === 'cal'){
+    h += taskCalHTML(rows);
   }else{
-    rows.forEach(function(t){ h += taskItemHTML(t); });
+    var selOn = !!ui.selMode;
+    rows.forEach(function(t){
+      h += taskItemHTML(t, { sel: selOn, picked: !!(ui.sel && ui.sel[t.id]) });
+    });
+    if(selOn) h += selBarHTML();
   }
   h += '</section>';
   return h;
@@ -2955,7 +3914,7 @@ function noteItemHTML(n){
   if(n.type) h += '<span class="badge b-blue">'+esc(n.type)+'</span> ';
   h += '<span class="badge '+stBadge+'">'+esc(n.status||'待整理')+'</span>';
   if(n.source) h += ' <span style="color:var(--text-3)">来源：'+esc(n.source)+'</span>';
-  h += '</div></div>';
+  h += '</div>' + thumbRowHTML(n, 'note') + '</div>';
   h += '<div class="item-date">'+esc(fmtShort(n.date))+'</div>';
   h += '<button class="btn sm ico ghost" data-act="note-edit" data-id="'+esc(n.id)+'" title="编辑" aria-label="编辑">✏️</button>';
   h += '<button class="btn sm ico ghost" data-act="note-del" data-id="'+esc(n.id)+'" title="删除" aria-label="删除">✕</button>';
@@ -3174,18 +4133,126 @@ function adviceHTML(list){
   return h;
 }
 
+/* ==========================================================================
+   周报 Markdown —— 借鉴每日工作台的 weekMarkdown
+   纯文本那份是给自己看的，Markdown 这份是能直接贴给别人的。
+   ========================================================================== */
+function weekMarkdown(wk){
+  var s = weekSummary(wk);
+  var prev = weekSummary(shiftWeek(wk,-1));
+  var w = DB.weekly[wk] || {};
+  var dates = weekDates(wk);
+  var L = [];
+
+  L.push('## ' + wk.replace('-W', ' 年第 ') + '周 · ' + fmtShort(dates[0]) + ' ~ ' + fmtShort(dates[6]));
+  L.push('');
+
+  L.push('### 本周数据');
+  L.push('');
+  L.push('| 指标 | 本周 | 上周 |');
+  L.push('| --- | --- | --- |');
+  L.push('| 记录天数 | ' + s.recorded + '/7 | ' + prev.recorded + '/7 |');
+  L.push('| 平均心情 | ' + r1(s.mood) + ' | ' + r1(prev.mood) + ' |');
+  L.push('| 平均能量 | ' + r1(s.energy) + ' | ' + r1(prev.energy) + ' |');
+  L.push('| 平均睡眠 | ' + r1(s.sleep) + 'h | ' + r1(prev.sleep) + 'h |');
+  L.push('| 任务完成 | ' + s.taskDone + '/' + s.taskTotal + ' | ' + prev.taskDone + '/' + prev.taskTotal + ' |');
+  L.push('| 救火占比 | ' + pct(s.fireRate) + ' | ' + pct(prev.fireRate) + ' |');
+  L.push('| 总耗时 | ' + r1(s.minutes/60) + 'h | ' + r1(prev.minutes/60) + 'h |');
+  L.push('| 反省条数 | ' + s.reflectN + ' | ' + prev.reflectN + ' |');
+  L.push('');
+
+  var done = tasksIn(dates).filter(function(t){ return t.status === '完成'; });
+  if(done.length){
+    L.push('### 本周完成（' + done.length + ' 件）');
+    L.push('');
+    done.forEach(function(t){
+      var line = '- ' + (t.prio ? '`' + t.prio + '` ' : '') + t.title;
+      if(t.output) line += ' —— ' + t.output;
+      if(t.project) line += '　_(' + t.project + ')_';
+      L.push(line);
+    });
+    L.push('');
+  }
+  var blocked = tasksIn(dates).filter(function(t){ return t.status === '阻塞'; });
+  if(blocked.length){
+    L.push('### 卡住的（' + blocked.length + ' 件）');
+    L.push('');
+    blocked.forEach(function(t){
+      L.push('- ' + t.title + (t.blocker ? ' —— 卡点：' + t.blocker : ''));
+    });
+    L.push('');
+  }
+
+  var notes = notesIn(dates);
+  if(notes.length){
+    L.push('### 本周灵感（' + notes.length + ' 条）');
+    L.push('');
+    notes.slice(0, 10).forEach(function(n){ L.push('- ' + String(n.content || '').replace(/\n/g, ' ')); });
+    L.push('');
+  }
+
+  /* 反省单独一节：它是这一周里"我想明白了什么"，比流水账更值得回头看 */
+  var refs = reflectsIn(dates);
+  if(refs.length){
+    L.push('### 本周反省（' + refs.length + ' 条）');
+    L.push('');
+    refs.slice().sort(function(a,b){ return (a.date||'') < (b.date||'') ? -1 : 1; })
+      .forEach(function(r){
+        L.push('- **' + fmtShort(r.date) + '** ' + String(r.content || '').replace(/\n/g, ' '));
+        if(r.decision) L.push('  - 关联决策：' + r.decision);
+      });
+    L.push('');
+  }
+
+  /* 自动建议也带上 —— 这才是"看完知道下一步"的部分 */
+  L.push('### 值得注意的');
+  L.push('');
+  reviewAdvice(s, prev).forEach(function(a){
+    L.push('- **' + a.t + '** —— ' + a.d);
+  });
+  L.push('');
+
+  if(w.gain || w.problem || w.oneThing || w.todos){
+    L.push('### 复盘');
+    L.push('');
+    if(w.gain) L.push('- **最大收获**：' + w.gain);
+    if(w.problem) L.push('- **最大问题**：' + w.problem);
+    if(w.oneThing) L.push('- **下周只做一件**：' + w.oneThing);
+    if(w.todos){ L.push(''); L.push('下周待办：'); L.push(''); L.push(w.todos); }
+    L.push('');
+  }
+  return L.join('\n');
+}
+
 function viewReview(){
   var wk = ui.week || isoWeek(ui.todayDate || todayStr());
+  var mode = ui.reviewMode || 'week';
+
+  var head = pageHead('review', {
+    count: mode === 'reflect'
+      ? (alive(DB.reflects).length + ' 条')
+      : esc(weekLabel(wk)).replace(/^\d+年 第/, '第'),
+    actions: mode === 'reflect'
+      ? '<button class="btn pri" data-act="new-reflect">＋ 记一条反省</button>'
+      : '<button class="btn sm ico" data-act="week-prev" aria-label="上一周">‹</button>'
+      + '<button class="btn sm ico" data-act="week-next" aria-label="下一周">›</button>'
+      + (wk!==isoWeek(todayStr()) ? '<button class="btn sm pri" data-act="week-now">回到本周</button>' : '')
+  });
+
+  /* 周复盘 / 每日反省 —— 同一页的两个视角。
+     反省不单独占导航位（底部已经 6 个了），但它得有自己能翻的地方。 */
+  head += '<div class="row" style="margin-bottom:16px"><div class="seg">'
+        + '<button class="seg-b' + (mode === 'week' ? ' on' : '') + '" data-act="review-mode" data-m="week">周复盘</button>'
+        + '<button class="seg-b' + (mode === 'reflect' ? ' on' : '') + '" data-act="review-mode" data-m="reflect">每日反省</button>'
+        + '</div></div>';
+
+  if(mode === 'reflect') return head + viewReflects();
+
   var s = weekSummary(wk);
   var prev = weekSummary(shiftWeek(wk,-1));
   var w = DB.weekly[wk] || {gain:'',problem:'',oneThing:'',todos:''};
 
-  var h = pageHead('review', {
-    count: esc(weekLabel(wk)).replace(/^\d+年 第/, '第'),
-    actions: '<button class="btn sm ico" data-act="week-prev" aria-label="上一周">‹</button>'
-           + '<button class="btn sm ico" data-act="week-next" aria-label="下一周">›</button>'
-           + (wk!==isoWeek(todayStr()) ? '<button class="btn sm pri" data-act="week-now">回到本周</button>' : '')
-  });
+  var h = head;
 
   h += '<section class="card">'
      + cardHead('📊', esc(weekLabel(wk)),'');
@@ -3194,7 +4261,9 @@ function viewReview(){
   h += '</section>';
 
   h += '<section class="card">'
-     + cardHead('🧮','自动汇总','<button class="btn sm" data-act="copy-summary">复制为文本</button>');
+     + cardHead('🧮','自动汇总',
+         '<button class="btn sm" data-act="copy-summary">复制纯文本</button>'
+         + '<button class="btn sm pri" data-act="copy-markdown">复制为 Markdown</button>');
   h += '<div class="summary-wrap"><pre class="summary" id="sumBox">'+esc(buildSummaryText(wk))+'</pre></div>';
 
   h += '<div class="stats" style="margin-top:16px">';
@@ -3338,6 +4407,111 @@ function goalHTML(g){
 }
 
 /* ==========================================================================
+   每日反省
+   ---------------------------------------------------------------------------
+   和「今日一句」不是一回事：那句是一天的总纲，反省是**具体的一件事或一个念头**，
+   一天可以写好几条，还能挂到某个决策上 —— 半年后回头看，最值钱的正是这条链：
+   「当时拍了这个板 → 后来怎么样了」。
+   ========================================================================== */
+function reflectsOn(date){
+  return alive(DB.reflects).filter(function(r){ return r.date === date; })
+    .sort(function(a,b){ return numOr(b.at,0) - numOr(a.at,0); });
+}
+function reflectsIn(dates){
+  var set = {};
+  dates.forEach(function(d){ set[d] = 1; });
+  return alive(DB.reflects).filter(function(r){ return set[r.date]; });
+}
+function reflectAll(){
+  return alive(DB.reflects).slice().sort(function(a,b){
+    if(a.date !== b.date) return a.date < b.date ? 1 : -1;   /* 新的在前 */
+    return numOr(b.at,0) - numOr(a.at,0);
+  });
+}
+function reflectItemHTML(r){
+  var dec = r.decision ? alive(DB.decisions).filter(function(d){ return d.title === r.decision; })[0] : null;
+  var h = '<div class="item"><div class="item-h"><div class="item-main">';
+  h += '<div class="item-t" style="white-space:pre-wrap;font-weight:520">' + esc(r.content || '') + '</div>';
+  h += '<div class="item-m">';
+  h += '<span class="badge b-gray">' + esc(fmtFull(r.date)) + '</span>';
+  if(r.decision) h += ' <span class="badge b-blue">🧭 ' + esc(r.decision) + '</span>';
+  if(dec && dec.conclusion) h += ' <span style="color:var(--text-3)">结论：' + esc(dec.conclusion) + '</span>';
+  if(imgsOf(r).length) h += ' <span style="color:var(--text-3)">附图 ' + imgsOf(r).length + ' 张</span>';
+  h += '</div>' + thumbRowHTML(r, 'reflect') + '</div>';
+  h += '<button class="btn sm ico ghost" data-act="reflect-edit" data-id="' + esc(r.id) + '"'
+     + ' title="编辑" aria-label="编辑">✏️</button>';
+  h += '<button class="btn sm ico ghost" data-act="reflect-del" data-id="' + esc(r.id) + '"'
+     + ' title="删除" aria-label="删除">✕</button>';
+  h += '</div></div>';
+  return h;
+}
+function viewReflects(){
+  var list = reflectAll();
+  var today = todayStr();
+  var todayN = reflectsOn(today).length;
+  var h = '';
+
+  if(!list.length){
+    return h + '<section class="card">' + emptyHTML('🪞',
+      '还没有反省记录',
+      '做完一件事、犯了一个错、或者想通一个道理的时候，写两三句。'
+      + '它和「今日一句」不一样：那句话是一天的总纲，这里是一件具体的事',
+      '<button class="btn pri" data-act="new-reflect">现在写一条</button>') + '</section>';
+  }
+
+  /* 按日期分组 —— 反省是按天长的东西，平铺一长串会看不出节奏 */
+  var groups = [], cur = null;
+  list.forEach(function(r){
+    if(!cur || cur.date !== r.date){ cur = { date:r.date, items:[] }; groups.push(cur); }
+    cur.items.push(r);
+  });
+
+  h += '<div class="stats" style="margin-bottom:18px">';
+  h += statHTML({icon:'🪞', k:'反省总数', v:list.length});
+  h += statHTML({icon:'📅', k:'写过的天数', v:groups.length});
+  h += statHTML({icon:'🧭', k:'挂到决策上', v:list.filter(function(r){ return r.decision; }).length,
+                 d:'有出处的那几条'});
+  h += statHTML({icon:'📷', k:'附图', v:list.reduce(function(a,r){ return a + imgsOf(r).length; }, 0)});
+  h += '</div>';
+
+  if(todayN){
+    h += '<div class="note" style="margin-bottom:16px"><span class="note-body">'
+       + '今天已经写了 <b>' + todayN + '</b> 条。想到就补，不用攒到晚上。</span></div>';
+  }
+
+  groups.forEach(function(g){
+    h += '<section class="card">'
+       + cardHead('📆', fmtFull(g.date) + (g.date === today ? ' · 今天' : ''),
+                  '<span class="hint">' + g.items.length + ' 条</span>');
+    g.items.forEach(function(r){ h += reflectItemHTML(r); });
+    h += '</section>';
+  });
+  return h;
+}
+/* 「今天」页上的入口：一天里最该被记下来的那句话，在这里当场写掉 */
+function todayReflectHTML(){
+  var date = ui.todayDate || todayStr();
+  var list = reflectsOn(date);
+  var h = '<section class="card">'
+        + cardHead('🪞', '今日反省' + (list.length ? ' · ' + list.length + ' 条' : ''),
+                   '<span class="hint">' + (list.length ? '想到就补' : '两三句就够') + '</span>');
+  if(!ui.reflectOpen && !list.length){
+    h += '<button class="btn" data-act="reflect-open" style="width:100%">＋ 写一条反省</button>';
+    return h + '</section>';
+  }
+  h += '<div class="field"><textarea id="rf_quick" style="min-height:76px"'
+     + ' placeholder="做完的事、犯的错、想通的道理 —— 写具体的那一件，不写感受">'
+     + '</textarea></div>';
+  h += '<div class="row" style="margin-top:11px">'
+     + '<button class="btn pri sm" data-act="reflect-quick">记下来</button>'
+     + '<button class="btn sm" data-act="new-reflect">要挂决策 / 加图…</button>'
+     + (ui.reflectOpen ? '<button class="btn sm ghost" data-act="reflect-close">收起</button>' : '')
+     + '</div>';
+  list.forEach(function(r){ h += reflectItemHTML(r); });
+  return h + '</section>';
+}
+
+/* ==========================================================================
    视图：数据
    ========================================================================== */
 function viewData(){
@@ -3357,14 +4531,12 @@ function viewData(){
        + '请立刻用下面的「导出备份」保存 JSON 文件，并考虑换用 Chrome/Edge 打开本文件。</span></div></section>';
   }
 
-  h += syncCardHTML();
-  h += installCardHTML();
-
   h += '<section class="card">' + cardHead('📦','数据概况','');
   h += '<div class="stats">';
   h += statHTML({k:'已记录天数', v:dn});
   h += statHTML({k:'任务', v:alive(DB.tasks).length});
   h += statHTML({k:'灵感', v:alive(DB.notes).length});
+  h += statHTML({k:'反省', v:alive(DB.reflects).length});
   h += statHTML({k:'决策', v:alive(DB.decisions).length});
   h += statHTML({k:'周复盘', v:Object.keys(DB.weekly).length});
   h += statHTML({k:'目标', v:alive(DB.goals).length});
@@ -3376,6 +4548,21 @@ function viewData(){
   h += syncCardHTML();
   h += installCardHTML();
   h += trashCardHTML();
+  h += snapListHTML();
+
+  /* 图片占用 —— 字节在 IndexedDB 里，不在下面那个"占用"数字里，所以单独说清楚 */
+  h += '<section class="card">' + cardHead('📷','图片附件','<span class="badge b-gray" id="imgUsage">—</span>');
+  h += '<div class="hint">图片按<b>原图保存，不压缩</b>，一条记录最多 9 张。'
+     + '因为原图一张就有几 MB，它们不进浏览器的本地存储，而是存在这个站点的 '
+     + '<b>IndexedDB</b> 里（配额大得多，几百 MB 起步）。</div>';
+  h += '<div class="note warn" style="margin-top:12px"><span class="note-body">'
+     + '<b>图片只在这台设备上，不参与云同步。</b>同步通道装不下原图。'
+     + '换设备后记录都会在，图会显示成占位方块 —— 「导出完整备份」里也只有文件名和尺寸。'
+     + '</span></div>';
+  h += '<div class="row" style="margin-top:14px">'
+     + '<button class="btn" data-act="img-sweep">清理没人引用的图片</button>'
+     + '<button class="btn" data-act="export-imgs">导出图片清单（表格）</button>'
+     + '</div></section>';
 
   h += '<section class="card">' + cardHead('💾','备份与导出','');
   if(SYNC.token){
@@ -3423,7 +4610,8 @@ function viewData(){
      + '<b>3. 每天</b>：「打卡」页打勾。<br>'
      + '<b>4. 拍板时</b>：去「决策」页记下当时怎么想的 —— 这是最容易被忘掉、却最值钱的资产。<br>'
      + '<b>5. 每周</b>：去「复盘」页，指标已经自动算好，还会直接告诉你下周该做什么。'
-     + '</div>';
+     + '切到「每日反省」能翻你写下的每一条 —— 那是这一周里你真正想明白的东西。<br>'
+     + '<b>6. 顺手时</b>：做完了、想通了、拍板了，都可以加张图。点、拖、粘三种方式随便用。</div>';
   h += '<div class="note" style="margin-top:16px"><span class="note-body">'
      + '<b>分阶段上线：</b>第 1-2 周只开「今天」+「灵感」；第 3-4 周再加「任务」+「打卡」；'
      + '第 5 周起用「复盘」；决策和目标按需再动。一次全开，两周后就会放弃。</span></div>';
@@ -3433,6 +4621,20 @@ function viewData(){
      + '<b>小技巧：</b>数字键 <b>1-5</b> 直接打心情分；<b>Ctrl+K</b> 全局搜索；'
      + '<b>Ctrl+Enter</b> 保存；图表上移动鼠标看具体数值。'
      + (PWA.standalone ? '' : '装在桌面上的话，长按图标可以直接跳到「记灵感」。') + '</div>';
+  h += '<div class="hint" style="margin-top:6px">'
+     + '<b>任务换个看法：</b>任务页右上角可以切<b>清单 / 看板 / 日历</b>；'
+     + '看板一列一个状态、卡片直接挪列，日历一周一屏、点某天就能加一条；'
+     + '开「多选」可以一次把一批标完成、改期或删掉。</div>';
+  h += '<div class="hint" style="margin-top:6px">'
+     + '<b>带图：</b>任务 / 灵感 / 反省都可以加图，一条最多 9 张 —— '
+     + '<b>点「＋ 加图」、把图拖进去、或者直接 Ctrl+V 粘贴</b>，三种都行。'
+     + '图片<b>按原图存，不压缩</b>；点缩略图放大，滚轮 / 双指缩放、拖动平移、← → 翻页。</div>';
+  h += '<div class="hint" style="margin-top:6px">'
+     + '<b>每日反省：</b>在「今天」页随手写一条，或者去「复盘」页切到「每日反省」视角看全部。'
+     + '反省可以挂到某条决策上 —— 半年后翻决策记录，就能看到「当时怎么想的 → 后来怎么样了」。</div>';
+  h += '<div class="hint" style="margin-top:6px">'
+     + '<b>手滑了怎么办：</b>单个删除有「撤销」；批量改错、导入覆盖、清空数据这些'
+     + '「把数据改成另一个样子」的操作，去上面的<b>快照</b>卡一键退回。</div>';
   h += '</section>';
 
   return h;
@@ -3729,6 +4931,17 @@ function runSearch(qRaw){
     if(((g.goal||'')+' '+(g.krs||'')).toLowerCase().indexOf(q) >= 0)
       add('goal','🎯', g.goal, (g.period||'')+' · '+(g.status||''), g.id, 'review', '');
   });
+  alive(DB.reflects).forEach(function(r){
+    var hay = ((r.content||'')+' '+(r.decision||'')).toLowerCase();
+    if(hay.indexOf(q) >= 0)
+      add('reflect','🪞', r.content, (r.date||'')+(r.decision?' · 关联决策：'+r.decision:''),
+          r.id, 'review', r.date);
+  });
+  alive(DB.projects).forEach(function(p){
+    var hay = ((p.name||'')+' '+(p.goal||'')+' '+(p.milestone||'')+' '+(p.risk||'')+' '+(p.note||'')).toLowerCase();
+    if(hay.indexOf(q) >= 0)
+      add('project','📁', p.name, (p.status||'')+(p.due?' · 截止 '+p.due:''), p.id, 'tasks', p.due||'');
+  });
   out.sort(function(a,b){ return (a.date||'') < (b.date||'') ? 1 : ((a.date||'') > (b.date||'') ? -1 : 0); });
   return out.slice(0, 60);
 }
@@ -3742,13 +4955,14 @@ function hl(text, q){
 }
 function searchResultsHTML(q){
   if(!String(q||'').trim())
-    return '<div class="hint" style="padding:20px 0;text-align:center">输入关键词，搜日记、任务、灵感、决策、目标</div>';
+    return '<div class="hint" style="padding:20px 0;text-align:center">输入关键词，搜日记、任务、灵感、决策、目标、反省、项目</div>';
   var hits = runSearch(q);
   if(!hits.length)
     return '<div class="hint" style="padding:20px 0;text-align:center">没找到「'+esc(q)+'」相关的记录</div>';
   var h = '<div class="hint" style="margin-bottom:6px">找到 '+hits.length+' 条</div>';
   hits.forEach(function(x){
     h += '<div class="search-hit" data-act="search-goto" data-tab="'+x.tab+'"'
+       + ' data-kind="'+esc(x.kind)+'"'
        + ' data-date="'+esc(x.date||'')+'" data-id="'+esc(x.id||'')+'">'
        + '<span class="sh-i">'+x.icon+'</span>'
        + '<div class="sh-b"><div class="sh-t">'+hl(String(x.title).slice(0,120), q)+'</div>'
@@ -3961,10 +5175,10 @@ var GUIDE = [
   {
     icon:'🗺', title:'哪个页面什么时候用', sub:'除了「今天」，其他都是按需用',
     body:'<div class="map-row"><span class="mi">📅</span><span class="mn">今天</span>'
-       + '<span class="mw"><b>每天打开。</b>填心情/能量/一句话，顺便看今天打了什么卡、做了什么'
-       + '<em> · 最重要的一页</em></span></div>'
+       + '<span class="mw"><b>每天打开。</b>先回答「今天要做什么」（逾期 / 今天 / 你钉的三件），'
+       + '再看今天记了什么<em> · 最重要的一页</em></span></div>'
        + '<div class="map-row"><span class="mi">✅</span><span class="mn">任务</span>'
-       + '<span class="mw">完成一件事、或被卡住一件事时记一条。一个月后能看出多少时间花在"救火"上</span></div>'
+       + '<span class="mw">完成一件事、或被卡住一件事时记一条。三种看法：<b>清单</b>逐条处理、<b>看板</b>看堆在哪、<b>日历</b>看这周排不排得下；开「多选」可以一次改一批</span></div>'
        + '<div class="map-row"><span class="mi">🔥</span><span class="mn">打卡</span>'
        + '<span class="mw">睡前打勾。看最近 30 天坚持得怎么样</span></div>'
        + '<div class="map-row"><span class="mi">💡</span><span class="mn">灵感</span>'
@@ -3974,9 +5188,9 @@ var GUIDE = [
        + '<em>半年后回头看最值钱</em></span></div>'
        + '<div class="map-row"><span class="mi">📊</span><span class="mn">复盘</span>'
        + '<span class="mw"><b>每周一次。</b>指标已经自动算好，还会直接告诉你「下周该做什么」。'
-       + '下面还有本月/本季目标（每月看一次）</span></div>'
+       + '切到<b>「每日反省」</b>还能翻你写过的每一条。下面还有本月/本季目标（每月看一次）</span></div>'
        + '<div class="map-row"><span class="mi">⚙️</span><span class="mn">设置</span>'
-       + '<span class="mw">在右上角齿轮里，平时不用碰。备份、云同步、回收站、AI 助手都在这儿</span></div>'
+       + '<span class="mw">在右上角齿轮里，平时不用碰。备份、云同步、回收站、<b>快照</b>、AI 助手都在这儿</span></div>'
   },
   {
     icon:'☁️', title:'数据存在哪、怎么不丢', sub:'这一条最要紧',
@@ -4033,7 +5247,613 @@ function guideSeen(){
    诊断原话："每个模块顶部都放一整块新建表单，要滚过录入区才能看到清单，
    而实际使用频率正好相反。"
    ========================================================================== */
-var MODAL = { kind:null, id:null };
+/* ==========================================================================
+   图片附件
+   ---------------------------------------------------------------------------
+   两件事决定了这里的全部设计：
+
+   1) 【不压缩】所以一张手机原图就是 3-8MB。
+   2) localStorage 的配额通常只有 5MB —— 是**整个站** 5MB，不是每条记录。
+      一张图就能把它撑爆，九张是想都不用想。
+
+   所以图片的**字节**不放在记录里，也不放在 localStorage 里：
+   记录上只留一张"取件单"（id / 文件名 / 尺寸 / 体积 / 时间），
+   真正的字节进 IndexedDB（配额是磁盘的一个比例，几百 MB 起步）。
+   rec.imgs 依然跟着记录的合并规则走，只是它现在很轻，同步不会把片段撑爆。
+
+   代价必须说清楚：**图片只存在这台设备上，不参与云同步。**
+   换设备后记录都在、图会显示成"本机没有这张图"占位。
+   ========================================================================== */
+var IMG_MAX = 9;             /* 一条记录最多几张 */
+var IMG_KINDS = { task:1, note:1, reflect:1 };   /* 哪些记录类型能挂图 */
+
+/* ---- 元数据 ---- */
+function imgsOf(rec){ return (rec && Array.isArray(rec.imgs)) ? rec.imgs : []; }
+function fmtKB(kb){
+  if(kb == null) return '—';
+  if(kb < 1024) return Math.round(kb) + 'KB';
+  return (kb/1024).toFixed(kb < 10240 ? 1 : 0) + 'MB';
+}
+function imgKB(im){ return im && im.size ? im.size/1024 : 0; }
+function recImgsKB(rec){
+  return imgsOf(rec).reduce(function(a, im){ return a + imgKB(im); }, 0);
+}
+function dbImgsKB(db){
+  var d = db || DB, total = 0;
+  ['tasks','notes','decisions','projects','goals','reflects'].forEach(function(k){
+    (d[k]||[]).forEach(function(r){ total += recImgsKB(r); });
+  });
+  Object.keys(d.daily||{}).forEach(function(k){ total += recImgsKB(d.daily[k]); });
+  return total;
+}
+/* 本条记录还能加几张 —— 上限只看条数，不再看体积（体积由存储层兜着） */
+function imgRoom(list){ return Math.max(0, IMG_MAX - (list||[]).length); }
+function imgRejectList(list, n){
+  n = n || 1;
+  var room = imgRoom(list);
+  if(room <= 0) return '一条最多 ' + IMG_MAX + ' 张图';
+  if(n > room) return '还剩 ' + room + ' 张名额，这次选了 ' + n + ' 张 —— 少选几张再来';
+  return null;
+}
+/* 把 File/Blob 登记成一条元数据。不重编码、不改尺寸，字节原样存。 */
+function imgMetaFromFile(file, dim, id){
+  return {
+    id: id || uid(),
+    name: (file && file.name) || '粘贴的图片',
+    type: (file && file.type) || 'image/*',
+    size: (file && file.size) || 0,
+    w: (dim && dim.w) || 0,
+    h: (dim && dim.h) || 0,
+    at: Date.now()
+  };
+}
+function addImg(rec, im){
+  if(!rec || !im || !im.id) return '图片没读出来';
+  var no = imgRejectList(imgsOf(rec), 1);
+  if(no) return no;
+  if(!Array.isArray(rec.imgs)) rec.imgs = [];
+  rec.imgs.push(im);
+  return null;
+}
+function removeImg(rec, id){
+  if(!rec || !Array.isArray(rec.imgs)) return 0;
+  var before = rec.imgs.length;
+  var left = rec.imgs.filter(function(x){ return x.id !== id; });
+  /* 先算再删 —— 删掉字段之后再读 .length 就是对着 undefined 取长度 */
+  if(left.length) rec.imgs = left; else delete rec.imgs;
+  imgStore.del(id);
+  return before - left.length;
+}
+
+/* ---- 字节仓库：IndexedDB 优先，localStorage 兜底 ----
+   兜底那条路配额很小，所以只在没有 IndexedDB 的环境里用（老浏览器 / 测试）。 */
+var IDB_NAME = 'life_records_img', IDB_STORE = 'blobs';
+var FALLBACK_KEY = 'life_records_img_fallback_v1';
+var idbHandle = undefined;              /* undefined=还没试过，null=不可用 */
+var IMG_URL = {};                       /* id -> objectURL/dataURL，避免重复解码 */
+var IMG_MISS = {};                      /* id -> 确认本地没有 */
+
+function idbOpen(){
+  if(idbHandle !== undefined) return Promise.resolve(idbHandle);
+  if(typeof indexedDB === 'undefined' || !indexedDB) { idbHandle = null; return Promise.resolve(null); }
+  return new Promise(function(resolve){
+    var req;
+    try{ req = indexedDB.open(IDB_NAME, 1); }catch(e){ idbHandle = null; return resolve(null); }
+    req.onupgradeneeded = function(){
+      var d = req.result;
+      if(!d.objectStoreNames.contains(IDB_STORE)) d.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = function(){ idbHandle = req.result; resolve(idbHandle); };
+    req.onerror = function(){ idbHandle = null; resolve(null); };
+    req.onblocked = function(){ idbHandle = null; resolve(null); };
+  });
+}
+function idbRun(mode, fn){
+  return idbOpen().then(function(db){
+    if(!db) return null;
+    return new Promise(function(resolve){
+      var tx, store;
+      try{ tx = db.transaction(IDB_STORE, mode); store = tx.objectStore(IDB_STORE); }
+      catch(e){ return resolve(null); }
+      var req = fn(store);
+      tx.oncomplete = function(){ resolve(req ? req.result : null); };
+      tx.onerror = function(){ resolve(null); };
+      tx.onabort = function(){ resolve(null); };
+    });
+  });
+}
+function fallbackAll(){
+  try{ return JSON.parse(localStorage.getItem(FALLBACK_KEY) || '{}') || {}; }catch(e){ return {}; }
+}
+function fallbackPut(id, dataUrl){
+  try{
+    var all = fallbackAll(); all[id] = dataUrl;
+    localStorage.setItem(FALLBACK_KEY, JSON.stringify(all));
+    return true;
+  }catch(e){ return false; }
+}
+
+var imgStore = {
+  /* 存字节。IDB 存 Blob 本身（不占内存、不进 JSON）；兜底存 dataURL。 */
+  put: function(id, blob){
+    return idbRun('readwrite', function(s){ return s.put(blob, id); }).then(function(ok){
+      if(ok !== null) return true;
+      /* 没有 IDB：读成 dataURL 塞 localStorage，塞不下就老实报失败 */
+      return new Promise(function(resolve){
+        try{
+          var fr = new FileReader();
+          fr.onload = function(){ resolve(fallbackPut(id, fr.result)); };
+          fr.onerror = function(){ resolve(false); };
+          fr.readAsDataURL(blob);
+        }catch(e){ resolve(false); }
+      });
+    });
+  },
+  /* 取一个能直接塞进 <img src> 的地址 */
+  get: function(id){
+    if(IMG_URL[id]) return Promise.resolve(IMG_URL[id]);
+    if(IMG_MISS[id]) return Promise.resolve(null);
+    return idbRun('readonly', function(s){ return s.get(id); }).then(function(hit){
+      if(hit){
+        if(typeof hit === 'string'){ IMG_URL[id] = hit; return hit; }
+        if(typeof URL !== 'undefined' && URL.createObjectURL){
+          IMG_URL[id] = URL.createObjectURL(hit);
+          return IMG_URL[id];
+        }
+        return new Promise(function(resolve){
+          var fr = new FileReader();
+          fr.onload = function(){ IMG_URL[id] = fr.result; resolve(fr.result); };
+          fr.onerror = function(){ IMG_MISS[id]=1; resolve(null); };
+          fr.readAsDataURL(hit);
+        });
+      }
+      var fb = fallbackAll()[id];
+      if(fb){ IMG_URL[id] = fb; return fb; }
+      IMG_MISS[id] = 1;
+      return null;
+    });
+  },
+  del: function(id){
+    if(IMG_URL[id] && typeof URL !== 'undefined' && URL.revokeObjectURL){
+      try{ URL.revokeObjectURL(IMG_URL[id]); }catch(e){}
+    }
+    delete IMG_URL[id]; delete IMG_MISS[id];
+    var fb = fallbackAll();
+    if(fb[id]){ delete fb[id]; try{ localStorage.setItem(FALLBACK_KEY, JSON.stringify(fb)); }catch(e){} }
+    return idbRun('readwrite', function(s){ return s.delete(id); });
+  },
+  /* 回收：库里存在、但已经没有任何记录引用的字节 */
+  sweep: function(){
+    var used = {};
+    ['tasks','notes','decisions','projects','goals','reflects'].forEach(function(k){
+      (DB[k]||[]).forEach(function(r){ imgsOf(r).forEach(function(im){ used[im.id]=1; }); });
+    });
+    Object.keys(DB.daily||{}).forEach(function(k){
+      imgsOf(DB.daily[k]).forEach(function(im){ used[im.id]=1; });
+    });
+    return idbRun('readonly', function(s){ return s.getAllKeys(); }).then(function(keys){
+      if(!keys) return 0;
+      var dead = keys.filter(function(k){ return !used[k]; });
+      if(!dead.length) return 0;
+      return idbRun('readwrite', function(s){
+        dead.forEach(function(k){ s.delete(k); });
+        return { result: dead.length };
+      }).then(function(){ return dead.length; });
+    });
+  }
+};
+
+/* ---- 读尺寸：只解码头部信息，不重编码、不改一个像素 ---- */
+function readImageMeta(file, cb){
+  if(!file || !/^image\//.test(file.type || '')){ cb('只能加图片文件'); return; }
+  var url = null;
+  try{ url = URL.createObjectURL(file); }catch(e){ url = null; }
+  var done = function(err, dim){
+    if(url && URL.revokeObjectURL){ try{ URL.revokeObjectURL(url); }catch(e){} }
+    cb(err, dim);
+  };
+  if(!url){ done(null, { w:0, h:0 }); return; }
+  var img = new Image();
+  img.onload = function(){ done(null, { w: img.width||0, h: img.height||0 }); };
+  img.onerror = function(){ done(null, { w:0, h:0 }); };   /* 尺寸读不到也照样存，不拦 */
+  img.src = url;
+}
+
+/* ---- 统一入口：点击选文件 / 拖进来 / 粘贴，三条路都走这里 ----
+   只有这一个地方需要处理"加图"的全部规则，三种入口不会各写一遍慢慢跑偏。 */
+function addImageFiles(files, targetRec, cb){
+  files = Array.prototype.slice.call(files || []).filter(function(f){
+    return f && /^image\//.test(f.type || '');
+  });
+  cb = cb || function(){};
+  if(!files.length){ cb('没有可用的图片', 0); return; }
+  var list = targetRec === 'modal' ? (MODAL.imgs || []) : imgsOf(targetRec);
+  var no = imgRejectList(list, files.length);
+  if(no){ cb(no, 0); return; }
+
+  /* 文件和它的元数据必须一起走。
+     读尺寸是异步的，回调顺序不一定等于选择顺序 ——
+     如果按"元数据数组的下标"去 files 里捞原始文件，就会把 A 的文件名
+     配到 B 的字节上（张冠李戴，而且完全看不出来）。所以成对存。 */
+  var pairs = [], pending = files.length, failed = 0;
+  files.forEach(function(f){
+    readImageMeta(f, function(err, dim){
+      if(err){ failed++; }
+      else { pairs.push({ file: f, im: imgMetaFromFile(f, dim) }); }
+      if(--pending) return;
+      /* 落库：字节进 IDB，元数据进记录 */
+      Promise.all(pairs.map(function(x){
+        return imgStore.put(x.im.id, x.file).then(function(ok){
+          return ok ? x.im : null;
+        });
+      })).then(function(got){
+        var ok = got.filter(Boolean);
+        var bad = got.length - ok.length + failed;
+        if(targetRec === 'modal'){
+          MODAL.imgs = (MODAL.imgs || []).concat(ok);
+          renderImgBox();
+        }else{
+          ok.forEach(function(im){ addImg(targetRec, im); });
+        }
+        cb(ok.length ? null : '图片没能存下来（本地存储拒绝写入）', ok.length, bad);
+      }).catch(function(){
+        /* 任何一步出岔子都要给用户一句话，不能让"加图"静默失效 */
+        cb('图片没能存下来', 0, files.length);
+      });
+    });
+  });
+}
+
+/* ---- 渲染 ---- */
+/* 列表里的缩略图行。注意 src 是空的：真正的地址由 hydrateImgs() 异步补上，
+   因为字节在 IndexedDB 里，取它是异步的 —— 页面不能为了等图而卡住。 */
+function thumbRowHTML(rec, kind){
+  var list = imgsOf(rec);
+  if(!list.length) return '';
+  var owner = kind ? (kind + ':' + (rec.id || '')) : '';
+  var h = '<div class="thumbs">';
+  list.forEach(function(im, i){
+    h += '<img class="thumb" data-img="' + esc(im.id) + '"'
+       + ' data-act="img-view" data-idx="' + i + '"'
+       + (owner ? ' data-owner="' + esc(owner) + '"' : '')
+       + ' alt="' + esc(im.name || ('附图 ' + (i+1))) + '"'
+       + ' title="' + esc(im.name || '') + (im.w ? ' · ' + im.w + '×' + im.h : '') + '">';
+  });
+  return h + '</div>';
+}
+/* 弹窗里的图片编辑条 */
+function imgStripInnerHTML(){
+  var list = MODAL.imgs || [];
+  var room = imgRoom(list);
+  var h = '<div class="imgstrip">';
+  list.forEach(function(im, i){
+    h += '<div class="imgcell">'
+       + '<img data-img="' + esc(im.id) + '" data-act="img-view" data-idx="' + i + '"'
+       + ' data-owner="modal:" alt="第 ' + (i+1) + ' 张" title="' + esc(im.name || '') + '">'
+       + '<button class="imgx" data-act="img-del" data-id="' + esc(im.id) + '"'
+       + ' aria-label="删掉第 ' + (i+1) + ' 张">✕</button></div>';
+  });
+  if(room > 0){
+    h += '<button class="imgadd" data-act="img-pick">＋ 加图'
+       + '<span class="imgadd-n">' + list.length + '/' + IMG_MAX + '</span></button>';
+  }
+  h += '</div>';
+  var kb = recImgsKB({ imgs:list });
+  h += '<div class="hint" style="margin-top:8px">'
+     + (list.length
+        ? ('已加 ' + list.length + '/' + IMG_MAX + ' 张 · 共 ' + fmtKB(kb) + ' · 原图不压缩')
+        : ('最多 ' + IMG_MAX + ' 张。<b>点、拖、粘</b>都行 —— 原图保存，不压缩'))
+     + (room > 0 ? '' : '（已满，删一张才能再加）')
+     + '</div>';
+  h += '<input type="file" id="imgFile" accept="image/*" multiple style="display:none" tabindex="-1">';
+  return h;
+}
+function imgBoxHTML(){
+  /* 拖拽由 document 上的 dragover/drop 按 #imgBox 判定，不需要额外挂 data-act */
+  return '<div class="imgbox" id="imgBox">' + imgStripInnerHTML() + '</div>';
+}
+function renderImgBox(){
+  var box = $('#imgBox');
+  if(!box) return;
+  box.innerHTML = imgStripInnerHTML();
+  hydrateImgs(box);
+}
+/* 异步把字节填进 <img>。每次渲染完都要跑一遍。 */
+function hydrateImgs(root){
+  var scope = root || document;
+  var nodes = scope.querySelectorAll ? scope.querySelectorAll('img[data-img]') : [];
+  Array.prototype.forEach.call(nodes, function(el){
+    var id = el.getAttribute('data-img');
+    if(!id || el.getAttribute('src')) return;
+    imgStore.get(id).then(function(url){
+      if(url){ el.setAttribute('src', url); el.classList.remove('img-missing'); }
+      else{
+        el.classList.add('img-missing');
+        el.setAttribute('data-missing', '本机没有这张图');
+        if(el.parentNode && el.parentNode.classList) el.parentNode.classList.add('imgcell-missing');
+      }
+    });
+  });
+  updateImgUsage();
+}
+/* 设置页里的图片占用 */
+function updateImgUsage(){
+  var el = $('#imgUsage');
+  if(!el) return;
+  var kb = dbImgsKB(), n = 0;
+  ['tasks','notes','decisions','projects','goals','reflects'].forEach(function(k){
+    (DB[k]||[]).forEach(function(r){ n += imgsOf(r).length; });
+  });
+  el.textContent = n + ' 张 · ' + fmtKB(kb);
+}
+
+/* ==========================================================================
+   看图：缩放 / 拖动 / 翻页
+   ---------------------------------------------------------------------------
+   查看器是**静态 DOM + 直接改样式**，不走 render()。
+   原因是拖动和捏合每秒会更新几十次，每次重画整页既卡又会打断手势。
+   缩放平移的数学单独抽成纯函数，这样它可以被直接测。
+   ========================================================================== */
+var VIEW_MIN = 1, VIEW_MAX = 8;
+function clampScale(s){ return Math.max(VIEW_MIN, Math.min(VIEW_MAX, s)); }
+/* 图片按 contain 放进视口后的实际显示尺寸 */
+function fitSize(iw, ih, vw, vh){
+  if(!iw || !ih || !vw || !vh) return { w:0, h:0, k:1 };
+  var k = Math.min(vw/iw, vh/ih);
+  return { w: iw*k, h: ih*k, k: k };
+}
+/* 以 (cx,cy) 为锚点缩放：那一点在屏幕上不能动，否则放大时目标会跑掉 */
+function zoomAt(st, factor, cx, cy){
+  var s2 = clampScale(st.s * factor);
+  var r = s2 / st.s;
+  return { s: s2, x: cx - (cx - st.x) * r, y: cy - (cy - st.y) * r };
+}
+/* 平移不能把图拖出屏幕：只在图比视口大的那个方向上允许移动 */
+function clampPan(st, fw, fh, vw, vh){
+  var maxX = Math.max(0, (fw*st.s - vw)/2);
+  var maxY = Math.max(0, (fh*st.s - vh)/2);
+  return {
+    s: st.s,
+    x: Math.max(-maxX, Math.min(maxX, st.x)),
+    y: Math.max(-maxY, Math.min(maxY, st.y))
+  };
+}
+var VIEW = { items:[], i:0, s:1, x:0, y:0, url:null, natural:{w:0,h:0} };
+
+function viewerOpenHTML(){
+  return '<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="看大图">'
+    + '<div class="vw-bar">'
+    + '<span class="vw-name" id="vwName"></span>'
+    + '<span class="vw-zoom" id="vwZoom">100%</span>'
+    + '<button class="vw-b" data-act="vw-out" aria-label="缩小">−</button>'
+    + '<button class="vw-b" data-act="vw-in" aria-label="放大">＋</button>'
+    + '<button class="vw-b" data-act="vw-reset" aria-label="还原">⤢</button>'
+    + '<button class="vw-b" data-act="vw-close" aria-label="关闭">✕</button>'
+    + '</div>'
+    + '<div class="vw-stage" id="vwStage">'
+    + '<button class="vw-nav prev" data-act="vw-prev" aria-label="上一张">‹</button>'
+    + '<img class="vw-img" id="vwImg" alt="" draggable="false">'
+    + '<button class="vw-nav next" data-act="vw-next" aria-label="下一张">›</button>'
+    + '</div>'
+    + '<div class="vw-tip">滚轮 / 双指缩放 · 拖动平移 · 双击还原 · ← → 翻页 · Esc 关闭</div>'
+    + '</div>';
+}
+function viewerEl(){ return $('#viewer'); }
+
+function vwApply(){
+  var img = $('#vwImg'), st = $('#vwStage');
+  if(img) img.style.transform = 'translate(' + VIEW.x + 'px,' + VIEW.y + 'px) scale(' + VIEW.s + ')';
+  var z = $('#vwZoom'); if(z) z.textContent = Math.round(VIEW.s*100) + '%';
+  var n = $('#vwName');
+  if(n){
+    var it = VIEW.items[VIEW.i] || {};
+    n.textContent = (it.name || '图片') + (VIEW.items.length > 1 ? '　' + (VIEW.i+1) + '/' + VIEW.items.length : '');
+  }
+  var prev = $('.vw-nav.prev'), next = $('.vw-nav.next');
+  var many = VIEW.items.length > 1;
+  if(prev) prev.style.visibility = many ? '' : 'hidden';
+  if(next) next.style.visibility = many ? '' : 'hidden';
+  if(st) st.classList.toggle('zoomed', VIEW.s > 1.001);
+}
+function vwStageSize(){
+  var st = $('#vwStage');
+  var w = (st && st.clientWidth) || (typeof window !== 'undefined' ? window.innerWidth : 0) || 1000;
+  var h = (st && st.clientHeight) || (typeof window !== 'undefined' ? window.innerHeight : 0) || 700;
+  return { w:w, h:h };
+}
+function vwReset(){
+  VIEW.s = 1; VIEW.x = 0; VIEW.y = 0;
+  vwApply();
+}
+/* 只覆盖变换的三个字段 —— 直接 `VIEW = clampPan(...)` 会把 items / i 一起换掉，
+   下一页就翻不动了（而且报的错是 "Cannot read property 'undefined' of undefined"，
+   完全看不出是这里）。 */
+function vwSetTransform(t){
+  VIEW.s = t.s; VIEW.x = t.x; VIEW.y = t.y;
+}
+function vwZoom(factor, cx, cy){
+  var sz = vwStageSize();
+  var fw = 0, fh = 0;
+  var img = $('#vwImg');
+  if(img && img.naturalWidth){
+    VIEW.natural = { w: img.naturalWidth, h: img.naturalHeight };
+    var f = fitSize(VIEW.natural.w, VIEW.natural.h, sz.w, sz.h);
+    fw = f.w; fh = f.h;
+  }
+  var nxt = zoomAt(VIEW, factor, cx == null ? sz.w/2 : cx, cy == null ? sz.h/2 : cy);
+  vwSetTransform(clampPan(nxt, fw, fh, sz.w, sz.h));
+  vwApply();
+}
+function vwLoad(i){
+  if(!VIEW.items.length) return;
+  VIEW.i = (i + VIEW.items.length) % VIEW.items.length;
+  VIEW.s = 1; VIEW.x = 0; VIEW.y = 0;
+  var img = $('#vwImg');
+  var it = VIEW.items[VIEW.i];
+  if(!img || !it) return;
+  img.removeAttribute('src');
+  img.classList.remove('img-missing');
+  imgStore.get(it.id).then(function(url){
+    if(url){ img.setAttribute('src', url); }
+    else{
+      img.classList.add('img-missing');
+      var n = $('#vwName');
+      if(n) n.textContent = (it.name || '图片') + ' · 本机没有这张图';
+    }
+    vwApply();
+  });
+  img.onload = function(){
+    if(img.naturalWidth){ VIEW.natural = { w: img.naturalWidth, h: img.naturalHeight }; }
+    vwApply();
+  };
+  vwApply();
+}
+function viewerOpen(items, i){
+  VIEW.items = items || [];
+  if(!VIEW.items.length) return;
+  var v = viewerEl();
+  if(!v){ toast('查看器没准备好','err'); return; }
+  if(!v.innerHTML) v.innerHTML = viewerOpenHTML();   /* 需要时再铺内容 */
+  v.classList.add('show');
+  document.body.classList.add('vw-lock');
+  vwBind();
+  vwLoad(i || 0);
+}
+function viewerClose(){
+  var v = viewerEl();
+  if(v) v.classList.remove('show');
+  document.body.classList.remove('vw-lock');
+  VIEW.items = []; VIEW.s = 1; VIEW.x = 0; VIEW.y = 0;
+}
+function viewerOpen$(){ var v = viewerEl(); return !!(v && v.classList.contains('show')); }
+/* 从一条记录打开看大图：把它的图整批交给查看器，方便左右翻 */
+function openImgsOf(rec, i){
+  var list = imgsOf(rec);
+  if(!list.length) return;
+  viewerOpen(list.map(function(x){ return { id:x.id, name:x.name }; }), i || 0);
+}
+
+/* ---- 手势：滚轮 / 拖动 / 双指 ---- */
+function vwBind(){
+  var stage = $('#vwStage');
+  if(!stage || stage.__bound) return;
+  stage.__bound = 1;
+
+  stage.addEventListener('wheel', function(e){
+    if(!viewerOpen$()) return;
+    e.preventDefault();
+    var r = stage.getBoundingClientRect();
+    vwZoom(e.deltaY < 0 ? 1.12 : 1/1.12, e.clientX - r.left, e.clientY - r.top);
+  }, { passive:false });
+
+  var pts = {}, dragging = false, last = null, pinch0 = 0, pinchS = 1;
+  var ptList = function(){ return Object.keys(pts).map(function(k){ return pts[k]; }); };
+  function dist(a, b){
+    var dx = a.x-b.x, dy = a.y-b.y;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  stage.addEventListener('pointerdown', function(e){
+    pts[e.pointerId] = { x:e.clientX, y:e.clientY };
+    if(stage.setPointerCapture){ try{ stage.setPointerCapture(e.pointerId); }catch(err){} }
+    var n = ptList().length;
+    if(n === 1){ dragging = true; last = { x:e.clientX, y:e.clientY }; }
+    if(n === 2){ dragging = false; pinch0 = dist(ptList()[0], ptList()[1]); pinchS = VIEW.s; }
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!pts[e.pointerId]) return;
+    pts[e.pointerId] = { x:e.clientX, y:e.clientY };
+    var n = ptList().length;
+    if(n >= 2){
+      var d = dist(ptList()[0], ptList()[1]);
+      if(pinch0 > 0){
+        var r = stage.getBoundingClientRect();
+        var mid = { x:(ptList()[0].x + ptList()[1].x)/2 - r.left,
+                    y:(ptList()[0].y + ptList()[1].y)/2 - r.top };
+        var nxt = zoomAt({ s:VIEW.s, x:VIEW.x, y:VIEW.y }, (pinchS * d / pinch0)/VIEW.s, mid.x, mid.y);
+        var img = $('#vwImg');
+        var f = img && img.naturalWidth
+          ? fitSize(img.naturalWidth, img.naturalHeight, r.width, r.height) : { w:0, h:0 };
+        vwSetTransform(clampPan(nxt, f.w, f.h, r.width, r.height));
+        vwApply();
+      }
+      return;
+    }
+    if(!dragging || !last) return;
+    var img2 = $('#vwImg');
+    var sz = vwStageSize();
+    var f2 = img2 && img2.naturalWidth
+      ? fitSize(img2.naturalWidth, img2.naturalHeight, sz.w, sz.h) : { w:0, h:0 };
+    vwSetTransform(clampPan(
+      { s:VIEW.s, x: VIEW.x + (e.clientX - last.x), y: VIEW.y + (e.clientY - last.y) },
+      f2.w, f2.h, sz.w, sz.h));
+    last = { x:e.clientX, y:e.clientY };
+    vwApply();
+  });
+  function up(e){
+    delete pts[e.pointerId];
+    if(ptList().length < 2) pinch0 = 0;
+    if(!ptList().length) dragging = false;
+  }
+  stage.addEventListener('pointerup', up);
+  stage.addEventListener('pointercancel', up);
+  stage.addEventListener('pointerleave', up);
+  stage.addEventListener('dblclick', function(e){
+    if(VIEW.s > 1.001){ vwReset(); return; }
+    var r = stage.getBoundingClientRect();
+    vwZoom(2.5, e.clientX - r.left, e.clientY - r.top);
+  });
+}
+
+/* ---- 三方投递：粘贴 与 拖拽 ----
+   粘贴挂在整个 document 上：图在剪贴板里的时候，用户不该还要先点哪里。
+   只有弹窗开着时才接管，否则会抢掉别处正常的粘贴。 */
+function bindPasteDrop(){
+  document.addEventListener('paste', function(e){
+    if(!MODAL.kind || !IMG_KINDS[MODAL.kind]) return;
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    var files = [];
+    for(var i=0;i<items.length;i++){
+      if(items[i].kind === 'file'){
+        var f = items[i].getAsFile();
+        if(f && /^image\//.test(f.type || '')) files.push(f);
+      }
+    }
+    if(!files.length) return;                 /* 粘的是文字就放行 */
+    e.preventDefault();
+    addImageFiles(files, 'modal', function(err, n){
+      if(err) toast(err,'err'); else toast('粘进来 ' + n + ' 张','ok');
+    });
+  });
+  document.addEventListener('dragover', function(e){
+    if(!MODAL.kind || !IMG_KINDS[MODAL.kind]) return;
+    if(!e.target || !e.target.closest) return;
+    /* 拖进弹窗的任意位置都算，不要求非得瞄准那个虚线框 ——
+       瞄准一个 76px 的框是件很烦的事，而拖进来意图已经足够明确 */
+    if(!e.target.closest('#modalBody')) return;
+    e.preventDefault();
+    var box = $('#imgBox');
+    if(box) box.classList.add('over');
+  });
+  document.addEventListener('dragleave', function(e){
+    var box = $('#imgBox');
+    if(box && e.target && e.target.closest && e.target.closest('#modalBody')) box.classList.remove('over');
+  });
+  document.addEventListener('drop', function(e){
+    if(!MODAL.kind || !IMG_KINDS[MODAL.kind]) return;
+    if(!e.target || !e.target.closest || !e.target.closest('#modalBody')) return;
+    e.preventDefault();
+    var box = $('#imgBox');
+    if(box) box.classList.remove('over');
+    var dt = e.dataTransfer;
+    var files = (dt && dt.files && dt.files.length) ? dt.files : [];
+    if(!files.length) return;
+    addImageFiles(files, 'modal', function(err, n){
+      if(err) toast(err,'err'); else toast('拖进来 ' + n + ' 张','ok');
+    });
+  });
+}
+
+var MODAL = { kind:null, id:null, imgs:[] };
 var DEC_STATUS = ['已决定','待定','已复盘'];
 
 var MODAL_DEF = {
@@ -4043,14 +5863,32 @@ var MODAL_DEF = {
       r = r || {};
       return '<div class="field"><label class="f">事项 <span class="req">*</span></label>'
         + '<input type="text" id="m_title" placeholder="动词开头，比如「重写Q4方案」" value="'+esc(r.title||'')+'"></div>'
-        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="grid g3" style="margin-top:14px">'
+        + '<div class="field"><label class="f">优先级</label>'
+        + '<select id="m_prio"><option value="">不标</option>'
+        + PRIOS.map(function(p){ return '<option value="'+p+'"'+(r.prio===p?' selected':'')+'>'+p+'</option>'; }).join('')
+        + '</select></div>'
         + '<div class="field"><label class="f">类型</label>'+selectHTML('m_type', TASK_TYPES, r.type||'推进')+'</div>'
         + '<div class="field"><label class="f">状态</label>'+selectHTML('m_status', TASK_STATUS, r.status||'完成')+'</div>'
         + '</div>'
-        + '<div class="grid g2" style="margin-top:14px">'
-        + '<div class="field"><label class="f">日期</label><input type="date" id="m_date" value="'+esc(r.date||(ui.todayDate||todayStr()))+'"></div>'
-        + '<div class="field"><label class="f">项目</label><input type="text" id="m_project" placeholder="可留空" value="'+esc(r.project||'')+'"></div>'
+        + '<div class="grid g3" style="margin-top:14px">'
+        + '<div class="field"><label class="f">计划日期</label><input type="date" id="m_date" value="'+esc(r.date||(ui.todayDate||todayStr()))+'"></div>'
+        + '<div class="field"><label class="f">重复</label>'
+        + '<select id="m_repeat">'
+        + REPEATS.map(function(x){ return '<option value="'+x+'"'+((r.repeat||'不重复')===x?' selected':'')+'>'+x+'</option>'; }).join('')
+        + '</select></div>'
+        + '<div class="field"><label class="f">项目</label>'
+        + '<input type="text" id="m_project" list="prjList" placeholder="可留空" value="'+esc(r.project||'')+'">'
+        + '<datalist id="prjList">'
+        + alive(DB.projects).map(function(p){ return '<option value="'+esc(p.name)+'"></option>'; }).join('')
+        + '</datalist></div>'
         + '</div>'
+        + '<label class="tgl" style="margin-top:14px;justify-content:space-between;background:var(--surface-2);'
+        + 'border:1.5px solid var(--line);border-radius:var(--r-md);padding:12px 15px">'
+        + '<span><b style="font-size:13.5px">钉为今日三件</b>'
+        + '<span class="hint" style="display:block;margin-top:2px">打开「今天」页会把它放在最上面</span></span>'
+        + '<span class="row" style="gap:10px"><input type="checkbox" id="m_pin"'+(r.pin?' checked':'')+'>'
+        + '<span class="track"></span></span></label>'
         + '<details class="adv"' + ((r.estMin!=null||r.minutes!=null||r.output||r.blocker)?' open':'') + '>'
         + '<summary>更多（耗时 / 产出 / 卡点）</summary><div>'
         + '<div class="grid g2">'
@@ -4097,8 +5935,7 @@ var MODAL_DEF = {
     }
   },
   goal: {
-    ico:'🎯', color:'--m-goal', title:'加一个目标', hint:'具体、可验证。不写「多读书」，写「读完 4 本书」',
-    form: function(r){
+    ico:'🎯', color:'--m-goal', title:'加一个目标', hint:'具体、可验证。不写「多读书」，写「读完 4 本书」',    form: function(r){
       r = r || {};
       return '<div class="field"><label class="f">目标 <span class="req">*</span></label>'
         + '<input type="text" id="m_goal" placeholder="比如「把睡眠拉回 7.5 小时」" value="'+esc(r.goal||'')+'"></div>'
@@ -4110,30 +5947,133 @@ var MODAL_DEF = {
         + '<div class="field" style="margin-top:14px"><label class="f">关键结果（1-3 条，最好带数字）</label>'
         + '<input type="text" id="m_krs" placeholder="比如「早睡≤23:30 达到 60%；体重 -2kg」" value="'+esc(r.krs||'')+'"></div>';
     }
+  },
+  /* 每日反省：日期 / 内容 / 关联决策 / 图片 —— 和每日工作台那张表对齐 */
+  reflect: {
+    ico:'🪞', color:'--m-review', title:'记一条反省', hint:'只有「内容」是必填',
+    form: function(r){
+      r = r || {};
+      var ds = alive(DB.decisions).slice().sort(function(a,b){
+        return (b.date||'') < (a.date||'') ? -1 : 1;
+      });
+      return '<div class="field"><label class="f">内容 <span class="req">*</span></label>'
+        + '<textarea id="m_rcontent" style="min-height:120px"'
+        + ' placeholder="写具体的那一件事：做对了什么 / 错在哪 / 下次怎么改。'
+        + '不写「今天很累」这种，它回头帮不了你">' + esc(r.content || '') + '</textarea></div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">日期</label>'
+        + '<input type="date" id="m_rdate" value="' + esc(r.date || (ui.todayDate || todayStr())) + '"></div>'
+        + '<div class="field"><label class="f">关联决策</label>'
+        + '<select id="m_rdecision"><option value="">不关联</option>'
+        + ds.map(function(d){
+            return '<option value="' + esc(d.title) + '"'
+              + (r.decision === d.title ? ' selected' : '') + '>'
+              + esc(String(d.title || '').slice(0, 24)) + '</option>';
+          }).join('')
+        + '</select></div>'
+        + '</div>'
+        + '<div class="hint" style="margin-top:10px">'
+        + (ds.length
+           ? '关联到某条决策后，半年后翻决策记录就能看到「当时怎么想的 → 后来怎么样了」。'
+           : '还没有决策记录。等你在「决策」页记下第一条，这里就能选了。')
+        + '</div>';
+    }
+  },
+  /* 批量改期 / 改项目 / 改优先级 —— 一次改一堆，不用一条条点开 */
+  batch: {
+    ico:'🗂', color:'--m-task', title:'批量修改', hint:'留空的项就不改',
+    form: function(){
+      var n = selIds().length;
+      return '<div class="field"><label class="f">改到哪一天</label>'
+        + '<input type="date" id="b_date" value="' + todayStr() + '"></div>'
+        + '<div class="row" style="margin-top:10px">'
+        + '<button class="btn sm" data-act="batch-quick" data-d="0">今天</button>'
+        + '<button class="btn sm" data-act="batch-quick" data-d="1">明天</button>'
+        + '<button class="btn sm" data-act="batch-quick" data-d="7">下周今天</button>'
+        + '</div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">项目（留空不改）</label>'
+        + '<input type="text" id="b_project" list="prjList2" placeholder="不改" value=""></div>'
+        + '<div class="field"><label class="f">优先级（留空不改）</label>'
+        + '<select id="b_prio"><option value="">不改</option>'
+        + PRIOS.map(function(p){ return '<option value="' + p + '">' + p + '</option>'; }).join('')
+        + '</select></div>'
+        + '</div>'
+        + '<datalist id="prjList2">'
+        + alive(DB.projects).map(function(p){ return '<option value="' + esc(p.name) + '"></option>'; }).join('')
+        + '</datalist>'
+        + '<div class="hint" style="margin-top:14px">正在修改选中的 <b>' + n + '</b> 条任务。'
+        + '改日期对未完成的任务算一次延期。</div>';
+    }
+  },
+  project: {
+    ico:'📁', color:'--m-goal', title:'新建项目', hint:'只有「项目名称」是必填',
+    form: function(r){
+      r = r || {};
+      return '<div class="field"><label class="f">项目名称 <span class="req">*</span></label>'
+        + '<input type="text" id="m_pname" placeholder="比如「Q4 首页改版」" value="'+esc(r.name||'')+'"></div>'
+        + '<div class="grid g3" style="margin-top:14px">'
+        + '<div class="field"><label class="f">状态</label>'+selectHTML('m_pstatus', PROJ_STATUS, r.status||'进行中')+'</div>'
+        + '<div class="field"><label class="f">优先级</label>'
+        + '<select id="m_pprio"><option value="">不标</option>'
+        + PRIOS.map(function(p){ return '<option value="'+p+'"'+(r.prio===p?' selected':'')+'>'+p+'</option>'; }).join('')
+        + '</select></div>'
+        + '<div class="field"><label class="f">截止日期</label><input type="date" id="m_pdue" value="'+esc(r.due||'')+'"></div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">目标（这个项目要达成什么）</label>'
+        + '<input type="text" id="m_pgoal" placeholder="一句话，可验证" value="'+esc(r.goal||'')+'"></div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">里程碑</label>'
+        + '<input type="text" id="m_pmile" placeholder="下一个要交付的节点" value="'+esc(r.milestone||'')+'"></div>'
+        + '<div class="field"><label class="f">风险点</label>'
+        + '<input type="text" id="m_prisk" placeholder="最可能出问题的地方" value="'+esc(r.risk||'')+'"></div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">起始日期</label>'
+        + '<input type="date" id="m_pstart" value="'+esc(r.start||'')+'"></div>'
+        + '<details class="adv"'+(r.note?' open':'')+'><summary>备注</summary><div>'
+        + '<div class="field"><textarea id="m_pnote" placeholder="想记什么都行">'+esc(r.note||'')+'</textarea></div>'
+        + '</div></details>';
+    }
   }
 };
 
-function openModal(kind, id){
+function openModal(kind, id, opt){
   var d = MODAL_DEF[kind];
   if(!d){ toast('未知类型','err'); return; }
+  opt = opt || {};
   MODAL.kind = kind;
   MODAL.id = id || null;
   var ico = $('#modalIco');
-  if(ico){ ico.textContent = d.ico; ico.setAttribute('style',
+  if(ico){ ico.setAttribute('style',
     '--mc:var('+d.color+');width:34px;height:34px;font-size:16px;border-radius:11px'); }
+  if(ico) ico.textContent = d.ico;
   var ti = $('#modalTitle'); if(ti) ti.textContent = (id ? '编辑：' : '') + d.title;
-  var bd = $('#modalBody'); if(bd) bd.innerHTML = d.form(id ? findRec(kind, id) : null);
+  /* opt.date：从日历上某一天点「＋」进来时，日期直接填好，不用再选一次 */
+  var seed = id ? findRec(kind, id) : (opt.date ? { date: opt.date } : null);
+  /* 附件先攒在 MODAL.imgs 里：新建时记录还不存在，没地方挂图 */
+  MODAL.imgs = (id && IMG_KINDS[kind]) ? imgsOf(findRec(kind, id)).map(function(x){
+    return { id:x.id, name:x.name, type:x.type, size:x.size, w:x.w, h:x.h, at:x.at };
+  }) : [];
+  var bd = $('#modalBody');
+  if(bd) bd.innerHTML = d.form(seed) + (IMG_KINDS[kind] ? imgBoxHTML() : '');
+  if(IMG_KINDS[kind]) hydrateImgs(bd);
   var hn = $('#modalHint'); if(hn) hn.textContent = d.hint || '';
   var sv = $('#modalSave'); if(sv) sv.textContent = id ? '保存修改' : '保存';
   var m = $('#modal'); if(m) m.classList.add('show');
   setTimeout(function(){
     var f = document.querySelector('#modalBody input, #modalBody textarea');
-    if(f && f.focus) f.focus();
+    if(f && f.focus && f.type !== 'file') f.focus();
   }, 140);
 }
 function closeModal(){
   var m = $('#modal'); if(m) m.classList.remove('show');
-  MODAL.kind = null; MODAL.id = null;
+  MODAL.kind = null; MODAL.id = null; MODAL.imgs = [];
+}
+/* 弹窗里攒的图落到记录上；一张都没有就把字段删干净，不留空数组 */
+function applyImgs(rec){
+  if(!rec) return;
+  if(MODAL.imgs && MODAL.imgs.length) rec.imgs = MODAL.imgs.slice();
+  else delete rec.imgs;
 }
 function saveModal(){
   var kind = MODAL.kind; if(!kind) return;
@@ -4141,6 +6081,7 @@ function saveModal(){
   var isNew = !rec;
   var v = function(id){ var e = $(id); return e ? e.value : ''; };
   var n = function(id){ return num(v(id)); };
+  var ck = function(id){ var e = $(id); return !!(e && e.checked); };
 
   if(kind === 'task'){
     var title = (v('#m_title')||'').trim();
@@ -4149,17 +6090,66 @@ function saveModal(){
     rec.title = title;
     rec.type = v('#m_type') || '推进';
     rec.status = v('#m_status') || '完成';
-    rec.date = v('#m_date') || todayStr();
+    rec.prio = v('#m_prio') || '';
+    rec.pin = ck('#m_pin');
+    rec.repeat = v('#m_repeat') || '不重复';
+    if(rec.repeat === '不重复') delete rec.repeat;
+    /* 改计划日期 = 延期一次。这个数字能看出哪件事老被往后推 */
+    var newDate = v('#m_date') || todayStr();
+    if(!isNew && rec.date && rec.date !== newDate && rec.status !== '完成'){
+      rec.deferCount = (num(rec.deferCount) || 0) + 1;
+    }
+    rec.date = newDate;
     rec.project = (v('#m_project')||'').trim();
     rec.estMin = n('#m_est');
     rec.minutes = n('#m_min');
     rec.output = (v('#m_output')||'').trim();
     rec.blocker = (v('#m_blocker')||'').trim();
+    var wasDone = !isNew && rec.status === '完成' && rec.doneDate;
     if(rec.status === '完成' && !rec.doneDate) rec.doneDate = rec.date;
     if(rec.status !== '完成') delete rec.doneDate;
     touch(rec);
     if(isNew) DB.tasks.push(rec);
-    if(MODAL.id){ /* 编辑已有 */ }
+    /* 在弹窗里直接标成完成，也要排下一次 */
+    if(!wasDone && rec.status === '完成') rollRepeat(rec);
+    applyImgs(rec);
+  }else if(kind === 'reflect'){
+    var rc = (v('#m_rcontent') || '').trim();
+    if(!rc){ toast('反省内容不能为空','err'); return; }
+    if(isNew) rec = { id: uid(), at: Date.now(), updatedAt: Date.now() };
+    rec.content = rc;
+    rec.date = v('#m_rdate') || todayStr();
+    rec.decision = v('#m_rdecision') || '';
+    touch(rec);
+    if(isNew) DB.reflects.push(rec);
+    applyImgs(rec);
+  }else if(kind === 'batch'){
+    var bids = selIds();
+    if(!bids.length){ closeModal(); toast('没有选中的任务','err'); return; }
+    var bdate = v('#b_date');
+    var bprj  = (v('#b_project') || '').trim();
+    var bprio = v('#b_prio') || '';
+    if(!bdate && !bprj && !bprio){ toast('日期、项目、优先级至少要改一项','err'); return; }
+    var bn = 0, bdef = 0;
+    bids.forEach(function(id){
+      var t = findRec('task', id);
+      if(!t) return;
+      if(bdate){
+        if(t.status !== '完成' && t.date && t.date !== bdate){
+          t.deferCount = (num(t.deferCount) || 0) + 1; bdef++;
+        }
+        t.date = bdate;
+      }
+      if(bprj)  t.project = bprj;
+      if(bprio) t.prio = bprio;
+      touch(t); bn++;
+    });
+    save(true);
+    ui.sel = {};
+    closeModal();
+    toast('已更新 ' + bn + ' 条' + (bdef ? ' · ' + bdef + ' 条记了一次延期' : ''), 'ok');
+    render();
+    return;
   }else if(kind === 'note'){
     var content = (v('#m_content')||'').trim();
     if(!content){ toast('内容不能为空','err'); return; }
@@ -4170,6 +6160,7 @@ function saveModal(){
     rec.date = v('#m_ndate') || todayStr();
     touch(rec);
     if(isNew) DB.notes.push(rec);
+    applyImgs(rec);
   }else if(kind === 'decision'){
     var dt = (v('#m_dtitle')||'').trim();
     if(!dt){ toast('「决策事项」是必填的','err'); return; }
@@ -4193,6 +6184,22 @@ function saveModal(){
     rec.krs = (v('#m_krs')||'').trim();
     touch(rec);
     if(isNew) DB.goals.push(rec);
+  }else if(kind === 'project'){
+    var pname = (v('#m_pname')||'').trim();
+    if(!pname){ toast('「项目名称」是必填的','err'); return; }
+    if(isNew) rec = { id: uid(), progress: null, updatedAt: Date.now() };
+    else if(rec.name !== pname) renameProjectTasks(rec.name, pname);   /* 改名要带上关联任务 */
+    rec.name = pname;
+    rec.status = v('#m_pstatus') || '进行中';
+    rec.prio = v('#m_pprio') || '';
+    rec.due = v('#m_pdue') || '';
+    rec.start = v('#m_pstart') || '';
+    rec.goal = (v('#m_pgoal')||'').trim();
+    rec.milestone = (v('#m_pmile')||'').trim();
+    rec.risk = (v('#m_prisk')||'').trim();
+    rec.note = (v('#m_pnote')||'').trim();
+    touch(rec);
+    if(isNew) DB.projects.push(rec);
   }
   save(true);
   closeModal();
@@ -4265,6 +6272,7 @@ function render(){
   $('#app').innerHTML = envWarningHTML() + t.render();
   renderTabs();
   window.scrollTo(0,0);
+  hydrateImgs($('#app'));
 }
 function rerenderKeepScroll(){
   var y = window.scrollY;
@@ -4274,6 +6282,7 @@ function rerenderKeepScroll(){
   app.innerHTML = envWarningHTML() + t.render();
   renderTabs();
   window.scrollTo(0,y);
+  hydrateImgs(app);
 }
 function go(tab){ TAB = tab; render(); }
 
@@ -4375,6 +6384,113 @@ document.addEventListener('click', function(e){
   }
   if(act==='task-del'){ deleteWithUndo('task', el.getAttribute('data-id'), '任务'); return; }
   if(act==='task-timer'){ toggleTimer(el.getAttribute('data-id')); return; }
+  /* --- 任务 / 项目 切换 --- */
+  if(act==='task-mode'){ ui.taskMode = el.getAttribute('data-m'); render(); return; }
+  /* --- 清单 / 看板 / 日历 --- */
+  if(act==='task-layout'){ ui.taskLayout = el.getAttribute('data-m'); render(); return; }
+  if(act==='cal-prev'){ ui.calWeek = shiftWeek(ui.calWeek||isoWeek(todayStr()), -1); render(); return; }
+  if(act==='cal-next'){ ui.calWeek = shiftWeek(ui.calWeek||isoWeek(todayStr()), 1); render(); return; }
+  if(act==='cal-now'){ ui.calWeek = isoWeek(todayStr()); render(); return; }
+  /* --- 看板上直接挪列 --- */
+  if(act==='task-status'){
+    var sr = setTaskStatus(el.getAttribute('data-id'), el.getAttribute('data-st'));
+    if(!sr) return;
+    toast(sr.nx ? ('完成 · 下一次已排到 ' + fmtShort(sr.nx.date)) : ('已移到「' + sr.rec.status + '」'), 'ok');
+    rerenderKeepScroll(); return;
+  }
+  /* --- 多选 / 批量操作 --- */
+  if(act==='task-selmode'){
+    ui.selMode = !ui.selMode;
+    if(!ui.selMode) ui.sel = {};
+    render(); return;
+  }
+  if(act==='task-sel'){
+    var sid = el.getAttribute('data-id');
+    if(ui.sel[sid]) delete ui.sel[sid]; else ui.sel[sid] = 1;
+    rerenderKeepScroll(); return;
+  }
+  if(act==='task-sel-all'){
+    var vrows = taskRows().rows;
+    var allOn = vrows.length > 0 && vrows.every(function(t){ return ui.sel[t.id]; });
+    if(allOn) vrows.forEach(function(t){ delete ui.sel[t.id]; });
+    else vrows.forEach(function(t){ ui.sel[t.id] = 1; });
+    rerenderKeepScroll(); return;
+  }
+  if(act==='task-batch'){
+    var op = el.getAttribute('data-op');
+    var ids = selIds();
+    if(!ids.length){ toast('先勾几条再操作','err'); return; }
+    if(op==='done'){
+      var nxN = 0, doneN = 0;
+      ids.forEach(function(id){
+        var t = findRec('task', id);
+        if(!t || t.status === '完成') return;
+        var wasDone = !!t.doneDate;
+        t.status = '完成';
+        if(!t.doneDate) t.doneDate = todayStr();
+        touch(t);
+        doneN++;
+        if(!wasDone && rollRepeat(t)) nxN++;
+      });
+      save(true);
+      ui.sel = {};
+      toast('已标记完成 ' + doneN + ' 条' + (nxN ? ' · ' + nxN + ' 条重复任务已排下一次' : ''), 'ok');
+      render(); return;
+    }
+    if(op==='del'){
+      if(!batchDeleteTasks(ids)){ toast('没找到这些记录','err'); return; }
+      render(); return;                    /* 撤销按钮由 batchDeleteTasks 里的 toast 提供 */
+    }
+    if(op==='date'){ openModal('batch'); return; }
+    return;
+  }
+  if(act==='batch-quick'){
+    var bqEl = $('#b_date');
+    if(bqEl) bqEl.value = addDays(todayStr(), +el.getAttribute('data-d'));
+    return;
+  }
+  /* --- 项目 --- */
+  if(act==='new-project'){ openModal('project'); return; }
+  if(act==='prj-edit'){ openModal('project', el.getAttribute('data-id')); return; }
+  if(act==='prj-del'){ deleteWithUndo('project', el.getAttribute('data-id'), '项目'); return; }
+  if(act==='prj-status'){
+    var pj = findRec('project', el.getAttribute('data-id'));
+    if(!pj) return;
+    pj.status = el.getAttribute('data-st');
+    if(pj.status === '已完成') pj.progress = 100;
+    touch(pj); save(true);
+    toast('已标为' + pj.status, 'ok'); rerenderKeepScroll(); return;
+  }
+  if(act==='prj-tasks'){
+    ui.taskMode = 'tasks';
+    ui.projectFilter = el.getAttribute('data-name') || '';
+    render(); return;
+  }
+  /* --- 今日议程上的快捷操作 --- */
+  if(act==='task-done'){
+    var dt = findRec('task', el.getAttribute('data-id'));
+    if(!dt) return;
+    dt.status = '完成';
+    dt.doneDate = todayStr();
+    touch(dt);
+    var nx = rollRepeat(dt);          /* 重复任务：完成后自动排下一次 */
+    save(true);
+    toast(nx ? ('完成了 · 下一次已排到 ' + fmtShort(nx.date))
+              : ('完成了：' + String(dt.title || '').slice(0,14)), 'ok');
+    rerenderKeepScroll(); return;
+  }
+  /* 钉 / 取消钉「今日三件」 */
+  if(act==='task-pin'){
+    var pt = findRec('task', el.getAttribute('data-id'));
+    if(!pt) return;
+    if(!pt.pin && pinnedTasks().filter(function(x){ return x.id !== pt.id; }).length >= 3){
+      toast('今日三件已经满了，先取消一个','err'); return;
+    }
+    pt.pin = !pt.pin;
+    touch(pt); save(true);
+    toast(pt.pin ? '已钉为今日三件' : '已取消钉选','ok');
+    rerenderKeepScroll(); return;
+  }
   if(act==='task-filter'){ ui.taskFilter = el.getAttribute('data-f'); render(); return; }
 
   /* --- 打卡 --- */
@@ -4418,6 +6534,26 @@ document.addEventListener('click', function(e){
   if(act==='week-next'){ ui.week = shiftWeek(ui.week||isoWeek(todayStr()), 1); render(); return; }
   if(act==='week-now'){ ui.week = isoWeek(todayStr()); render(); return; }
   if(act==='week-goto'){ ui.week = el.getAttribute('data-wk'); render(); return; }
+  /* --- 每日反省 --- */
+  if(act==='review-mode'){ ui.reviewMode = el.getAttribute('data-m'); render(); return; }
+  if(act==='new-reflect'){ openModal('reflect'); return; }
+  if(act==='reflect-edit'){ openModal('reflect', el.getAttribute('data-id')); return; }
+  if(act==='reflect-del'){ deleteWithUndo('reflect', el.getAttribute('data-id'), '反省'); return; }
+  if(act==='reflect-open'){ ui.reflectOpen = true; rerenderKeepScroll();
+    setTimeout(function(){ var e = $('#rf_quick'); if(e && e.focus) e.focus(); }, 60); return; }
+  if(act==='reflect-close'){ ui.reflectOpen = false; render(); return; }
+  if(act==='reflect-quick'){
+    var rfEl = $('#rf_quick');
+    var rv = ((rfEl && rfEl.value) || '').trim();
+    if(!rv){ toast('写两句再存','err'); if(rfEl && rfEl.focus) rfEl.focus(); return; }
+    DB.reflects.push({ id: uid(), date: ui.todayDate || todayStr(), content: rv,
+                       decision: '', at: Date.now(), updatedAt: Date.now() });
+    if(rfEl) rfEl.value = '';
+    save(true);
+    toast('已记下','ok');
+    rerenderKeepScroll();
+    return;
+  }
   if(act==='copy-summary'){
     var txt = buildSummaryText(ui.week || isoWeek(todayStr()));
     var ta = document.createElement('textarea');
@@ -4426,6 +6562,16 @@ document.addEventListener('click', function(e){
     try{ document.execCommand('copy'); toast('已复制到剪贴板','ok'); }
     catch(err){ toast('复制失败，请手动选中复制','err'); }
     document.body.removeChild(ta);
+    return;
+  }
+  if(act==='copy-markdown'){
+    var md = weekMarkdown(ui.week || isoWeek(todayStr()));
+    var ta2 = document.createElement('textarea');
+    ta2.value = md; ta2.style.position='fixed'; ta2.style.opacity='0';
+    document.body.appendChild(ta2); ta2.select();
+    try{ document.execCommand('copy'); toast('Markdown 已复制，可以直接贴出去','ok'); }
+    catch(err){ toast('复制失败，请手动选中复制','err'); }
+    document.body.removeChild(ta2);
     return;
   }
 
@@ -4463,7 +6609,9 @@ document.addEventListener('click', function(e){
   /* --- 弹窗（新建 / 编辑表单都收在这里） --- */
   if(act==='modal-close'){ closeModal(); return; }
   if(act==='modal-save'){ saveModal(); return; }
-  if(act==='new-task'){ openModal('task'); return; }
+  if(act==='new-task'){
+    openModal('task', null, { date: el.getAttribute('data-date') || null }); return;
+  }
   if(act==='new-note'){ openModal('note'); return; }
   if(act==='new-decision'){ openModal('decision'); return; }
   if(act==='new-goal'){ openModal('goal'); return; }
@@ -4479,6 +6627,9 @@ document.addEventListener('click', function(e){
     var stb = el.getAttribute('data-tab'), sd = el.getAttribute('data-date');
     closeSearch();
     if(sd){ ui.todayDate = sd; ui.habitDate = sd; ui.week = isoWeek(sd); }
+    /* 反省住在「复盘」页的第二个视角里，跳过去要顺手把视角切过去，
+       否则搜到了点进去却看不见它 —— 那和不给结果一样 */
+    if(stb === 'review' && el.getAttribute('data-kind') === 'reflect') ui.reviewMode = 'reflect';
     go(stb);
     return;
   }
@@ -4491,6 +6642,41 @@ document.addEventListener('click', function(e){
   if(act==='ai-save'){ saveAISettings(); return; }
   if(act==='ai-send'){ aiSendFromInput(); return; }
   if(act==='ai-preset'){ aiPreset(el.getAttribute('data-q')); return; }
+
+  /* --- 图片附件 --- */
+  if(act==='img-pick'){
+    var fi = $('#imgFile');
+    if(fi && fi.click) fi.click();
+    return;
+  }
+  if(act==='img-del'){
+    var di = el.getAttribute('data-id');
+    MODAL.imgs = (MODAL.imgs || []).filter(function(x){ return x.id !== di; });
+    imgStore.del(di);
+    renderImgBox();
+    return;
+  }
+  if(act==='img-view'){
+    var own = el.getAttribute('data-owner') || '';
+    var idx = +el.getAttribute('data-idx') || 0;
+    var p = own.split(':');
+    if(p[0] === 'modal'){
+      /* 弹窗里点图：在刚才攒的这一批里左右翻，不用退出去再点下一张 */
+      viewerOpen((MODAL.imgs || []).map(function(x){ return { id:x.id, name:x.name }; }), idx);
+      return;
+    }
+    var rec = p.length === 2 ? findRec(p[0], p[1]) : null;
+    if(rec) openImgsOf(rec, idx);
+    else viewerOpen([{ id: el.getAttribute('data-img'), name:'' }], 0);
+    return;
+  }
+  /* --- 看图器 --- */
+  if(act==='vw-close'){ viewerClose(); return; }
+  if(act==='vw-in'){ vwZoom(1.4); return; }
+  if(act==='vw-out'){ vwZoom(1/1.4); return; }
+  if(act==='vw-reset'){ vwReset(); return; }
+  if(act==='vw-prev'){ vwLoad(VIEW.i - 1); return; }
+  if(act==='vw-next'){ vwLoad(VIEW.i + 1); return; }
 
   /* --- 回收站 --- */
   if(act==='toast-act'){ runToastAction(); return; }
@@ -4507,9 +6693,36 @@ document.addEventListener('click', function(e){
     var tn = trashList().length;
     if(!tn){ toast('回收站是空的'); return; }
     if(!confirm('清空回收站？这 '+tn+' 项将无法恢复。')) return;
+    takeSnapshot('清空回收站前');
     toast('已彻底删除 '+purgeAllTrash()+' 项');
     render(); return;
   }
+
+  /* --- 快照 --- */
+  if(act==='snap-take'){
+    var sn = takeSnapshot('手动留存');
+    if(!sn){ toast('存不下：数据太大或本地存储已满，先导出备份','err'); return; }
+    toast('已存快照（' + sn.kb + 'KB）','ok');
+    render(); return;
+  }
+  if(act==='snap-restore'){
+    if(!confirm('回退到这一份？当前的数据会先自动存成一份快照。')) return;
+    restoreSnapshot(+el.getAttribute('data-at')); return;
+  }
+  if(act==='snap-drop'){
+    dropSnapshot(+el.getAttribute('data-at'));
+    toast('已删掉这份快照'); render(); return;
+  }
+
+  /* --- 图片 --- */
+  if(act==='img-sweep'){
+    imgStore.sweep().then(function(n){
+      toast(n ? ('清掉 ' + n + ' 张没人引用的图片') : '没有可清理的图片','ok');
+      render();
+    });
+    return;
+  }
+  if(act==='export-imgs'){ exportImgCSV(); return; }
 
   /* --- 任务筛选条 --- */
   if(act==='task-toggle-filter'){
@@ -4518,6 +6731,7 @@ document.addEventListener('click', function(e){
     else { ui.taskShowFilter = true; }
     render(); return;
   }
+  if(act==='task-clear-prj'){ ui.projectFilter = ''; render(); return; }
 
   /* --- 新手引导 --- */
   if(act==='guide-open'){ openGuide(0); return; }
@@ -4557,8 +6771,9 @@ document.addEventListener('click', function(e){
   if(act==='clear-all'){
     if(!confirm('确定清空全部数据？此操作不可撤销。')) return;
     if(!confirm('再确认一次：真的要删掉所有记录吗？建议先导出备份。')) return;
+    var cs = takeSnapshot('清空数据前');      /* 说是"不可撤销"，那就先替用户留一手 */
     clearAllData();
-    toast('已清空'); render(); return;
+    toast(cs ? '已清空（回退用的快照已存在设置页）' : '已清空'); render(); return;
   }
 });
 
@@ -4611,6 +6826,18 @@ function saveSyncSettings(){
 /* change */
 document.addEventListener('change', function(e){
   var el = e.target;
+  /* 选完图片 —— 点击 / 拖拽 / 粘贴 三条路最后都汇到 addImageFiles */
+  if(el.id==='imgFile'){
+    var picked = [];
+    if(el.files) for(var fi0=0; fi0<el.files.length; fi0++) picked.push(el.files[fi0]);
+    if(!picked.length) return;
+    if(!MODAL.kind){ toast('先打开一条记录再插图','err'); return; }
+    addImageFiles(picked, 'modal', function(err, n){
+      if(err){ toast(err,'err'); return; }
+      toast('加了 ' + n + ' 张原图','ok');
+    });
+    return;
+  }
   if(el.id==='todayDateInput'){ ui.todayDate = el.value; render(); return; }
   if(el.id==='habitDateInput'){ ui.habitDate = el.value; render(); return; }
   /* 换服务商 = 换一个完全不同的云端，片段 ID 必须作废重来 */
@@ -4665,6 +6892,7 @@ document.addEventListener('change', function(e){
     return;
   }
   if(act==='goal-prog'){ return; }   /* 由 input 事件处理，拖动时即可实时反馈 */
+  if(act==='prj-prog'){ return; }    /* 同上 */
 });
 
 /* input：自动保存（不重渲染，避免丢焦点） */
@@ -4687,6 +6915,13 @@ document.addEventListener('input', function(e){
   if(el.id==='s_pass'){ SYNC.pass = el.value||''; saveSync(); return; }
 
   var act = el.getAttribute('data-act');
+  if(act==='dec-review'){
+    /* 决策卡上那个"事后复盘"输入框。曾经有框没处理器 ——
+       打字打得挺认真，一个字也没存下来，还不报错。 */
+    var did = el.getAttribute('data-id');
+    DB.decisions.forEach(function(d){ if(d.id===did){ d.review = el.value; touch(d); } });
+    save(); return;
+  }
   if(act==='goal-review'){
     var gid = el.getAttribute('data-id');
     DB.goals.forEach(function(g){ if(g.id===gid){ g.review = el.value; touch(g); } });
@@ -4703,6 +6938,20 @@ document.addEventListener('input', function(e){
       if(pv) pv.textContent = vP+'%';
       var bar = box.querySelector('.bar > i');
       if(bar) bar.style.width = vP+'%';
+    }
+    return;
+  }
+  if(act==='prj-prog'){
+    var pid = el.getAttribute('data-id');
+    var pv2 = +el.value;
+    DB.projects.forEach(function(p){ if(p.id === pid){ p.progress = pv2; touch(p); } });
+    save();
+    var pbox = el.closest('.prj');
+    if(pbox){
+      var psp = pbox.querySelector('.pv.num');
+      if(psp) psp.textContent = pv2 + '%';
+      var pbar = pbox.querySelector('.bar > i');
+      if(pbar) pbar.style.width = pv2 + '%';
     }
     return;
   }
@@ -4755,6 +7004,7 @@ document.addEventListener('keydown', function(e){
     return;
   }
   if(e.key === 'Escape'){
+    if(viewerOpen$()){ viewerClose(); return; }
     var g = $('#guide');
     if(g && g.classList.contains('show')){ closeGuide(); return; }
     var md = $('#modal');
@@ -4770,6 +7020,14 @@ document.addEventListener('keydown', function(e){
     if(md2 && md2.classList.contains('show')){ e.preventDefault(); saveModal(); return; }
     var am2 = $('#aiModal');
     if(am2 && am2.classList.contains('show')){ e.preventDefault(); aiSendFromInput(); return; }
+  }
+  /* 看图器开着时接管方向键和缩放键（平时不抢按键） */
+  if(viewerOpen$()){
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); vwLoad(VIEW.i - 1); return; }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); vwLoad(VIEW.i + 1); return; }
+    if(e.key === '+' || e.key === '='){ e.preventDefault(); vwZoom(1.4); return; }
+    if(e.key === '-' || e.key === '_'){ e.preventDefault(); vwZoom(1/1.4); return; }
+    if(e.key === '0'){ e.preventDefault(); vwReset(); return; }
   }
   /* 灵感页一行速记：回车即存 */
   if(e.key === 'Enter' && e.target && e.target.id === 'n_quick'){
@@ -4831,6 +7089,25 @@ function exportDailyCSV(){
     toCSV(['日期','星期','心情','能量','今日一句','睡眠','运动','标签','备注'], rows), 'text/csv');
   toast('已导出 '+rows.length+' 天记录','ok');
 }
+/* 图片清单：字节导不出来（浏览器里没有打包压缩的能力），
+   但"哪条记录带了哪几张图"这件事本身值得能导出去对照。 */
+function exportImgCSV(){
+  var rows = [];
+  var push = function(kind, name, rec){
+    imgsOf(rec).forEach(function(im){
+      rows.push([KIND_NAME[kind] || kind, name, rec.date || '', im.name || '', im.w + '×' + im.h,
+                 im.size ? (im.size/1024).toFixed(0) : '', im.id]);
+    });
+  };
+  (DB.tasks||[]).forEach(function(r){ push('task', r.title, r); });
+  (DB.notes||[]).forEach(function(r){ push('note', String(r.content||'').slice(0, 40), r); });
+  (DB.reflects||[]).forEach(function(r){ push('reflect', String(r.content||'').slice(0, 40), r); });
+  if(!rows.length){ toast('还没有任何图片','err'); return; }
+  download('图片清单_' + stamp() + '.csv',
+    toCSV(['类型','所属记录','日期','文件名','尺寸','大小KB','图片ID'], rows), 'text/csv');
+  toast('已导出 ' + rows.length + ' 行（只有清单，图片本身在设备上）','ok');
+}
+
 function exportTaskCSV(){
   var rows = DB.tasks.slice().sort(function(a,b){ return a.date<b.date?-1:1; }).map(function(t){
     return [t.date, t.title, t.type, t.status, t.output||'', t.blocker||'',
@@ -4850,6 +7127,7 @@ function importJSON(){
       var n = Object.keys(incoming.daily).filter(function(d){ return incoming.daily[d]; }).length;
       if(!confirm('导入将整体替换当前数据。\n\n备份包含：'+n+' 天记录、'
         + incoming.tasks.length+' 条任务、'+incoming.notes.length+' 条灵感。\n\n继续？')) return;
+      takeSnapshot('导入覆盖前');       /* 导入会整体替换，先留一份"导入前" */
       DB = incoming;
       save(true);
       ui.todayDate = null; ui.week = null; ui.habitDate = null;
@@ -4969,7 +7247,11 @@ loadSync();
 loadAI();
 /* 回收站里超过 30 天的，启动时清掉 */
 try{ autoPurgeTrash(); }catch(e){}
+/* 每天第一次打开存一份 —— 今天搞砸的事，明天还能捞回来 */
+try{ autoDailySnapshot(); }catch(e){}
 startTimerTick();
+bindPasteDrop();          /* 图片的粘贴 / 拖拽投递口 */
+vwBind();
 ui.todayDate = todayStr();
 ui.habitDate = todayStr();
 ui.week = isoWeek(todayStr());
