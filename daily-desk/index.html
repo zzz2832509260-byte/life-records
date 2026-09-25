@@ -4707,7 +4707,17 @@ function aiContext(){
   var tasks=aiSafe("tasks"),periods=aiSafe("periods"),logs=aiSafe("logs"),
       projects=aiSafe("projects"),ideas=aiSafe("ideas"),reflects=aiSafe("reflects");
   if(!tasks.length&&!projects.length&&!logs.length&&!reflects.length){
-    return "（暂时读不到工作台数据。可能是页面还没加载完，或未从资料库打开。）";
+    /* 注入层补丁：数据层和页面的 state 是两回事，两种情况要分开说 */
+    var wbN=-1;
+    try{ wbN=window.__SMART_PAGE__.offlineApi.count(); }catch(e){}
+    if(wbN>0){
+      return "（界面上的数据还没读进来，但本机数据层里其实有 "+wbN+" 条记录，数据是在的。"
+        + "请等两三秒，关掉这个对话框重新打开，再问一次。）";
+    }
+    return "（这台设备上还没有任何记录，所以没有可参考的依据。"
+      + "先在工作台里记一条任务、或者写一条每日反省，AI 才有东西可看。"
+      + "另外提醒一句：「每日工作台」和「我的记录表」是两个独立的应用，"
+      + "各自存各自的数据，互不相通。）";
   }
   var today=new Date();
   var td=(typeof dayStr==="function")?dayStr(today):(function(d){var m=d.getMonth()+1,dd=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(dd<10?"0":"")+dd})(today);
