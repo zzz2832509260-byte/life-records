@@ -13,7 +13,7 @@
  *
  * 改了应用代码要发布时：把 VERSION 加一，旧缓存会在 activate 时被清掉。
  */
-const VERSION = 'v2';
+const VERSION = 'v5';
 const CACHE = 'life-records-' + VERSION;
 
 const ASSETS = [
@@ -74,8 +74,16 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
 
   /* 页面本体：缓存优先 + 后台更新（秒开，同时悄悄拉新版）
-     没有缓存时才等网络 —— 也就是第一次打开的那一次。 */
+     没有缓存时才等网络 —— 也就是第一次打开的那一次。
+
+     ⚠️ 只接管"本应用自己的那一页"。Service Worker 的作用域会覆盖子目录，
+     如果无脑对所有导航都返回 ./index.html，同一个域名下放在子目录里的
+     另一个应用就会被这个 SW 顶掉（打开子目录却显示了本应用）。 */
   if (req.mode === 'navigate') {
+    var here = new URL('./', self.location).pathname;
+    if (url.pathname !== here && url.pathname !== here + 'index.html') {
+      return;                       /* 不是本应用的页面，交给浏览器正常处理 */
+    }
     event.respondWith(
       caches.match('./index.html').then(cached => {
         const fromNetwork = fetch(req)
