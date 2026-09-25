@@ -4935,7 +4935,7 @@ function aiToast(msg){
   document.body.appendChild(t);
   setTimeout(function(){t.remove()},2400);
 }
-var AI_DEF_URL="https://api.deepseek.com/chat/completions",AI_DEF_MODEL="deepseek-chat";
+var AI_DEF_URL="https://api.deepseek.com/chat/completions",AI_DEF_MODEL="deepseek-flash";
 var aiBusy=false,aiHistory=[],aiWrap=null;
 
 function aiKey(){try{return localStorage.getItem(AI_KEY_LS)||""}catch(e){return ""}}
