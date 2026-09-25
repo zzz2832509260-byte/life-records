@@ -1078,23 +1078,40 @@ button.ai-sub{
 }
 button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd6) }
 
-/* ---------------- 模型切换条（贴在输入框上面） ---------------- */
+/* ---------------- 模型 / 思考强度 快捷切换面板 ----------------
+   放在快捷按钮那一行下面（**不是**贴着输入框）：
+   贴着输入框会把输入区往下挤，手指够的时候还会挡住对话。 */
 .ai-modelpick{
-  display:none; flex-direction:column; gap:6px;
-  padding:0 16px; margin-bottom:2px;
+  display:none; flex-direction:column; gap:5px;
+  padding:10px 18px 4px; flex:none;
+  max-height:44vh; overflow-y:auto;
+  border-bottom:1px solid var(--line,#e5e7ec);
+  background:var(--surface-2,#f7f8fb);
 }
 .ai-modelpick.on{ display:flex }
+.ai-pick-g{
+  font-size:11px; font-weight:700; color:var(--muted,#6b7280);
+  letter-spacing:.04em; margin:4px 0 1px;
+}
 .ai-pick-i{
   display:flex; align-items:center; gap:10px; width:100%;
-  padding:11px 13px; border-radius:10px; cursor:pointer; text-align:left;
+  padding:9px 12px; border-radius:9px; cursor:pointer; text-align:left;
   border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
-  color:inherit; font:inherit; font-size:13.5px; font-weight:600;
+  color:inherit; font:inherit; font-size:13px; font-weight:600;
   transition:.16s;
 }
 .ai-pick-i:hover{ border-color:var(--accent,#5b5bd6); color:var(--accent,#5b5bd6) }
 .ai-pick-i.on{ border-color:var(--accent,#5b5bd6); background:rgba(91,91,214,.08) }
 .ai-pick-n{ flex:1; min-width:0 }
 .ai-pick-c{ color:var(--accent,#5b5bd6); font-weight:800 }
+
+/* 页面原本在这个宽度下把 .ai-sub 整个藏了（.ai-head .ai-sub{display:none}）——
+   那是给"纯显示的一行小字"设计的。现在它是**换模型的入口**，
+   藏掉就等于手机上没法换模型了，所以这里必须把它放回来。 */
+@media (max-width:640px){
+  .ai-head button.ai-sub{ display:inline-flex; align-items:center; max-width:52% }
+  .ai-modelpick{ max-height:40vh }
+}
 .wb-btn{
   min-height:40px; padding:0 16px; font:inherit; font-size:13px; font-weight:650;
   border:1px solid var(--line,#e5e7ec); border-radius:9px;
@@ -4670,12 +4687,30 @@ AI 助手
 
   function aiModelName() { return lsGet(AI_MODEL_LS) || AI_DEF_MODEL_NAME; }
   function aiEffort() { return lsGet(AI_EFF_LS) || ''; }
+  function aiEffortLabel(v) {
+    var hit = null;
+    AI_EFFORTS.forEach(function (o) { if (o.v === v) hit = o; });
+    return hit ? hit.name.replace(/ · .*/, '') : v;
+  }
+  /* 头部那行小字同时显示模型和思考强度，一眼看得出当前是什么组合 */
+  function aiHeadLabel() {
+    var e = aiEffort();
+    return shortModelName(aiModelName()) + (e ? ' · ' + aiEffortLabel(e) : '') + ' ▾';
+  }
+  function aiRepaintHead() {
+    var b = document.getElementById('aiModelBtn');
+    if (b) b.textContent = aiHeadLabel();
+  }
   function aiSetModel(id) {
     if (!id) return;
     lsSet(AI_MODEL_LS, id);
-    /* 面板头部那个模型名要立刻跟着变，不用重开对话框 */
-    var b = document.getElementById('aiModelBtn');
-    if (b) b.textContent = shortModelName(id) + ' ▾';
+    aiRepaintHead();
+    aiPaintPicker();
+  }
+  function aiSetEffort(v) {
+    if (v) lsSet(AI_EFF_LS, v);
+    else { try { localStorage.removeItem(AI_EFF_LS); } catch (e) {} }
+    aiRepaintHead();
     aiPaintPicker();
   }
   function shortModelName(id) {
@@ -4684,8 +4719,8 @@ AI 助手
     if (hit) return hit.id;
     return id;                                  /* 自定义的，原样显示 */
   }
-  /* 头部 / 快速切换器里只列这两个模型；如果当前用的是自定义的，
-     额外补一条显示出来，免得用户以为被改掉了。 */
+  /* 快捷切换面板里只列这两个模型；当前用的是自定义的，额外补一条显示出来，
+     免得用户以为被改掉了。思考强度则列全部（含 none）。 */
   function aiPickerList() {
     var cur = aiModelName();
     var list = AI_MODELS.slice();
@@ -4697,34 +4732,52 @@ AI 助手
   function aiPaintPicker() {
     var box = document.getElementById('aiModelPick');
     if (!box) return;
-    var cur = aiModelName();
-    var h = '';
+    var curM = aiModelName(), curE = aiEffort();
+    var h = '<div class="ai-pick-g">模型</div>';
     aiPickerList().forEach(function (m) {
-      h += '<button type="button" class="ai-pick-i' + (m.id === cur ? ' on' : '') + '"'
+      h += '<button type="button" class="ai-pick-i' + (m.id === curM ? ' on' : '') + '"'
         + ' data-m="' + esc(m.id) + '">'
         + '<span class="ai-pick-n">' + esc(m.name) + '</span>'
-        + (m.id === cur ? '<span class="ai-pick-c">✓</span>' : '')
+        + (m.id === curM ? '<span class="ai-pick-c">✓</span>' : '')
+        + '</button>';
+    });
+    h += '<div class="ai-pick-g">思考强度</div>';
+    AI_EFFORTS.forEach(function (o) {
+      h += '<button type="button" class="ai-pick-i' + (o.v === curE ? ' on' : '') + '"'
+        + ' data-e="' + esc(o.v) + '">'
+        + '<span class="ai-pick-n">' + esc(o.name) + '</span>'
+        + (o.v === curE ? '<span class="ai-pick-c">✓</span>' : '')
         + '</button>';
     });
     box.innerHTML = h;
   }
-  /* 点头部的模型名 → 在面板**底下**展开/收起模型切换条 */
+  /* 点头部的模型名 → 在**快捷按钮下面**展开/收起切换面板。
+     注意：不放在输入框上方（用户明确说不要"置于底部"）。 */
   function aiWireSwitcher() {
     var btn = document.getElementById('aiModelBtn');
     var box = document.getElementById('aiModelPick');
     if (!btn || !box || btn.__wbWired) return;
     btn.__wbWired = true;
-    btn.textContent = shortModelName(aiModelName()) + ' ▾';
+    btn.textContent = aiHeadLabel();
+    function toggle() {
+      aiPaintPicker();
+      var on = box.className.indexOf(' on') < 0;
+      box.className = 'ai-modelpick' + (on ? ' on' : '');
+    }
     btn.onclick = function (e) {
       if (e && e.stopPropagation) e.stopPropagation();
-      aiPaintPicker();
-      box.className = 'ai-modelpick' + (box.className.indexOf('on') >= 0 ? '' : ' on');
+      toggle();
     };
     box.onclick = function (e) {
+      if (e && e.stopPropagation) e.stopPropagation();
       var t = e.target;
-      while (t && t !== box && !(t.getAttribute && t.getAttribute('data-m'))) t = t.parentNode;
+      while (t && t !== box && !(t.getAttribute && (t.getAttribute('data-m') !== null || t.getAttribute('data-e') !== null))) {
+        t = t.parentNode;
+      }
       if (!t || t === box) return;
-      aiSetModel(t.getAttribute('data-m'));
+      var mm = t.getAttribute('data-m'), ee = t.getAttribute('data-e');
+      if (mm !== null) aiSetModel(mm);
+      else aiSetEffort(ee);
       box.className = 'ai-modelpick';           /* 选完就收起来 */
     };
     aiPaintPicker();
@@ -4845,8 +4898,7 @@ AI 助手
   function aiSaveEffort() {
     var esel = document.getElementById('aiEffortSel');
     var v = esel ? String(esel.value || '') : '';
-    if (v) lsSet(AI_EFF_LS, v);
-    else { try { localStorage.removeItem(AI_EFF_LS); } catch (e) {} }
+    aiSetEffort(v);
     return v;
   }
 
@@ -4860,6 +4912,7 @@ AI 助手
     effort: aiEffort,
     model: aiModelName,
     setModel: aiSetModel,
+    setEffort: aiSetEffort,
     wireSwitcher: aiWireSwitcher,
     paintPicker: aiPaintPicker,
     baseUrl: aiBaseUrl,
@@ -5199,8 +5252,8 @@ function aiOpen(){
     +'<button type="button" data-ai="基于最近的复盘和反思，指出我反复出现的问题，并给两条可执行的改进建议">复盘反思</button>'
     +'<button type="button" data-ai="我要开始一个新目标，先问我目标是什么，再帮我拆成可执行的任务">拆解目标</button>'
     +'</div>'
-    +'<div class="ai-body" id="aiBody"></div>'
     +'<div class="ai-modelpick" id="aiModelPick"></div>'
+    +'<div class="ai-body" id="aiBody"></div>'
     +'<div class="ai-foot"><textarea id="aiIn" placeholder="问点什么，或说说你要做的事…" rows="1"></textarea>'
     +'<button class="ai-send" type="button" id="aiSend">发送</button></div>'
     +'</div>';
