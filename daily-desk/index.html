@@ -1075,6 +1075,8 @@ button.ai-sub{
   border:0; background:transparent; padding:2px 6px; margin-right:4px;
   font:inherit; font-size:inherit; color:inherit; line-height:inherit;
   border-radius:7px; cursor:pointer; transition:background .16s, color .16s;
+  /* 名字可能很长（deepseek-v4-pro · high），不许它把右边的关闭键挤出去 */
+  min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd6) }
 
@@ -1135,9 +1137,11 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
    藏掉就等于手机上没法换模型了，所以这里必须把它放回来，而且要做成看得出来的按钮。 */
 @media (max-width:640px){
   .ai-head button.ai-sub{
-    display:inline-flex; align-items:center; max-width:56%;
+    display:inline-flex; align-items:center; max-width:52%;
     border:1px solid var(--line,#e5e7ec); padding:5px 10px;
     background:var(--surface-2,#f4f5f9);
+    /* 手机上头部更窄，长名字一律省略号收尾，保证关闭键始终看得见、点得到 */
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 }
 .wb-btn{
