@@ -11,7 +11,7 @@
  *
  * 改了 daily-desk 里的东西要发布时：把 VERSION 加一。
  */
-const VERSION = 'desk-v13';
+const VERSION = 'desk-v14';
 const CACHE = 'daily-desk-' + VERSION;
 
 const ASSETS = [
