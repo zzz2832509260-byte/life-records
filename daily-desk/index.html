@@ -1076,6 +1076,36 @@ body{background:var(--ds3-bg)}
 }
 .wb-toast.on{ opacity:1; transform:translate(-50%,0) }
 
+/* ---------------- 存储写不进去时的常驻警告 ----------------
+   这条不能做成 toast：数据存不下来是个持续状态，
+   一闪而过的提示会被当成"刚才那个小提示"忽略掉。 */
+.wb-warn{
+  position:fixed; left:50%; top:14px; z-index:300;
+  transform:translate(-50%,-24px); opacity:0; pointer-events:none;
+  width:min(92vw,520px);
+  display:flex; flex-direction:column; gap:4px;
+  padding:13px 16px; border-radius:14px;
+  background:#fff4f4; color:#8a1f1f;
+  border:1px solid #f3c2c2;
+  box-shadow:0 12px 34px rgba(0,0,0,.18);
+  font-size:13px; line-height:1.7;
+  transition:opacity .25s, transform .3s cubic-bezier(.22,1,.36,1);
+}
+.wb-warn.on{ opacity:1; transform:translate(-50%,0); pointer-events:auto }
+.wb-warn b{ font-size:13.5px; color:#7a1414 }
+.wb-warn span{ color:#8a1f1f; opacity:.9 }
+.wb-warn-x{
+  align-self:flex-end; margin-top:2px; padding:5px 12px; border-radius:8px;
+  background:rgba(138,31,31,.1); font-weight:650; cursor:pointer;
+}
+
+/* 图在这台设备上没有（记录从云端同步来了、图没跟过来） */
+img[data-wbmissing]{
+  background:repeating-linear-gradient(45deg,#eef0f5,#eef0f5 6px,#f7f8fb 6px,#f7f8fb 12px);
+  border:1px dashed var(--line,#d8dde9); border-radius:8px;
+  min-width:44px; min-height:44px;
+}
+
 /* ============================================================================
    移动端修正
    原页面在 ≤900px 已经有底部导航（.mobbar）和卡片化布局，
@@ -1095,20 +1125,19 @@ body{background:var(--ds3-bg)}
     min-width:0 !important;
     overflow:hidden;
   }
-  .mobbar > * span,
-  .mobbar > * .mb-t{
+  .mobbar > * span{
     max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     font-size:10px;
   }
   .mobbar svg{ width:17px !important; height:17px !important }
 
-  /* b) 常用的可点控件抬到 44px（只扩热区，不改变视觉密度） */
-  .btn-ghost, .btn-main, .chip, .seg-i, .mini-btn,
-  .row-acts button, .ti-acts button, .mb-i{
+  /* b) 常用的可点控件抬到 44px（只扩热区，不改变视觉密度）
+     注意：这里点名的类必须是页面里真实存在的。
+     原来还写了 .seg-i 和 .mini-btn，但页面里根本没有这两个类 —— 那两条是死代码。 */
+  .btn-ghost, .btn-main, .chip, .row-acts button, .ti-acts button, .mb-i{
     position:relative;
   }
-  .btn-ghost::after, .btn-main::after, .chip::after,
-  .seg-i::after, .mini-btn::after{
+  .btn-ghost::after, .btn-main::after, .chip::after{
     content:''; position:absolute; left:0; right:0; top:50%;
     transform:translateY(-50%); height:44px; min-height:100%;
   }
@@ -1125,7 +1154,7 @@ body{background:var(--ds3-bg)}
 }
 
 @media (max-width:420px){
-  .mobbar > * span, .mobbar > * .mb-t{ font-size:9px }
+  .mobbar > * span{ font-size:9px }
   .wb-topbtn span:not(.wb-dot){ display:none }   /* 极窄屏只留圆点 */
   .wb-topbtn{ padding:0 10px }
 }
@@ -3644,7 +3673,7 @@ AI 助手
 (function () {
   'use strict';
 
-  var SCHEMA = {"tIaiq8CCj17DrOmNAjxGyI":{"title":"每日反省","properties":[{"name":"日期","type":"date"},{"name":"内容","type":"text"},{"name":"关联决策","type":"text"},{"name":"示例","type":"checkbox"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"}]},"N9CbOKvoBgrZ2IY7mBAe4Q":{"title":"灵感速记","properties":[{"name":"内容","type":"text"},{"name":"标签","type":"select"},{"name":"记录时间","type":"date"},{"name":"状态","type":"select"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"ovFeG4UznSCTsBe0TL6026":{"title":"项目","properties":[{"name":"项目名称","type":"text"},{"name":"状态","type":"select"},{"name":"优先级","type":"select"},{"name":"起始日期","type":"date"},{"name":"截止日期","type":"date"},{"name":"进度","type":"number"},{"name":"目标描述","type":"text"},{"name":"里程碑","type":"text"},{"name":"风险点","type":"text"},{"name":"备注","type":"text"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"周期","type":"select"},{"name":"示例","type":"checkbox"}]},"uuhSr3V901x39T9h1wYXDW":{"title":"决策记录","properties":[{"name":"决策事项","type":"text"},{"name":"决策日期","type":"date"},{"name":"备选方案","type":"text"},{"name":"最终结论","type":"text"},{"name":"决策依据","type":"text"},{"name":"状态","type":"select"},{"name":"复盘结论","type":"text"},{"name":"当日反省","type":"text"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"ywbEUmBBj2GwbUod9MNHpJ":{"title":"每周复盘","properties":[{"name":"周期","type":"text"},{"name":"起始日期","type":"date"},{"name":"状态评分","type":"number"},{"name":"本期产出","type":"text"},{"name":"做得好","type":"text"},{"name":"待改进","type":"text"},{"name":"下期重点","type":"text"},{"name":"周期类型","type":"select"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"已回访","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"HbUQcLTAifuyK4tLoPsp0W":{"title":"每日任务","properties":[{"name":"任务名称","type":"text"},{"name":"优先级","type":"select"},{"name":"状态","type":"select"},{"name":"计划日期","type":"date"},{"name":"备注","type":"text"},{"name":"图片","type":"image"},{"name":"项目","type":"text"},{"name":"重复","type":"select"},{"name":"已删除","type":"checkbox"},{"name":"延期次数","type":"number"},{"name":"预计耗时","type":"number"},{"name":"实际耗时","type":"number"},{"name":"删除时间","type":"date"},{"name":"完成日期","type":"date"},{"name":"项目ID","type":"text"},{"name":"示例","type":"checkbox"},{"name":"今日优先","type":"checkbox"},{"name":"开始时间","type":"text"},{"name":"结束时间","type":"text"}]}};
+  var SCHEMA = {"tIaiq8CCj17DrOmNAjxGyI":{"title":"每日反省","properties":[{"name":"日期","type":"date"},{"name":"内容","type":"text"},{"name":"关联决策","type":"text"},{"name":"示例","type":"checkbox"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"}]},"N9CbOKvoBgrZ2IY7mBAe4Q":{"title":"灵感速记","properties":[{"name":"内容","type":"text"},{"name":"标签","type":"select","config":{"options":[{"id":"elYUWLp4r1JX","text":"想法"},{"id":"EIHmu8PiyjHO","text":"灵感"},{"id":"6gn4R1PmEZQ6","text":"待办线索"},{"id":"ktXFnZanK9aW","text":"随手记"}]}},{"name":"记录时间","type":"date"},{"name":"状态","type":"select","config":{"options":[{"id":"vyG9O6N1RCzq","text":"未处理"},{"id":"37Ksdd7cWaUB","text":"已落实"}]}},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"ovFeG4UznSCTsBe0TL6026":{"title":"项目","properties":[{"name":"项目名称","type":"text"},{"name":"状态","type":"select","config":{"options":[{"id":"2LNAM8gSJ9NH","text":"规划中"},{"id":"8hHJjvWqu4LX","text":"进行中"},{"id":"mqUvgqd9XuCu","text":"已暂停"},{"id":"IUxSM8v8AwAL","text":"已完成"}]}},{"name":"优先级","type":"select","config":{"options":[{"id":"G9LWMVv4JkOM","text":"P0 最紧急"},{"id":"XZOAwpCiSOgz","text":"P1 重要"},{"id":"kPzZn3uJJeju","text":"P2 一般"}]}},{"name":"起始日期","type":"date"},{"name":"截止日期","type":"date"},{"name":"进度","type":"number"},{"name":"目标描述","type":"text"},{"name":"里程碑","type":"text"},{"name":"风险点","type":"text"},{"name":"备注","type":"text"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"周期","type":"select","config":{"options":[{"id":"w2NXFcNNhxes","text":"日常"},{"id":"KHH07FTvXAxA","text":"季度"},{"id":"WbENTkRhV2SI","text":"年度"}]}},{"name":"示例","type":"checkbox"}]},"uuhSr3V901x39T9h1wYXDW":{"title":"决策记录","properties":[{"name":"决策事项","type":"text"},{"name":"决策日期","type":"date"},{"name":"备选方案","type":"text"},{"name":"最终结论","type":"text"},{"name":"决策依据","type":"text"},{"name":"状态","type":"select","config":{"options":[{"id":"Z8RDJbc6s8Hf","text":"待决策"},{"id":"IFk3PNGD9nz4","text":"已决策"},{"id":"Q99hLuAXSDR9","text":"执行中"},{"id":"i0ObJN4aXRZB","text":"已验证"}]}},{"name":"复盘结论","type":"text"},{"name":"当日反省","type":"text"},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"ywbEUmBBj2GwbUod9MNHpJ":{"title":"每周复盘","properties":[{"name":"周期","type":"text"},{"name":"起始日期","type":"date"},{"name":"状态评分","type":"number"},{"name":"本期产出","type":"text"},{"name":"做得好","type":"text"},{"name":"待改进","type":"text"},{"name":"下期重点","type":"text"},{"name":"周期类型","type":"select","config":{"options":[{"id":"esQ7EFDZigCI","text":"周复盘"},{"id":"IWEY0c05U0T7","text":"月复盘"},{"id":"krmxlHtJpBtR","text":"季总结"},{"id":"4EnvFuUtrf2l","text":"年终总结"}]}},{"name":"图片","type":"image"},{"name":"已删除","type":"checkbox"},{"name":"已回访","type":"checkbox"},{"name":"删除时间","type":"date"},{"name":"示例","type":"checkbox"}]},"HbUQcLTAifuyK4tLoPsp0W":{"title":"每日任务","properties":[{"name":"任务名称","type":"text"},{"name":"优先级","type":"select","config":{"options":[{"id":"lZhCrO3FCXDd","text":"P0 最紧急"},{"id":"v3hJrJ1fAJ8t","text":"P1 重要"},{"id":"ErnbfK7OV0wg","text":"P2 一般"}]}},{"name":"状态","type":"select","config":{"options":[{"id":"dmIZl9aCvV7i","text":"待开始"},{"id":"HYvtMssENpA4","text":"进行中"},{"id":"K8yqgAdsOcGE","text":"已完成"}]}},{"name":"计划日期","type":"date"},{"name":"备注","type":"text"},{"name":"图片","type":"image"},{"name":"项目","type":"text"},{"name":"重复","type":"select","config":{"options":[{"id":"rYwxIlsBhGFb","text":"不重复"},{"id":"nPRMXlEZucdo","text":"每天"},{"id":"w7qFi7pUHfp1","text":"每周"},{"id":"fsKFaEsTjXGk","text":"每月"}]}},{"name":"已删除","type":"checkbox"},{"name":"延期次数","type":"number"},{"name":"预计耗时","type":"number"},{"name":"实际耗时","type":"number"},{"name":"删除时间","type":"date"},{"name":"完成日期","type":"date"},{"name":"项目ID","type":"text"},{"name":"示例","type":"checkbox"},{"name":"今日优先","type":"checkbox"},{"name":"开始时间","type":"text"},{"name":"结束时间","type":"text"}]}};
 
   var LS_DATA = 'wb_offline_db_v1';
   var LS_SYNC = 'wb_offline_sync_v1';
@@ -3675,10 +3704,237 @@ AI 助手
     } catch (e) { console.warn('[离线版] 本地数据解析失败，从空库开始', e); }
   }
 
+  /* ==========================================================================
+     2b. 图片仓库 + 渲染时补地址
+     ==========================================================================
+     这里解决两个**互相纠缠**的问题，必须一起改：
+
+     问题一：图片显示不出来。
+       页面把 uploadImage 返回的 url **直接当 <img src> 用**：
+         '<img src="'+esc(it.imageUrl)+'">'      （缩略图）
+         openViewer(src) → im.src = src          （看大图，src 来自 data-src）
+       原来的实现返回的是一个裸 key（"r123_图片.png"），浏览器拿它当相对路径去请求，
+       结果是一张裂图。真正的字节必须能从这个 url 取到。
+
+     问题二：图片字节不能放进主库。
+       页面允许单张 10MB、一条 9 张（IMG_MAX_BYTES = 10*1024*1024）。
+       而 localStorage 的配额通常只有 5MB —— 是**整个站** 5MB。
+       一旦把 dataURL 塞进 DB.imgs，主库 JSON 就会超过配额，
+       saveLocal() 的 setItem 抛异常、被 catch 吞掉 ——
+       后果不是"图丢了"，而是**之后所有改动都再也存不进去**，而且没有任何提示。
+
+     所以：
+       · 字节进 IndexedDB（配额是磁盘的一个比例，几百 MB 起步）；
+       · 记录里只留一个短 key（7 个字符级的 "wbimg-xxx"），
+         云同步体积、页面自己的快照体积都不受影响；
+       · 渲染时由一个 MutationObserver 把 key 换成真正的 dataURL。
+     ========================================================================== */
+  var IMG_DB = 'wb_desk_img', IMG_STORE = 'blobs';
+  var IMG_LS = 'wb_offline_imgs_v1';        /* 兜底（没有 IndexedDB 时） */
+  var IMG_LS_MAX = 2 * 1024 * 1024;         /* 兜底路上限 2MB，再大就不收 */
+  var IMG_URL = {};                         /* key -> dataURL 内存缓存 */
+  var IMG_CACHE_MAX = 48;                   /* 缓存上限，防止长时间浏览后内存无限涨 */
+  var imgCacheQ = [];
+  function imgCachePut(key, url) {
+    if (IMG_URL[key] === undefined) {
+      imgCacheQ.push(key);
+      /* 每条 dataURL 可能就是几 MB 的字符串，不设上限的话
+         在手机上翻几十条带图记录，内存会一路涨上去 */
+      while (imgCacheQ.length > IMG_CACHE_MAX) {
+        var old = imgCacheQ.shift();
+        if (old !== key) delete IMG_URL[old];
+      }
+    }
+    IMG_URL[key] = url;
+  }
+  var idbHandle;                            /* undefined=没试过  null=不可用 */
+  var KEY_RE = /^wbimg-[a-z0-9]+$/;
+
+  function idbOpen() {
+    if (idbHandle !== undefined) return Promise.resolve(idbHandle);
+    if (typeof indexedDB === 'undefined' || !indexedDB) { idbHandle = null; return Promise.resolve(null); }
+    return new Promise(function (resolve) {
+      var req;
+      try { req = indexedDB.open(IMG_DB, 1); } catch (e) { idbHandle = null; return resolve(null); }
+      req.onupgradeneeded = function () {
+        var d = req.result;
+        if (!d.objectStoreNames.contains(IMG_STORE)) d.createObjectStore(IMG_STORE);
+      };
+      req.onsuccess = function () { idbHandle = req.result; resolve(idbHandle); };
+      req.onerror = function () { idbHandle = null; resolve(null); };
+      req.onblocked = function () { idbHandle = null; resolve(null); };
+    });
+  }
+  function idbRun(mode, fn) {
+    return idbOpen().then(function (db) {
+      if (!db) return null;
+      return new Promise(function (resolve) {
+        var tx, store;
+        try { tx = db.transaction(IMG_STORE, mode); store = tx.objectStore(IMG_STORE); }
+        catch (e) { return resolve(null); }
+        var req = fn(store);
+        tx.oncomplete = function () { resolve(req ? req.result : null); };
+        tx.onerror = function () { resolve(null); };
+        tx.onabort = function () { resolve(null); };
+      });
+    });
+  }
+  function imgLSAll() {
+    try { var o = JSON.parse(lsGet(IMG_LS) || '{}'); return (o && typeof o === 'object') ? o : {}; }
+    catch (e) { return {}; }
+  }
+  function imgLSPut(key, dataUrl) {
+    var all = imgLSAll(), total = 0;
+    Object.keys(all).forEach(function (k) { total += String(all[k]).length; });
+    if (total + dataUrl.length > IMG_LS_MAX) return false;   /* 兜底路容量很小，超了就老实拒绝 */
+    all[key] = dataUrl;
+    return lsSet(IMG_LS, JSON.stringify(all));
+  }
+  function imgPut(key, dataUrl) {
+    return idbRun('readwrite', function (s) { return s.put(dataUrl, key); }).then(function (r) {
+      if (r !== null) return true;          /* IndexedDB 成功 */
+      return imgLSPut(key, dataUrl);        /* 没有 IDB → 兜底 */
+    });
+  }
+  function imgGet(key) {
+    if (IMG_URL[key]) return Promise.resolve(IMG_URL[key]);
+    return idbRun('readonly', function (s) { return s.get(key); }).then(function (hit) {
+      if (typeof hit === 'string' && hit) { imgCachePut(key, hit); return hit; }
+      var fb = imgLSAll()[key];
+      if (fb) { imgCachePut(key, fb); return fb; }
+      return null;
+    });
+  }
+  function imgAllKeys() {
+    return idbRun('readonly', function (s) { return s.getAllKeys(); }).then(function (ks) {
+      var out = {};
+      (ks || []).forEach(function (k) { out[k] = 1; });
+      Object.keys(imgLSAll()).forEach(function (k) { out[k] = 1; });
+      return Object.keys(out);
+    });
+  }
+
+  /* 把旧版存在 DB.imgs 里的图搬到仓库，然后把主库里的清掉 ——
+     这一步很关键：老版本的用户已经攒了一些图在主库里，
+     不搬走的话主库仍然是超配额的。 */
+  var imgMigrate = Promise.resolve(0);
+  function migrateImgs() {
+    var old = DB.imgs || {};
+    var keys = Object.keys(old);
+    if (!keys.length) { DB.imgs = {}; return Promise.resolve(0); }
+    return Promise.all(keys.map(function (k) {
+      var v = String(old[k] || '');
+      var url = /^data:/.test(v) ? v : ('data:image/png;base64,' + v);
+      return imgPut(k, url).then(function (ok) { return ok ? k : null; });
+    })).then(function (done) {
+      var moved = done.filter(Boolean);
+      moved.forEach(function (k) { delete old[k]; });
+      /* 搬成功的清掉；搬不动的留着（宁可主库大一点，也不能把图弄丢） */
+      DB.imgs = old;
+      saveLocal(true);
+      if (moved.length) console.log('[离线版] 已把 ' + moved.length + ' 张图搬到图片仓库');
+      return moved.length;
+    });
+  }
+
+  /* ---- 渲染时补地址 ----
+     页面把 key 当 src 写进 DOM，我们在这里换成真地址。
+     DOM 一变就补，所以不需要去改页面那 427 个函数。 */
+  function hydrateEl(el) {
+    if (!el || el.nodeType !== 1) return;
+    if (el.tagName === 'IMG') swap(el, 'src');
+    if (el.hasAttribute && el.hasAttribute('data-src')) swap(el, 'data-src');
+    if (el.querySelectorAll) {
+      var in1 = el.querySelectorAll('img[src]');
+      for (var i = 0; i < in1.length; i++) swap(in1[i], 'src');
+      var in2 = el.querySelectorAll('[data-src]');
+      for (var j = 0; j < in2.length; j++) swap(in2[j], 'data-src');
+    }
+  }
+  function swap(el, attr) {
+    var v;
+    try { v = el.getAttribute(attr); } catch (e) { return; }
+    if (!v || !KEY_RE.test(v)) return;             /* 已经是真地址 / 不是我们的 key */
+    if (el.__wbWait === attr + v) return;          /* 正在取，别重复 */
+    el.__wbWait = attr + v;
+    imgGet(v).then(function (dataUrl) {
+      if (!el.__wbWait || el.__wbWait !== attr + v) return;
+      el.__wbWait = null;
+      if (!dataUrl) {
+        /* 图确实没了（换设备/清理过缓存）→ 给个可见的交代，别留一个裂图 */
+        el.setAttribute('data-wbmissing', '1');
+        el.setAttribute('alt', (el.getAttribute('alt') || '图片') + '（本机没有这张图）');
+        return;
+      }
+      el.setAttribute('data-wbsrc', v);            /* 记住原 key，以后还能对上 */
+      el.setAttribute(attr, dataUrl);
+      el.removeAttribute('data-wbmissing');
+    });
+  }
+  function imgObserve() {
+    if (typeof MutationObserver === 'undefined' || !document.documentElement) return;
+    var mo = new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var m = muts[i];
+        if (m.type === 'attributes') { hydrateEl(m.target); continue; }
+        for (var j = 0; j < m.addedNodes.length; j++) hydrateEl(m.addedNodes[j]);
+      }
+    });
+    mo.observe(document.documentElement, {
+      childList: true, subtree: true, attributes: true,
+      attributeFilter: ['src', 'data-src']
+    });
+    hydrateEl(document.documentElement);
+  }
+
+  /* ==========================================================================
+     2c. 存储写不进去时必须吭声
+     ==========================================================================
+     原来 saveLocal 是 lsSet(...) 然后看都不看返回值。
+     localStorage 一满（最常见的诱因就是图），setItem 抛异常 → 被 catch 吞掉 →
+     界面照常、toast 照常，但**用户此后记的每一条都存不下来**。
+     这是最坏的一种失败：无声、且发生在用户以为一切正常的时候。
+     ========================================================================== */
+  var storageBad = false;
+  function storageWarn(msg) {
+    storageBad = true;
+    var el = document.getElementById('wbStorageWarn');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'wbStorageWarn';
+      el.className = 'wb-warn';
+      el.setAttribute('role', 'alert');
+      if (document.body) document.body.appendChild(el);
+      else document.addEventListener('DOMContentLoaded', function () { document.body.appendChild(el); });
+    }
+    el.innerHTML = '<b>本地存储写不进去了</b><span>' + esc(msg) + '</span>' +
+      '<span class="wb-warn-x" id="wbWarnX">知道了</span>';
+    el.classList.add('on');
+    var x = document.getElementById('wbWarnX');
+    if (x) x.onclick = function () { el.classList.remove('on'); };
+  }
+
+  /* 注意：这里**不能**因为 loading 就跳过写入。
+     loading 是"这次改动是同步程序自己引起的，别再去安排下一次同步"的标记，
+     它管的是 bump()（见 L714 附近），不是落盘。
+     原来两处都判了 loading，结果 syncNow 里这段永远不生效：
+
+       loading = true;
+       DB.dbs = merged.dbs; DB.meta = merged.meta;
+       saveLocal(true);        ← loading 还是 true，直接 return，什么都没写
+       loading = false;
+
+     后果很严重：**从云端合并下来的数据从来没有落过盘**。
+     新设备上第一次同步看着成功了、界面也有数据，一刷新全没了。 */
   function saveLocal(immediate) {
-    if (loading) return;
     clearTimeout(saveTimer);
-    var run = function () { lsSet(LS_DATA, JSON.stringify(DB)); };
+    var run = function () {
+      var ok = lsSet(LS_DATA, JSON.stringify(DB));
+      if (!ok && !storageBad) {
+        storageWarn('浏览器拒绝写入，通常是本机存储满了。'
+          + '你之后记的内容可能存不下来 —— 请先导出备份，再删掉一些图片。');
+      }
+    };
     if (immediate) run(); else saveTimer = setTimeout(run, 260);
   }
 
@@ -3784,10 +4040,17 @@ AI 助手
   function uploadImage(o) {
     o = o || {};
     var name = o.fileName || ('img_' + newId() + '.png');
-    var key = newId() + '_' + name;
-    DB.imgs[key] = o.data || '';
-    saveLocal(true);
-    return Promise.resolve({ url: key, name: name });
+    var key = 'wbimg-' + newId();
+    /* 页面传进来的 data 是**裸 base64**（它自己做 String(r.result).split(",")[1]），
+       所以要在这里补回 data: 前缀，否则浏览器认不出来。 */
+    var dataUrl = /^data:/.test(o.data || '')
+      ? o.data
+      : ('data:' + (o.contentType || 'image/png') + ';base64,' + (o.data || ''));
+    return imgPut(key, dataUrl).then(function (ok) {
+      if (!ok) throw new Error('图片存不下：本地存储已满，先导出备份再删几张图');
+      imgCachePut(key, dataUrl);               /* 内存里留一份，省一次异步读 */
+      return { url: key, name: name };
+    });
   }
 
   window.__SMART_PAGE__ = window.__SMART_PAGE__ || {};
@@ -3801,13 +4064,47 @@ AI 助手
   window.__SMART_PAGE__.offlineApi = {
     merge: function (a, b) { return mergePayload(a, b); },
     snapshot: function () { return payload(); },
-    count: countAll
+    count: countAll,
+    /* 图片仓库：验证"字节没进主库""渲染时能换成真地址"这两件事 */
+    imgGet: imgGet,
+    imgKeys: imgAllKeys,
+    imgReady: function () { return imgMigrate; },
+    /* 验证 onUpdated 发的是全部 6 张表的 id */
+    watchedIds: watchedIds,
+    /* 存储满了以后，主库还能不能写 */
+    storageBad: function () { return storageBad; },
+    /* 把合并结果落盘并通知页面 —— syncNow 里那一步的等价物。
+       抽出来是为了能被测到：原来那句 saveLocal(true) 被 loading 挡掉了，
+       而它藏在网络流程中间，光靠单测永远走不到。 */
+    applyMerged: function (merged) {
+      loading = true;
+      DB.dbs = merged.dbs;
+      DB.meta = merged.meta;
+      saveLocal(true);
+      loading = false;
+      bump();
+    }
   };
 
-  /* 本机数据变了 → 通知页面重新加载 */
+  /* 本机数据变了 → 通知页面重新加载。
+     这里要发**全部 6 张表的 id**，而不是"当前有数据的那些"。原因是页面那边的守卫：
+       var ids = payload && payload.databaseIds || [];
+       if (ids.indexOf(DB_TASK)===-1 && ids.indexOf(DB_PERIOD)===-1 &&
+           ids.indexOf(DB_LOG)===-1  && ids.indexOf(DB_PROJECT)===-1 &&
+           ids.indexOf(DB_IDEA)===-1) return;          ← 早退，不重新加载
+     注意这个列表里**没有 DB_REFLECT（每日反省）**。
+     如果只发"有数据的表"，那么"同步下来的只有反省记录"这种情况下守卫会早退，
+     界面就一直停在旧数据上 —— 用户会以为同步没生效。 */
+  function watchedIds() {
+    var ids = Object.keys(DB.dbs);
+    Object.keys(SCHEMA || {}).forEach(function (id) {
+      if (ids.indexOf(id) < 0) ids.push(id);
+    });
+    return ids;
+  }
   function bump() {
     if (loading) return;
-    var ids = Object.keys(DB.dbs);
+    var ids = watchedIds();
     listeners.forEach(function (cb) {
       try { cb({ databaseIds: ids }); } catch (e) { /* 页面自己的错误不该影响存储 */ }
     });
@@ -4059,11 +4356,8 @@ AI 助手
         var remoteChanged = !remote || mergedHash !== hashStr(JSON.stringify(remote));
 
         if (localChanged) {
-          loading = true;
-          DB.dbs = merged.dbs; DB.meta = merged.meta;
-          saveLocal(true);
-          loading = false;
-          bump();                       /* 让页面重新读数据 */
+          /* 走和 offlineApi.applyMerged 同一条路（那边有测试盯着） */
+          window.__SMART_PAGE__.offlineApi.applyMerged(merged);
         }
         if (!remoteChanged) return null;
         var out = JSON.stringify(merged);
@@ -4122,6 +4416,25 @@ AI 助手
     return n;
   }
 
+  /* 面板上顺带说一下图片占了多少。
+     没有 IndexedDB 的环境（比如个别浏览器直接双击 file:// 打开）
+     只能走 localStorage 兜底，容量小得多 —— 这件事必须让用户看得见，
+     否则他会一直奇怪"为什么加到第五张就说存不下"。 */
+  function imgStatText() {
+    var n = 0;
+    Object.keys(DB.dbs).forEach(function (dbId) {
+      (DB.dbs[dbId] || []).forEach(function (r) {
+        Object.keys(r).forEach(function (k) {
+          if (typeof r[k] === 'string' && KEY_RE.test(r[k])) n++;
+        });
+      });
+    });
+    if (!n) return '';
+    var s = '，其中图片 ' + n + ' 张';
+    if (idbHandle === null) s += '（当前环境不支持大容量存储，图片总量有限）';
+    return s;
+  }
+
   function paintStatus(txt) {
     var el = document.getElementById('wbSyncState');
     if (el) el.textContent = txt || (SYNC.lastError ? '同步失败' : (SYNC.lastAt ? '已同步' : '未同步'));
@@ -4154,7 +4467,7 @@ AI 助手
         '<button class="wb-btn" id="wbNow"' + (SYNC.token ? '' : ' disabled') + '>立即同步</button>' +
         '<button class="wb-btn danger" id="wbOff"' + (SYNC.token ? '' : ' disabled') + '>断开</button>' +
       '</div>' +
-      '<div class="wb-mut" style="margin-top:10px">本机共 ' + countAll() + ' 条记录。' +
+      '<div class="wb-mut" style="margin-top:10px">本机共 ' + countAll() + ' 条记录' + imgStatText() + '。' +
         '数据存到你<b>自己账号</b>下的一个私密片段里，不经过任何第三方服务器。' +
         '图片不参与同步。</div>' +
       '<div class="wb-help"><b>怎么拿令牌</b><br>' +
@@ -4255,6 +4568,11 @@ AI 助手
      ========================================================================== */
   loadLocal();
   loadSyncCfg();
+
+  /* 图片仓库：先把旧的搬过来，再开始盯着 DOM 补图片地址。
+     顺序不能反 —— 先搬完，后面的 hydrate 才取得到图。 */
+  imgObserve();
+  imgMigrate = migrateImgs().catch(function () { return 0; });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', buildUI);
