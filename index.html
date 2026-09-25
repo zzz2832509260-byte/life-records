@@ -51,6 +51,22 @@
 
   --r-sm: 9px;  --r-md: 13px;  --r-lg: 18px;  --r-full: 999px;
 
+  /* 模块语义色：让每个页面有自己的辨识度，而不是一片灰 */
+  --m-today:  #5b5bd6;
+  --m-task:   #0d9f6e;
+  --m-habit:  #c0761a;
+  --m-note:   #8b5cf6;
+  --m-review: #2563eb;
+  --m-goal:   #db2777;
+  --m-dec:    #0891b2;
+  --m-trash:  #6b7280;
+
+  /* 字号阶梯：页面标题 > 卡片标题 > 正文 > 辅助 */
+  --fs-page: 21px;
+  --fs-card: 13px;
+  --fs-body: 14.5px;
+  --fs-sub:  12.5px;
+
   --sh-1: 0 1px 2px rgba(16,23,41,.05), 0 1px 3px rgba(16,23,41,.04);
   --sh-2: 0 4px 14px rgba(16,23,41,.07), 0 1px 3px rgba(16,23,41,.04);
   --sh-3: 0 12px 32px rgba(16,23,41,.10), 0 2px 8px rgba(16,23,41,.05);
@@ -88,6 +104,16 @@
     --sh-2: 0 4px 14px rgba(0,0,0,.45);
     --sh-3: 0 12px 32px rgba(0,0,0,.55);
     --sh-accent: 0 6px 18px rgba(139,139,245,.25);
+
+    /* 暗色下的模块语义色：提高明度，保证在深底上够亮 */
+    --m-today:  #8b8bf5;
+    --m-task:   #34d399;
+    --m-habit:  #fbbf24;
+    --m-note:   #a78bfa;
+    --m-review: #60a5fa;
+    --m-goal:   #f472b6;
+    --m-dec:    #22d3ee;
+    --m-trash:  #94a3b8;
   }
 }
 
@@ -138,6 +164,14 @@ input,select,textarea{ font:inherit; color:inherit }
   border:1px solid var(--accent-line); box-shadow:var(--sh-1);
 }
 .brand-t{ font-size:16.5px; font-weight:700; letter-spacing:-.02em; white-space:nowrap }
+.brand .dot{
+  width:7px; height:7px; border-radius:50%; background:var(--line-strong);
+  transition:.25s; margin-left:3px; flex:none;
+}
+.brand .dot.ok{ background:var(--ok); box-shadow:0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent) }
+.brand .dot.err{ background:var(--bad); animation:blink 1s infinite }
+.hide-xs{ }
+@media (max-width:560px){ .hide-xs{ display:none } }
 
 .pill{
   display:inline-flex; align-items:center; gap:6px;
@@ -192,6 +226,162 @@ nav.mnav{ display:none }
 .wrap > *:nth-child(n+7){ animation-delay:206ms }
 /* 增删条目后局部重绘时不要重播入场动画，否则整页会闪一下 */
 .wrap.no-anim > *{ animation:none!important }
+
+/* ==========================================================================
+   触控热区 —— 视觉尺寸不变，可点区域扩到 44px
+   实测原来 .btn.sm 只有 32px、.chip 36px、.tab 36px、.pill 28px，
+   都低于 44px 基线。手机上手感差是物理原因，不是审美问题。
+   ========================================================================== */
+.btn, .chip, .tab, .pill, .guide-x{ position:relative }
+.btn::after, .chip::after, .tab::after, .pill::after, .guide-x::after{
+  content:''; position:absolute; left:0; right:0; top:50%;
+  transform:translateY(-50%); height:44px; min-height:100%;
+}
+/* 交叠的按钮之间不要把热区叠在一起 */
+.row > .btn + .btn::after{ left:2px }
+@media (max-width:760px){
+  /* 手机上再抬一手：视觉也稍微放大一点，别只扩热区 */
+  .btn.sm{ padding:8px 13px; font-size:13px }
+  .chip{ padding:9px 15px; font-size:13.5px }
+}
+
+/* ==========================================================================
+   页面标题 —— 解决"层级塌陷"和"不知道这是哪一页"
+   之前每个页面直接就是卡片，没有页面级标题，卡片标题(13px)比正文(14.5px)还小
+   ========================================================================== */
+.page-head{
+  display:flex; align-items:flex-start; gap:13px;
+  padding:6px 2px 18px;
+}
+.page-head .ph-ico{
+  width:42px; height:42px; border-radius:13px; flex:none;
+  display:grid; place-items:center; font-size:20px;
+  background:color-mix(in srgb, var(--mc, var(--accent)) 15%, transparent);
+  border:1px solid color-mix(in srgb, var(--mc, var(--accent)) 28%, transparent);
+}
+.page-head h1{
+  font-size:var(--fs-page); font-weight:760; letter-spacing:-.03em; line-height:1.25;
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+}
+.page-head h1 .ph-n{
+  font-size:12px; font-weight:700; color:var(--mc, var(--accent));
+  background:color-mix(in srgb, var(--mc, var(--accent)) 13%, transparent);
+  border-radius:99px; padding:2px 9px; letter-spacing:0;
+}
+.page-head p{ margin:6px 0 0; font-size:12.8px; color:var(--text-3); line-height:1.65; max-width:56ch }
+.page-head .ph-act{ margin-left:auto; flex:none; display:flex; gap:8px; align-items:center }
+@media (max-width:640px){
+  .page-head{ padding:2px 0 14px; gap:11px }
+  .page-head .ph-ico{ width:36px; height:36px; font-size:17px; border-radius:11px }
+  .page-head h1{ font-size:19px }
+  .page-head .ph-act{ margin-left:0; width:100% }
+}
+
+/* ==========================================================================
+   弹窗（新建表单收进来了，不再常驻占首屏）
+   ========================================================================== */
+.modal{
+  position:fixed; inset:0; z-index:95;
+  background:rgba(12,15,23,.5);
+  -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
+  display:none; align-items:flex-end; justify-content:center; padding:0;
+}
+.modal.show{ display:flex; animation:fadeIn .2s var(--ease) }
+.modal-box{
+  background:var(--surface); width:100%; max-width:560px;
+  max-height:88vh; display:flex; flex-direction:column;
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  box-shadow:var(--sh-3); animation:sheetIn .34s var(--ease);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+@media (min-width:761px){
+  .modal{ align-items:center; padding:24px }
+  .modal-box{ border-radius:var(--r-xl) }
+}
+.modal-head{
+  padding:20px 22px 14px; display:flex; align-items:center; gap:11px;
+  border-bottom:1px solid var(--line); flex:none;
+}
+.modal-head h2{ font-size:16.5px; font-weight:720; margin-right:auto }
+.modal-body{ padding:18px 22px; overflow-y:auto; flex:1 }
+.modal-foot{
+  padding:14px 22px 18px; border-top:1px solid var(--line);
+  display:flex; gap:9px; align-items:center; flex:none;
+}
+.modal-foot .btn.pri{ margin-left:auto; min-width:120px }
+@keyframes sheetIn{ from{ opacity:0; transform:translateY(22px) } to{ opacity:1; transform:none } }
+
+/* ==========================================================================
+   全局搜索
+   ========================================================================== */
+.search-hit{
+  display:flex; gap:11px; align-items:flex-start; padding:12px 0;
+  border-bottom:1px solid var(--line); cursor:pointer;
+}
+.search-hit:hover{ background:var(--surface-3); margin:0 -10px; padding:12px 10px; border-radius:9px }
+.search-hit .sh-i{ font-size:15px; flex:none; width:20px; text-align:center; padding-top:2px }
+.search-hit .sh-b{ flex:1; min-width:0 }
+.search-hit .sh-t{ font-size:13.5px; font-weight:620; word-break:break-word }
+.search-hit .sh-m{ font-size:12px; color:var(--text-3); margin-top:3px; line-height:1.6 }
+.search-hit mark{ background:color-mix(in srgb, var(--warn) 30%, transparent); color:inherit; border-radius:3px; padding:0 2px }
+
+/* ==========================================================================
+   回收站
+   ========================================================================== */
+.trash-item{
+  display:flex; gap:11px; align-items:center; padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+.trash-item:last-child{ border-bottom:0 }
+.trash-item .ti-b{ flex:1; min-width:0 }
+.trash-item .ti-t{ font-size:13.5px; font-weight:600; word-break:break-word }
+.trash-item .ti-m{ font-size:11.5px; color:var(--text-3); margin-top:2px }
+
+/* ==========================================================================
+   热力图（打卡坚持度）
+   ========================================================================== */
+.heat{ display:flex; gap:3px; overflow-x:auto; padding:4px 0 6px }
+.heat-col{ display:flex; flex-direction:column; gap:3px; flex:none }
+.heat-c{
+  width:13px; height:13px; border-radius:3.5px;
+  background:var(--surface-3); transition:transform .12s var(--ease);
+}
+.heat-c:hover{ transform:scale(1.35) }
+.heat-c.l1{ background:color-mix(in srgb, var(--m-task) 32%, transparent) }
+.heat-c.l2{ background:color-mix(in srgb, var(--m-task) 56%, transparent) }
+.heat-c.l3{ background:color-mix(in srgb, var(--m-task) 78%, transparent) }
+.heat-c.l4{ background:var(--m-task) }
+.heat-c.off{ background:transparent; border:1px dashed var(--line-strong) }
+
+/* ==========================================================================
+   AI 助手
+   ========================================================================== */
+.ai-log{ display:flex; flex-direction:column; gap:11px }
+.ai-msg{ font-size:13.5px; line-height:1.8; border-radius:var(--r-md); padding:11px 14px; white-space:pre-wrap; word-break:break-word }
+.ai-msg.me{ background:var(--accent-soft); color:var(--accent-deep); align-self:flex-end; max-width:86% }
+.ai-msg.ai{ background:var(--surface-2); border:1px solid var(--line); align-self:flex-start; max-width:94% }
+.ai-msg.err{ background:var(--bad-soft); color:var(--bad) }
+.ai-msg.think{ color:var(--text-3); font-style:italic }
+.ai-chips{ display:flex; gap:7px; flex-wrap:wrap; margin-top:4px }
+
+/* ==========================================================================
+   决策卡 & 任务计时
+   ========================================================================== */
+.dec{
+  border:1px solid var(--line); border-radius:var(--r-md); padding:15px;
+  margin-bottom:10px; background:var(--surface-2); position:relative; overflow:hidden;
+}
+.dec::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--m-dec);
+}
+.dec-t{ font-weight:680; font-size:14.5px; margin-bottom:7px }
+.dec-row{ display:flex; gap:8px; margin-top:7px; font-size:12.5px; color:var(--text-2); line-height:1.7 }
+.dec-row .dk{ flex:none; color:var(--text-3); font-weight:650; min-width:60px }
+.dec-row .dv{ flex:1; min-width:0; word-break:break-word }
+
+.timer{ display:inline-flex; align-items:center; gap:7px; font-variant-numeric:tabular-nums }
+.timer .tt{ font-weight:700; font-size:13px; min-width:52px }
+.timer .tt.run{ color:var(--m-task) }
 
 /* ---------------- 卡片 ---------------- */
 .card{
@@ -536,6 +726,13 @@ table.hgrid thead th{ font-size:10.5px; color:var(--text-3); font-weight:600; pa
 .toast.show{ opacity:1; transform:translate(-50%,0) scale(1) }
 .toast.t-ok{ background:var(--ok); color:#fff }
 .toast.t-err{ background:var(--bad); color:#fff }
+.toast.has-act{ padding-right:8px }
+.toast-act{
+  border:0; background:rgba(255,255,255,.22); color:inherit;
+  font-size:12.5px; font-weight:700; padding:5px 12px; border-radius:999px;
+  margin-left:4px; transition:background .18s var(--ease);
+}
+.toast-act:hover{ background:rgba(255,255,255,.36) }
 
 /* ---------------- 安装提示条 ---------------- */
 .install-bar{
@@ -572,6 +769,7 @@ table.hgrid thead th{ font-size:10.5px; color:var(--text-3); font-weight:600; pa
 .pill.s-err{ background:var(--bad-soft); color:var(--bad); border-color:transparent }
 .pill.s-err .dot{ background:var(--bad) }
 .pill.s-off{ background:var(--surface-3); color:var(--text-3) }
+.pill.on-gear{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent-line) }
 
 .steps{ margin:16px 0 0; padding:0; list-style:none; counter-reset:step }
 .steps li{
@@ -760,12 +958,14 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
     <div class="brand">
       <span class="brand-ico">📓</span>
       <span class="brand-t">我的记录表</span>
+      <i class="dot" id="saveDot" title="保存状态"></i>
     </div>
-    <span class="pill" id="saveState"><i class="dot"></i><span id="saveText">就绪</span></span>
-    <button class="pill clickable" id="helpBtn" data-act="guide-open"
-            title="怎么用" aria-label="怎么用">❓ <span>怎么用</span></button>
+    <button class="pill clickable" data-act="search-open" title="搜索（Ctrl+K）" aria-label="搜索">
+      🔍<span class="hide-xs">搜索</span></button>
+    <button class="pill clickable" id="topGear" data-act="go" data-tab="data" title="设置" aria-label="设置">
+      ⚙️<span class="hide-xs">设置</span></button>
     <button class="pill clickable s-off" id="syncPill" data-act="go" data-tab="data"
-            title="云端同步"><i class="dot"></i><span id="syncText">未开启同步</span></button>
+            title="云端同步"><i class="dot"></i><span id="syncText">未开启</span></button>
   </div>
   <nav class="tabs"><div class="tabs-inner" id="tabs"></div></nav>
 </div>
@@ -773,6 +973,59 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
 <main class="wrap" id="app"></main>
 <nav class="mnav" id="mnav"></nav>
 <div class="toast" id="toast"></div>
+
+<!-- 新建弹窗：任务 / 灵感 / 决策 共用 -->
+<div class="modal" id="modal">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="ph-ico" id="modalIco"
+            style="--mc:var(--accent);width:34px;height:34px;font-size:16px;border-radius:11px">✍️</span>
+      <h2 id="modalTitle">记一笔</h2>
+      <button class="guide-x" data-act="modal-close" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <span class="hint" id="modalHint"></span>
+      <button class="btn pri" data-act="modal-save" id="modalSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 全局搜索 -->
+<div class="modal" id="searchModal">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="ph-ico" style="--mc:var(--m-review);width:34px;height:34px;font-size:16px;border-radius:11px">🔍</span>
+      <h2>搜索</h2>
+      <button class="guide-x" data-act="search-close" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="searchInput" placeholder="搜日记、任务、灵感、决策…" autocomplete="off">
+      <div id="searchResults" style="margin-top:14px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AI 助手 -->
+<div class="modal" id="aiModal">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="ph-ico" style="--mc:var(--m-note);width:34px;height:34px;font-size:16px;border-radius:11px">🤖</span>
+      <h2>AI 助手</h2>
+      <button class="guide-x" data-act="ai-settings" aria-label="设置">⚙️</button>
+      <button class="guide-x" data-act="ai-close" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="ai-log" id="aiLog"></div>
+      <div class="ai-chips" id="aiChips"></div>
+    </div>
+    <div class="modal-foot" style="gap:8px">
+      <input type="text" id="aiInput" placeholder="问点什么，或让它总结你这周" autocomplete="off" style="flex:1">
+      <button class="btn pri" data-act="ai-send" id="aiSend" style="min-width:auto">发送</button>
+    </div>
+  </div>
+</div>
+
 <div class="guide" id="guide">
   <div class="guide-box" role="dialog" aria-modal="true" aria-label="怎么用">
     <div class="guide-head">
@@ -812,7 +1065,8 @@ var STORE_KEY = 'life_records_v1';
 var storageOK = true;
 var DB = null;
 var TAB = 'today';
-var ui = { todayDate:null, habitDate:null, week:null, noteFilter:'all', taskFilter:'all' };
+var ui = { todayDate:null, habitDate:null, week:null, noteFilter:'all', taskFilter:'all',
+           taskShowFilter:false, aiSettings:false, searchQ:'' };
 var CHARTS = {};   /* 图表元数据，供悬停提示使用 */
 
 /* ---------------- 工具 ---------------- */
@@ -901,9 +1155,11 @@ function blankDB(){
     version: 2,
     createdAt: new Date().toISOString(),
     lastExport: null,   /* 上次导出备份的日期，用于备份提醒 */
-    tomb: {},           /* 删除墓碑 { 'task:abc': 时间戳, 'daily:2026-09-25': 时间戳 } */
+    tomb: {},           /* 硬删除的墓碑（只在"彻底删除"时用；平时删除走 deleted 软删除） */
     daily: {},          /* { 'YYYY-MM-DD': {mood,energy,line,sleep,exercise,tags,note,updatedAt} } */
-    tasks: [],          /* [{id,date,title,type,status,output,blocker,minutes,project,drain,updatedAt}] */
+    tasks: [],          /* [{id,date,title,type,status,output,blocker,minutes(实际耗时),estMin(预计),
+                            project,drain,doneDate,deferCount,deleted,deletedAt,updatedAt}] */
+    decisions: [],      /* [{id,date,title,options,conclusion,basis,status,review,deleted,deletedAt,updatedAt}] */
     habits: {
       /* 出厂预置的习惯，updatedAt 故意设成 0：
          它们是"默认值"不是"用户改过的内容"。如果给它们盖当前时间，
@@ -947,6 +1203,7 @@ function normalize(db){
       ts:  (db.habits && db.habits.ts  && typeof db.habits.ts==='object')  ? db.habits.ts  : {}
     },
     notes: Array.isArray(db.notes) ? db.notes : [],
+    decisions: Array.isArray(db.decisions) ? db.decisions : [],
     weekly: (db.weekly && typeof db.weekly==='object') ? db.weekly : {},
     goals: Array.isArray(db.goals) ? db.goals : []
   };
@@ -956,7 +1213,7 @@ function normalize(db){
     var r = out.daily[k];
     if(r && typeof r==='object' && r.updatedAt==null) r.updatedAt = base;
   });
-  ['tasks','notes','goals'].forEach(function(kind){
+  ['tasks','notes','goals','decisions'].forEach(function(kind){
     out[kind].forEach(function(r){
       if(r && typeof r==='object' && r.updatedAt==null) r.updatedAt = base;
     });
@@ -1011,24 +1268,106 @@ function save(immediate){
   if(!suppressSync) scheduleSync();
 }
 var pillTimer = null;
+/* 保存反馈改成一个会闪的圆点 —— 顶栏要腾地方给搜索和设置 */
 function setPill(text, cls){
-  var el = $('#saveState'), tx = $('#saveText');
-  if(!el || !tx) return;
-  tx.textContent = text;
-  el.className = 'pill' + (cls ? ' '+cls : '');
+  var d = $('#saveDot');
+  if(!d) return;
+  d.className = 'dot' + (cls === 'ok' ? ' ok' : cls === 'err' ? ' err' : '');
+  d.title = text || '已保存';
   clearTimeout(pillTimer);
-  if(cls==='ok') pillTimer = setTimeout(function(){
-    el.className = 'pill'; tx.textContent = '就绪';
-  }, 1600);
+  if(cls === 'ok') pillTimer = setTimeout(function(){ d.className = 'dot'; }, 1600);
 }
-var toastTimer = null;
-function toast(msg, type){
+var toastTimer = null, toastAction = null;
+function toast(msg, type, actionLabel, actionFn){
   var el = $('#toast');
   if(!el) return;
-  el.textContent = msg;
-  el.className = 'toast show' + (type ? ' t-'+type : '');
+  toastAction = actionFn || null;
+  el.innerHTML = esc(msg) + (actionLabel
+    ? ' <button class="toast-act" data-act="toast-act">'+esc(actionLabel)+'</button>' : '');
+  el.className = 'toast show' + (type ? ' t-'+type : '') + (actionLabel ? ' has-act' : '');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ el.className = 'toast'; }, 2200);
+  toastTimer = setTimeout(function(){ el.className = 'toast'; toastAction = null; },
+                          actionLabel ? 6000 : 2200);
+}
+function runToastAction(){
+  var fn = toastAction;
+  toastAction = null;
+  clearTimeout(toastTimer);
+  var el = $('#toast'); if(el) el.className = 'toast';
+  if(typeof fn === 'function') fn();
+}
+/* 删除 → 软删除 + 一个能撤销的提示。误删不再是永久损失。 */
+function deleteWithUndo(kind, id, label){
+  var r = softDelete(kind, id);
+  if(!r){ toast('没找到这条记录','err'); return; }
+  save(true);
+  toast((label || '记录') + '已移到回收站', '', '撤销', function(){
+    undelete(kind, id);
+    save(true);
+    toast('已恢复','ok');
+    rerenderKeepScroll();
+  });
+  rerenderKeepScroll();
+}
+/* 一行速记：灵感最重要的是快 */
+function quickNote(){
+  var e = $('#n_quick');
+  var v = ((e && e.value) || '').trim();
+  if(!v){ toast('写点什么再存','err'); if(e && e.focus) e.focus(); return; }
+  DB.notes.push({
+    id: uid(), date: (ui.todayDate || todayStr()), content: v,
+    type:'灵感', source:'', status:'待整理', updatedAt: Date.now()
+  });
+  save(true);
+  toast('已收进灵感池','ok');
+  rerenderKeepScroll();
+  var ni = $('#n_quick'); if(ni && ni.focus) ni.focus();
+}
+
+/* ---------------- 搜索 / AI 的开关与设置 ---------------- */
+function openSearch(){
+  var m = $('#searchModal'); if(!m) return;
+  m.classList.add('show');
+  var q = $('#searchInput'); if(q) q.value = '';
+  var r = $('#searchResults'); if(r) r.innerHTML = searchResultsHTML('');
+  setTimeout(function(){ var i = $('#searchInput'); if(i && i.focus) i.focus(); }, 130);
+}
+function closeSearch(){ var m = $('#searchModal'); if(m) m.classList.remove('show'); }
+function liveSearch(){
+  var q = $('#searchInput'), r = $('#searchResults');
+  if(r) r.innerHTML = searchResultsHTML(q ? q.value : '');
+}
+function openAI(){
+  var m = $('#aiModal'); if(!m) return;
+  m.classList.add('show');
+  renderAILog();
+  setTimeout(function(){ var i = $('#aiInput'); if(i && i.focus) i.focus(); }, 130);
+}
+function closeAI(){ var m = $('#aiModal'); if(m) m.classList.remove('show'); }
+function aiOpenOrSettings(){
+  if(AI.key) openAI();
+  else { ui.aiSettings = true; go('data'); }
+}
+function aiPreset(q){
+  AI.log.length = 0;
+  aiAsk(q);
+}
+function aiSendFromInput(){
+  var e = $('#aiInput');
+  var v = ((e && e.value) || '').trim();
+  if(!v) return;
+  if(e) e.value = '';
+  aiAsk(v);
+}
+function saveAISettings(){
+  var k = $('#ai_key'), u = $('#ai_url'), m = $('#ai_model');
+  AI.key = ((k && k.value) || '').trim();
+  AI.url = ((u && u.value) || '').trim() || AI_DEF_URL;
+  AI.model = ((m && m.value) || '').trim() || AI_DEF_MODEL;
+  saveAI();
+  ui.aiSettings = false;
+  toast(AI.key ? '已保存' : '已清空配置', AI.key ? 'ok' : '');
+  render();
 }
 
 /* ---------------- 数据访问 ---------------- */
@@ -1043,14 +1382,95 @@ function hasDaily(date){
   var d = DB.daily[date];
   return !!(d && (d.mood!=null || d.energy!=null || (d.line&&d.line.trim())));
 }
-function tasksOn(date){ return DB.tasks.filter(function(t){ return t.date===date; }); }
+
+/* ==========================================================================
+   软删除 / 回收站
+   平时删除不真删，只打 deleted 标记 —— 这样能撤销、能进回收站，
+   而且同步时它只是一条"被改过的记录"，天然跟着合并走，不需要墓碑。
+   只有"彻底删除"（回收站里手动删、或超过 30 天自动清理）才真的移出数组并立墓碑。
+   ========================================================================== */
+var TRASH_DAYS = 30;
+var KIND_TABLE = { task:'tasks', note:'notes', goal:'goals', decision:'decisions' };
+var KIND_ICON  = { task:'✅', note:'💡', goal:'🎯', decision:'🧭' };
+var KIND_NAME  = { task:'任务', note:'灵感', goal:'目标', decision:'决策' };
+
+function alive(list){
+  return (list||[]).filter(function(r){ return r && !r.deleted; });
+}
+function findRec(kind, id){
+  var list = DB[KIND_TABLE[kind]] || [];
+  for(var i=0;i<list.length;i++){ if(list[i] && list[i].id===id) return list[i]; }
+  return null;
+}
+function softDelete(kind, id){
+  var r = findRec(kind, id);
+  if(!r) return null;
+  r.deleted = true;
+  r.deletedAt = Date.now();
+  touch(r);
+  return r;
+}
+function undelete(kind, id){
+  var r = findRec(kind, id);
+  if(!r) return null;
+  delete r.deleted;
+  delete r.deletedAt;
+  touch(r);
+  return r;
+}
+/* 彻底删除：移出数组 + 立墓碑，防止别的设备把它推回来 */
+function purgeRecord(kind, id){
+  var key = KIND_TABLE[kind];
+  if(!key || !Array.isArray(DB[key])) return;
+  tombstone(kind, id);
+  DB[key] = DB[key].filter(function(r){ return !(r && r.id===id); });
+}
+/* 回收站里的东西，按类型和删除时间倒序 */
+function trashList(){
+  var out = [];
+  Object.keys(KIND_TABLE).forEach(function(kind){
+    (DB[KIND_TABLE[kind]] || []).forEach(function(r){
+      if(r && r.deleted) out.push({ kind:kind, rec:r, at:numOr(r.deletedAt, 0) });
+    });
+  });
+  out.sort(function(a,b){ return b.at - a.at; });
+  return out;
+}
+/* 超过 30 天的自动彻底删除 */
+function autoPurgeTrash(){
+  var cut = Date.now() - TRASH_DAYS*86400000;
+  var n = 0;
+  Object.keys(KIND_TABLE).forEach(function(kind){
+    (DB[KIND_TABLE[kind]] || []).slice().forEach(function(r){
+      if(r && r.deleted && numOr(r.deletedAt, 0) < cut){ purgeRecord(kind, r.id); n++; }
+    });
+  });
+  if(n) save(true);
+  return n;
+}
+function purgeAllTrash(){
+  var list = trashList(), n = 0;
+  list.forEach(function(x){ purgeRecord(x.kind, x.rec.id); n++; });
+  if(n) save(true);
+  return n;
+}
+function tasksOn(date){ return alive(DB.tasks).filter(function(t){ return t.date===date; }); }
 function tasksIn(dates){
   var set = {}; dates.forEach(function(d){ set[d]=1; });
-  return DB.tasks.filter(function(t){ return set[t.date]; });
+  return alive(DB.tasks).filter(function(t){ return set[t.date]; });
 }
 function notesIn(dates){
   var set = {}; dates.forEach(function(d){ set[d]=1; });
-  return DB.notes.filter(function(n){ return set[n.date]; });
+  return alive(DB.notes).filter(function(n){ return set[n.date]; });
+}
+function decisionsIn(dates){
+  var set = {}; dates.forEach(function(d){ set[d]=1; });
+  return alive(DB.decisions).filter(function(n){ return set[n.date]; });
+}
+function decisionsAll(){
+  return alive(DB.decisions).slice().sort(function(a,b){
+    return (a.date||'') < (b.date||'') ? 1 : ((a.date||'') > (b.date||'') ? -1 : 0);
+  });
 }
 function habitRate(habitId, dates){
   var total = 0, ok = 0;
@@ -2204,22 +2624,94 @@ function viewToday(){
 /* ==========================================================================
    视图：任务
    ========================================================================== */
+/* 任务计时器：点一下开始，再点一下停止，把实际耗时累加进去。
+   同一时间只允许一个任务在跑 —— 否则数字就不真实了。 */
+var timerTick = null;
+function fmtDur(ms){
+  var s = Math.max(0, Math.floor(ms/1000));
+  var h = Math.floor(s/3600), m = Math.floor((s%3600)/60), ss = s%60;
+  return (h ? h+':' : '') + pad2(m) + ':' + pad2(ss);
+}
+function runningTask(){
+  var list = alive(DB.tasks);
+  for(var i=0;i<list.length;i++){ if(list[i].timerStart) return list[i]; }
+  return null;
+}
+function toggleTimer(id){
+  var run = runningTask();
+  if(run && run.id === id){
+    var mins = Math.max(1, Math.round((Date.now() - run.timerStart)/60000));
+    run.minutes = (num(run.minutes) || 0) + mins;
+    delete run.timerStart;
+    touch(run); save(true);
+    toast('记了 '+mins+' 分钟','ok');
+    rerenderKeepScroll();
+    return;
+  }
+  if(run){ toast('「'+String(run.title||'').slice(0,12)+'」还在计时，先停掉它','err'); return; }
+  var t = findRec('task', id);
+  if(!t) return;
+  t.timerStart = Date.now();
+  touch(t); save(true);
+  toast('开始计时','ok');
+  rerenderKeepScroll();
+}
+function startTimerTick(){
+  clearInterval(timerTick);
+  timerTick = setInterval(function(){
+    $$('[data-timer]').forEach(function(el){
+      var st = +el.getAttribute('data-timer');
+      if(st) el.textContent = fmtDur(Date.now()-st);
+    });
+  }, 1000);
+}
+
 function taskItemHTML(t){
-  var h = '<div class="item"><div class="item-h"><div class="item-main">';
+  var est = num(t.estMin), act = num(t.minutes);
+  var running = !!t.timerStart;
+  var h = '<div class="item"' + (running ? ' style="border-color:var(--m-task)"' : '') + '>'
+        + '<div class="item-h"><div class="item-main">';
   h += '<div class="item-t">'+esc(t.title||'(未填事项)')+'</div>';
   h += '<div class="item-m">';
   h += '<span class="badge '+(TYPE_BADGE[t.type]||'b-gray')+'">'+esc(t.type||'未分类')+'</span> ';
   h += '<span class="badge '+(ST_BADGE[t.status]||'b-gray')+'">'+esc(t.status||'—')+'</span>';
   if(t.project) h += ' <span class="badge b-gray">'+esc(t.project)+'</span>';
-  if(num(t.minutes)) h += ' <span style="color:var(--text-3);font-weight:600">'+num(t.minutes)+'分钟</span>';
+  if(running){
+    h += ' <span class="timer"><span class="tt run" data-timer="'+t.timerStart+'">'
+       + fmtDur(Date.now()-t.timerStart)+'</span>计时中</span>';
+  }
+  /* 预计 vs 实际 —— 能看出自己的估算偏差，这是最实用的一条自省数据 */
+  if(!running && (est!=null || act!=null)){
+    h += ' <span style="color:var(--text-3);font-weight:600">';
+    if(est!=null && act!=null){
+      var ratio = est>0 ? act/est : null;
+      var tone = ratio==null ? '' :
+        (ratio>1.5 ? 'color:var(--bad)' : (ratio<0.7 ? 'color:var(--warn)' : 'color:var(--ok)'));
+      h += '预计 '+est+' → 实际 <b style="'+tone+'">'+act+'</b> 分';
+    }else if(act!=null){ h += act+' 分钟'; }
+    else { h += '预计 '+est+' 分钟'; }
+    h += '</span>';
+  }
   if(num(t.drain)) h += ' <span style="color:var(--text-3);font-weight:600">耗能'+num(t.drain)+'</span>';
   if(t.output) h += '<div style="margin-top:6px">产出：<b>'+esc(t.output)+'</b></div>';
   if(t.blocker) h += '<div style="margin-top:4px;color:var(--warn);font-weight:600">卡点：'+esc(t.blocker)+'</div>';
   h += '</div></div>';
   h += '<div class="item-date">'+esc(fmtShort(t.date))+'</div>';
+  h += '<button class="btn sm ico ghost" data-act="task-timer" data-id="'+esc(t.id)+'"'
+     + ' title="'+(running?'停止计时':'开始计时')+'" aria-label="计时">'+(running?'⏹':'⏱')+'</button>';
+  h += '<button class="btn sm ico ghost" data-act="task-edit" data-id="'+esc(t.id)+'" title="编辑" aria-label="编辑">✏️</button>';
   h += '<button class="btn sm ico ghost" data-act="task-del" data-id="'+esc(t.id)+'" title="删除" aria-label="删除">✕</button>';
   h += '</div></div>';
   return h;
+}
+
+/* 预计 vs 实际的整体偏差 */
+function estAccuracy(tasks){
+  var est = 0, act = 0, n = 0;
+  (tasks||[]).forEach(function(t){
+    if(num(t.estMin)!=null && num(t.minutes)!=null){ est += num(t.estMin); act += num(t.minutes); n++; }
+  });
+  return { n:n, est:est, act:act, ratio: est>0 ? act/est : null };
 }
 
 function viewTasks(){
@@ -2233,30 +2725,15 @@ function viewTasks(){
 
   var sum = weekSummary(wk);
   var fr = sum.fireRate;
-  var h = '';
+  var ea = estAccuracy(weekTasks);
+  var showF = ui.taskShowFilter || ui.taskFilter !== 'all';
 
-  h += '<section class="card">'
-     + cardHead('＋','记一条任务','<span class="hint">完成或卡住时记一条，不用天天填</span>');
-  h += '<div class="grid g2">';
-  h += '<div class="field"><label class="f">事项 <span class="req">*</span></label>'
-     + '<input type="text" id="t_title" placeholder="动词开头，比如「重写Q4方案」"></div>';
-  h += '<div class="field"><label class="f">日期</label><input type="date" id="t_date" value="'+date+'"></div>';
-  h += '</div>';
-  h += '<div class="grid g3" style="margin-top:14px">';
-  h += '<div class="field"><label class="f">类型 <span class="req">*</span></label>'+selectHTML('t_type', TASK_TYPES, '推进')+'</div>';
-  h += '<div class="field"><label class="f">状态 <span class="req">*</span></label>'+selectHTML('t_status', TASK_STATUS, '完成')+'</div>';
-  h += '<div class="field"><label class="f">耗时（分钟）</label><input type="number" id="t_minutes" min="0" placeholder="60"></div>';
-  h += '</div>';
-  h += '<details class="adv"><summary>选填（产出 / 卡点 / 项目 / 精力消耗）</summary><div><div class="grid g2">';
-  h += '<div class="field"><label class="f">产出</label><input type="text" id="t_output" placeholder="具体交付物，没产出的不算数"></div>';
-  h += '<div class="field"><label class="f">关联项目</label><input type="text" id="t_project" placeholder="项目名"></div>';
-  h += '<div class="field"><label class="f">卡点</label><input type="text" id="t_blocker" placeholder="阻塞原因，写具体"></div>';
-  h += '<div class="field"><label class="f">精力消耗 1-5</label><input type="number" id="t_drain" min="1" max="5" placeholder="3"></div>';
-  h += '</div></div></details>';
-  h += '<div class="row" style="margin-top:18px"><button class="btn pri" data-act="task-add">+ 添加任务</button></div>';
-  h += '</section>';
+  /* 页头放主操作 —— 表单不再常驻占着首屏 */
+  var h = pageHead('tasks', {
+    count: allCount + ' 条',
+    actions: '<button class="btn pri" data-act="new-task">＋ 记一条任务</button>'
+  });
 
-  h += '<div class="sec-title">'+esc(weekLabel(wk))+' 统计</div>';
   h += '<div class="stats">';
   h += statHTML({icon:'📋', k:'任务总数', v:sum.taskTotal,
                  d:'完成 '+sum.taskDone+' · 阻塞 '+sum.taskBlocked});
@@ -2265,6 +2742,12 @@ function viewTasks(){
   h += statHTML({icon:'🔥', k:'救火占比', v:pct(fr), tone:fireLevel(fr),
                  d: fireAlert(fr) ? '⚠ 已达30%，问题在流程' : ''});
   h += statHTML({icon:'⏱', k:'总耗时', v:r1(sum.minutes/60), unit:'h'});
+  if(ea.n){
+    h += statHTML({icon:'🎯', k:'估算偏差',
+      v:(ea.ratio==null ? '—' : (ea.ratio>=1?'+':'')+Math.round((ea.ratio-1)*100)+'%'),
+      tone:(ea.ratio==null ? '' : (ea.ratio>1.5?'bad':(ea.ratio<0.7?'warn':'good'))),
+      d:ea.n+' 条有预计也有实际'});
+  }
   h += '</div>';
 
   if(fireAlert(fr)){
@@ -2273,21 +2756,35 @@ function viewTasks(){
        + '这通常不是时间管理问题，而是流程或人力问题——写进周复盘里。</span></div>';
   }
 
+  if(ea.n >= 3 && ea.ratio != null && ea.ratio > 1.4){
+    h += '<div class="note" style="margin-top:12px"><span class="note-body">'
+       + '有 ' + ea.n + ' 条任务同时填了「预计」和「实际」，实际比预计多花了 '
+       + '<b>'+Math.round((ea.ratio-1)*100)+'%</b>。'
+       + '下次估时间的时候，先把这个系数加上。</span></div>';
+  }
+
   h += '<section class="card" style="margin-top:22px">'
      + cardHead('📋','本周任务 · '+rows.length+' 条','');
-  h += '<div class="chips" style="margin-bottom:14px">';
-  h += '<button class="chip'+(ui.taskFilter==='all'?' on':'')+'" data-act="task-filter" data-f="all">全部 '+allCount+'</button>';
-  TASK_TYPES.forEach(function(t){
-    var c = weekTasks.filter(function(x){ return x.type===t; }).length;
-    h += '<button class="chip'+(ui.taskFilter===t?' on':'')+'" data-act="task-filter" data-f="'+esc(t)+'">'+esc(t)+' '+c+'</button>';
-  });
-  h += '</div>';
+  /* 筛选条收起来只占一行 */
+  h += '<div class="row" style="margin-bottom:'+(showF?'12px':'0')+'">'
+     + '<button class="btn sm" data-act="task-toggle-filter">'
+     + (showF ? '收起筛选' : '筛选' + (ui.taskFilter!=='all' ? '：'+esc(ui.taskFilter) : ''))
+     + '</button></div>';
+  if(showF){
+    h += '<div class="chips" style="margin-bottom:14px">';
+    h += '<button class="chip'+(ui.taskFilter==='all'?' on':'')+'" data-act="task-filter" data-f="all">全部 '+allCount+'</button>';
+    TASK_TYPES.forEach(function(t){
+      var c = weekTasks.filter(function(x){ return x.type===t; }).length;
+      h += '<button class="chip'+(ui.taskFilter===t?' on':'')+'" data-act="task-filter" data-f="'+esc(t)+'">'+esc(t)+' '+c+'</button>';
+    });
+    h += '</div>';
+  }
   if(!rows.length){
     h += emptyHTML('📝',
       allCount ? '这个类型下没有任务' : '本周还没有任务记录',
       allCount ? '换一个筛选条件看看'
                : '完成一件事、或者被卡住一件事的时候，回来记一条',
-      allCount ? '' : '<button class="btn sm pri" data-act="focus-title">现在记一条</button>');
+      allCount ? '' : '<button class="btn pri" data-act="new-task">现在记一条</button>');
   }else{
     rows.forEach(function(t){ h += taskItemHTML(t); });
   }
@@ -2317,6 +2814,29 @@ function habitToggleListHTML(date){
   return h + '</div>';
 }
 
+/* 热力图：12 周 × 7 天，比 30 天网格更容易一眼看出"哪段时间在坚持、哪段时间断了" */
+function heatmapHTML(weeks){
+  weeks = weeks || 12;
+  var end = todayStr();
+  var start = addDays(end, -(weeks*7 - 1));
+  var cfg = DB.habits.config;
+  var h = '<div class="heat">';
+  for(var w=0; w<weeks; w++){
+    h += '<div class="heat-col">';
+    for(var d=0; d<7; d++){
+      var day = addDays(start, w*7+d);
+      if(day > end){ h += '<div class="heat-c" style="visibility:hidden"></div>'; continue; }
+      var row = DB.habits.log[day];
+      if(!row || !cfg.length){ h += '<div class="heat-c off"></div>'; continue; }
+      var done = cfg.filter(function(hb){ return row[hb.id]===true; }).length;
+      var lv = done===0 ? 0 : Math.max(1, Math.ceil(done/cfg.length*4));
+      h += '<div class="heat-c'+(lv>0?(' l'+lv):'')+'" title="'+esc(fmtFull(day)+' · '+done+'/'+cfg.length)+'"></div>';
+    }
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+
 function viewHabits(){
   var date = ui.habitDate || todayStr();
   var row = DB.habits.log[date] || {};
@@ -2324,16 +2844,17 @@ function viewHabits(){
   var dates30 = lastNDates(30, date);
   var doneToday = cfg.filter(function(hb){ return row[hb.id]===true; }).length;
   var allDone = cfg.length>0 && doneToday===cfg.length;
-  var h = '';
+
+  var h = pageHead('habits', {
+    count: cfg.length + ' 项',
+    actions: '<button class="btn sm ico" data-act="habit-prev" aria-label="前一天">‹</button>'
+           + '<input type="date" id="habitDateInput" value="'+date+'" style="width:146px;padding:8px 10px;font-size:13px">'
+           + '<button class="btn sm ico" data-act="habit-next" aria-label="后一天">›</button>'
+           + (date!==todayStr() ? '<button class="btn sm pri" data-act="habit-jump">今天</button>' : '')
+  });
 
   h += '<section class="card">'
-     + cardHead('🔥','打卡',
-       '<div class="row">'
-       + '<button class="btn sm ico" data-act="habit-prev" aria-label="前一天">‹</button>'
-       + '<input type="date" id="habitDateInput" value="'+date+'" style="width:146px;padding:6px 10px;font-size:13px">'
-       + '<button class="btn sm ico" data-act="habit-next" aria-label="后一天">›</button>'
-       + (date!==todayStr() ? '<button class="btn sm pri" data-act="habit-jump">今天</button>' : '')
-       + '</div>');
+     + cardHead('🔥', esc(fmtFull(date)) + ' 的打卡','');
 
   h += '<div class="row" style="gap:16px;margin-bottom:18px;align-items:center">';
   h += ringHTML(cfg.length ? doneToday/cfg.length : 0, doneToday+'/'+cfg.length,
@@ -2379,6 +2900,19 @@ function viewHabits(){
   h += '<div class="legend"><span><i style="background:var(--ok)"></i>已完成</span>'
      + '<span><i style="background:var(--bad-soft)"></i>未完成</span>'
      + '<span><i style="background:transparent;border:1.5px dashed var(--line-strong)"></i>未记录</span></div>';
+  h += '</section>';
+
+  /* 热力图：一眼看 12 周的坚持节奏 */
+  h += '<section class="card">'
+     + cardHead('🟩','最近 12 周', '<span class="hint">深色 = 那天打勾越多</span>');
+  h += heatmapHTML(12);
+  h += '<div class="legend"><span>少</span>'
+     + '<span><i style="background:var(--surface-3)"></i></span>'
+     + '<span><i style="background:color-mix(in srgb, var(--m-task) 32%, transparent)"></i></span>'
+     + '<span><i style="background:color-mix(in srgb, var(--m-task) 56%, transparent)"></i></span>'
+     + '<span><i style="background:color-mix(in srgb, var(--m-task) 78%, transparent)"></i></span>'
+     + '<span><i style="background:var(--m-task)"></i></span>'
+     + '<span>多</span></div>';
 
   h += '<div class="sec-title" style="margin-top:24px">近 30 天打卡率</div>';
   h += '<div class="stats">';
@@ -2423,6 +2957,7 @@ function noteItemHTML(n){
   if(n.source) h += ' <span style="color:var(--text-3)">来源：'+esc(n.source)+'</span>';
   h += '</div></div>';
   h += '<div class="item-date">'+esc(fmtShort(n.date))+'</div>';
+  h += '<button class="btn sm ico ghost" data-act="note-edit" data-id="'+esc(n.id)+'" title="编辑" aria-label="编辑">✏️</button>';
   h += '<button class="btn sm ico ghost" data-act="note-del" data-id="'+esc(n.id)+'" title="删除" aria-label="删除">✕</button>';
   h += '</div>';
   h += '<div class="row" style="margin-top:11px;gap:7px">';
@@ -2436,25 +2971,24 @@ function noteItemHTML(n){
 
 function viewNotes(){
   var date = ui.todayDate || todayStr();
-  var all = DB.notes.slice().sort(function(a,b){ return a.date<b.date?1:(a.date>b.date?-1:0); });
+  var all = alive(DB.notes).sort(function(a,b){ return a.date<b.date?1:(a.date>b.date?-1:0); });
   var pending = all.filter(function(n){ return !n.status || n.status==='待整理'; });
   var rows = ui.noteFilter==='all' ? all : all.filter(function(n){ return (n.status||'待整理')===ui.noteFilter; });
-  var h = '';
 
-  h += '<section class="card">'
-     + cardHead('💡','快速捕捉','<span class="hint">想到什么就写，不求通顺</span>');
-  h += '<div class="field"><textarea id="n_content"'
-     + ' placeholder="想到什么就写下来…（Ctrl+Enter 快速保存）" style="min-height:84px"></textarea></div>';
-  h += '<div class="grid g3" style="margin-top:14px">';
-  h += '<div class="field"><label class="f">类型</label>'+selectHTML('n_type', NOTE_TYPES, '灵感')+'</div>';
-  h += '<div class="field"><label class="f">来源</label><input type="text" id="n_source" placeholder="书名 / 文章 / 谁说的"></div>';
-  h += '<div class="field"><label class="f">日期</label><input type="date" id="n_date" value="'+date+'"></div>';
-  h += '</div>';
-  h += '<div class="row" style="margin-top:18px"><button class="btn pri" data-act="note-add">+ 保存</button>';
-  h += pending.length
-     ? '<span class="hint">待整理 <b style="color:var(--warn)">'+pending.length+'</b> 条 · 整理是每周的事</span>'
-     : '<span class="hint">✓ 没有待整理的</span>';
-  h += '</div></section>';
+  var h = pageHead('notes', {
+    count: all.length + ' 条',
+    purpose: pending.length
+      ? ('待整理 ' + pending.length + ' 条 —— 想到什么就丢进来，整理是每周的事')
+      : '想到什么就丢进来，当场不用整理',
+    actions: '<button class="btn" data-act="new-note">＋ 详细记录</button>'
+  });
+
+  /* 一行速记：灵感最重要的是"快"，不能先让你填四个框 */
+  h += '<section class="card tight" style="margin-bottom:16px">'
+     + '<div class="row" style="flex-wrap:nowrap;gap:8px">'
+     + '<input type="text" id="n_quick" placeholder="想到什么？回车即存" style="flex:1;min-width:0">'
+     + '<button class="btn pri" data-act="note-quick" style="flex:none">存</button>'
+     + '</div></section>';
 
   h += '<section class="card">' + cardHead('🗂','灵感池 · '+rows.length+' 条','');
   h += '<div class="chips" style="margin-bottom:14px">';
@@ -2472,6 +3006,67 @@ function viewNotes(){
   }else{
     rows.forEach(function(n){ h += noteItemHTML(n); });
   }
+  h += '</section>';
+  return h;
+}
+
+/* ==========================================================================
+   视图：决策
+   借鉴自 每日工作台 的「决策记录」表。价值在于：把"当时怎么想的"变成可检索的资产。
+   ========================================================================== */
+function decisionHTML(d){
+  var h = '<div class="dec">';
+  h += '<div class="row" style="align-items:flex-start;gap:8px;flex-wrap:nowrap">';
+  h += '<div style="flex:1;min-width:0">';
+  h += '<div class="dec-t">'+esc(d.title||'(无标题)')+'</div>';
+  h += '<div class="row" style="gap:7px">';
+  h += '<span class="badge '+(d.status==='已复盘'?'b-green':(d.status==='待定'?'b-amber':'b-blue'))+'">'
+     + esc(d.status||'已决定')+'</span>';
+  if(d.date) h += '<span style="font-size:12px;color:var(--text-3);font-weight:600">'+esc(fmtShort(d.date))+'</span>';
+  h += '</div></div>';
+  h += '<button class="btn sm ico ghost" data-act="dec-edit" data-id="'+esc(d.id)+'" title="编辑" aria-label="编辑">✏️</button>';
+  h += '<button class="btn sm ico ghost" data-act="dec-del" data-id="'+esc(d.id)+'" title="删除" aria-label="删除">✕</button>';
+  h += '</div>';
+  if(d.options){
+    h += '<div class="dec-row"><span class="dk">备选</span><span class="dv">'
+       + esc(d.options).split('\n').join('<br>')+'</span></div>';
+  }
+  if(d.conclusion) h += '<div class="dec-row"><span class="dk">结论</span><span class="dv"><b>'+esc(d.conclusion)+'</b></span></div>';
+  if(d.basis) h += '<div class="dec-row"><span class="dk">依据</span><span class="dv">'+esc(d.basis)+'</span></div>';
+  h += '<div class="row" style="margin-top:11px">'
+     + '<input type="text" data-act="dec-review" data-id="'+esc(d.id)+'"'
+     + ' placeholder="事后复盘：这个决定后来怎么样了？" value="'+esc(d.review||'')+'"'
+     + ' style="flex:1;min-width:150px"></div>';
+  h += '</div>';
+  return h;
+}
+
+function viewDecisions(){
+  var all = decisionsAll();
+  var todo = all.filter(function(d){ return d.status !== '已复盘'; });
+  var h = pageHead('decisions', {
+    count: all.length + ' 个',
+    actions: '<button class="btn pri" data-act="new-decision">＋ 记一个决策</button>'
+  });
+
+  if(!all.length){
+    h += '<section class="card">'
+       + emptyHTML('🧭','还没有决策记录',
+           '遇到要拍板的事就记一条：备选方案、最终结论、以及「当时为什么这么判断」。'
+           + '半年后回头看，这是最值钱的东西 —— 因为人最擅长忘记自己当时的理由。',
+           '<button class="btn pri" data-act="new-decision">记第一个</button>')
+       + '</section>';
+    return h;
+  }
+
+  if(todo.length){
+    h += '<div class="note" style="margin-bottom:16px"><span class="note-body">'
+       + '有 <b>'+todo.length+'</b> 个决策还没写事后复盘。过一阵回来补一句「后来怎么样了」，'
+       + '这个记录才算闭环。</span></div>';
+  }
+
+  h += '<section class="card">' + cardHead('🧭','全部决策 · '+all.length+' 个','');
+  all.forEach(function(d){ h += decisionHTML(d); });
   h += '</section>';
   return h;
 }
@@ -2510,21 +3105,90 @@ function buildSummaryText(wk){
   return lines.join('\n');
 }
 
+/* ==========================================================================
+   复盘建议引擎
+   诊断原话："进度概览有环形图、柱状图、趋势图、热力图四组，
+   但没有任何一处回答『所以我现在该做什么』。"  —— 这一节就是那个回答。
+   ========================================================================== */
+function reviewAdvice(s, prev){
+  var out = [];
+  var rec = s.recorded;
+
+  if(rec < 3){
+    out.push({tone:'bad', t:'这周只记了 '+rec+' 天',
+      d:'先别急着分析数据 —— 记录本身断了，后面所有统计都不准。'
+      + '下周只定一个目标：每天打开一次，填三项就走。'});
+  }else if(rec < 5){
+    out.push({tone:'warn', t:'记录 '+rec+'/7 天，还不太稳',
+      d:'差一点就能形成习惯。把入口绑在一个已有动作后面（关电脑前、刷牙后），比靠意志力管用。'});
+  }
+
+  if(fireAlert(s.fireRate)){
+    out.push({tone:'bad', t:'救火占了 '+pct(s.fireRate)+'，这才是本周最大的问题',
+      d:'超过 30% 说明你不是在推进事情，而是在被事情推着走。'
+      + '根因通常是缺文档、缺监控、或缺人 —— 下周挑一件「再来一次就不用救」的事做掉。'});
+  }else if(s.fireRate != null && s.fireRate >= 0.15){
+    out.push({tone:'warn', t:'救火占比 '+pct(s.fireRate)+'，开始有点多了',
+      d:'还在可控范围，但趋势值得盯。看看这些火烧的是不是同一类问题。'});
+  }
+
+  if(s.mood != null && prev && prev.mood != null && (prev.mood - s.mood) >= 0.5){
+    out.push({tone:'warn', t:'心情比上周降了 '+r1(prev.mood - s.mood)+' 分',
+      d:'先别找心理原因，先看睡眠 —— 睡眠要是也掉了，多半就是它。'});
+  }
+  if(s.sleep != null && s.sleep < 6.5 && s.recorded >= 3){
+    out.push({tone:'warn', t:'平均睡眠只有 '+r1(s.sleep)+' 小时',
+      d:'这个时长下心情和效率都会下滑，而你会误以为是「自己不够努力」。'});
+  }
+
+  var low = (s.habitRates||[]).filter(function(x){ return x.rate != null && x.rate < 0.3; });
+  if(low.length >= 3){
+    out.push({tone:'warn', t:'有 '+low.length+' 个习惯打卡率低于 30%',
+      d:'不是你不自律 —— 是习惯设太多了。砍到 3 个以内，等这三个稳了再加。'});
+  }
+
+  if(s.taskTotal >= 3 && s.taskBlocked >= 2){
+    out.push({tone:'warn', t:'有 '+s.taskBlocked+' 条任务卡着',
+      d:'卡住的事不会自己好。要么这周推掉，要么明确放弃 —— 挂着最消耗人。'});
+  }
+
+  if(s.recorded >= 5 && s.taskTotal >= 5 && !fireAlert(s.fireRate) && (s.mood == null || s.mood >= 3.5)){
+    out.push({tone:'good', t:'这周状态不错',
+      d:'记录稳定、任务推进正常、没被救火拖住。保持就好，别急着加新东西。'});
+  }
+
+  if(!out.length){
+    out.push({tone:'', t:'数据还不够看出规律', d:'再记一两周，这里会自动给出针对你的建议。'});
+  }
+  return out;
+}
+function adviceHTML(list){
+  var h = '<section class="card">'
+    + cardHead('💡','所以，下周该做什么','<span class="hint">从上面的数字推出来的</span>');
+  list.forEach(function(a){
+    var cls = a.tone==='bad' ? 'note bad' : (a.tone==='warn' ? 'note warn' : 'note');
+    h += '<div class="'+cls+'" style="margin-bottom:10px"><span class="note-body">'
+       + '<b>'+esc(a.t)+'</b><br>' + esc(a.d) + '</span></div>';
+  });
+  h += '</section>';
+  return h;
+}
+
 function viewReview(){
   var wk = ui.week || isoWeek(ui.todayDate || todayStr());
   var s = weekSummary(wk);
   var prev = weekSummary(shiftWeek(wk,-1));
   var w = DB.weekly[wk] || {gain:'',problem:'',oneThing:'',todos:''};
-  var h = '';
+
+  var h = pageHead('review', {
+    count: esc(weekLabel(wk)).replace(/^\d+年 第/, '第'),
+    actions: '<button class="btn sm ico" data-act="week-prev" aria-label="上一周">‹</button>'
+           + '<button class="btn sm ico" data-act="week-next" aria-label="下一周">›</button>'
+           + (wk!==isoWeek(todayStr()) ? '<button class="btn sm pri" data-act="week-now">回到本周</button>' : '')
+  });
 
   h += '<section class="card">'
-     + cardHead('📊','周复盘',
-       '<div class="row">'
-       + '<button class="btn sm ico" data-act="week-prev" aria-label="上一周">‹</button>'
-       + '<span style="font-weight:680;font-size:13.5px;white-space:nowrap">'+esc(weekLabel(wk))+'</span>'
-       + '<button class="btn sm ico" data-act="week-next" aria-label="下一周">›</button>'
-       + (wk!==isoWeek(todayStr()) ? '<button class="btn sm pri" data-act="week-now">本周</button>' : '')
-       + '</div>');
+     + cardHead('📊', esc(weekLabel(wk)),'');
   h += '<div class="note"><span class="note-body">下面的数字 <b>全部是自动算出来的</b>，你只需要补三个问题。'
      + '这就是记录和复盘之间的闭环——不自动汇总，记两周你就不会再打开了。</span></div>';
   h += '</section>';
@@ -2544,6 +3208,9 @@ function viewReview(){
   h += statHTML({icon:'🔥', k:'救火占比', v:pct(s.fireRate), tone:fireLevel(s.fireRate),
                  d:fireAlert(s.fireRate)?'⚠ 已达30%':''});
   h += '</div></section>';
+
+  /* ★ 关键：数字之后直接给结论。之前这一页只有图没有话，看完不知道该干嘛 */
+  h += adviceHTML(reviewAdvice(s, prev));
 
   h += '<section class="card">'
      + cardHead('✍️','你来写的三句话','<span class="hint">自动填不了的部分</span>');
@@ -2594,51 +3261,43 @@ function viewReview(){
     });
     h += '</section>';
   }
+
+  /* 目标并入复盘页 —— 一个往后看（复盘），一个往前看（目标），是同一件事的两面 */
+  h += goalsSectionHTML();
   return h;
 }
 
 /* ==========================================================================
-   视图：目标
+   目标（并入复盘页，不再单独占一个导航位）
    ========================================================================== */
-function viewGoals(){
+function goalsSectionHTML(){
   var today = todayStr();
   var curQ = quarterOf(today), curM = monthOf(today);
-  var h = '';
+  var goals = alive(DB.goals);
+  var h = '<section class="card">'
+    + cardHead('🎯','目标 · 本月 / 本季',
+        '<button class="btn sm pri" data-act="new-goal">＋ 加一个</button>');
 
-  h += '<section class="card">'
-     + cardHead('＋','加一个目标','<span class="hint">具体、可验证。不写「多读书」，写「读完 4 本书」</span>');
-  h += '<div class="grid g3">';
-  h += '<div class="field"><label class="f">周期</label><input type="text" id="g_period" value="'+esc(curQ)+'" placeholder="2025-Q4 或 2025-09"></div>';
-  h += '<div class="field"><label class="f">领域</label>'+selectHTML('g_area', AREAS, '工作')+'</div>';
-  h += '<div class="field"><label class="f">状态</label>'+selectHTML('g_status', ['进行中','达成','放弃'], '进行中')+'</div>';
-  h += '</div>';
-  h += '<div class="field" style="margin-top:14px"><label class="f">目标 <span class="req">*</span></label>'
-     + '<input type="text" id="g_goal" placeholder="比如「把睡眠拉回 7.5 小时」"></div>';
-  h += '<div class="field" style="margin-top:14px"><label class="f">关键结果（1-3 条，最好带数字）</label>'
-     + '<input type="text" id="g_krs" placeholder="比如「早睡≤23:30 达到 60%；体重 -2kg」"></div>';
-  h += '<div class="row" style="margin-top:18px"><button class="btn pri" data-act="goal-add">+ 添加目标</button></div>';
-  h += '</section>';
-
-  if(!DB.goals.length){
-    h += '<section class="card">'
-       + emptyHTML('🎯','还没有目标',
-           '建议第 2 个月再开始用这一页——先把「每天打开记录」这个习惯养起来，再来谈方向')
-       + '</section>';
+  if(!goals.length){
+    h += emptyHTML('🎯','还没有目标',
+      '建议第 2 个月再开始用这一块 —— 先把「每天打开记录」这个习惯养起来，再来谈方向');
+    h += '</section>';
     return h;
   }
 
   var groups = {};
-  DB.goals.forEach(function(g){ (groups[g.period] = groups[g.period] || []).push(g); });
-  Object.keys(groups).sort().reverse().forEach(function(p){
+  goals.forEach(function(g){ (groups[g.period] = groups[g.period] || []).push(g); });
+  Object.keys(groups).sort().reverse().forEach(function(p, gi){
     var isCur = (p===curQ || p===curM);
-    h += '<section class="card">'
-       + cardHead('🎯', p+(isCur?' · 当前':''), '<span class="hint">'+groups[p].length+' 个目标</span>');
+    h += '<div class="sec-title" style="margin:'+(gi?'22px':'4px')+' 0 12px">'
+       + esc(p) + (isCur ? ' · 当前' : '') + '</div>';
     groups[p].forEach(function(g){ h += goalHTML(g); });
-    h += '</section>';
   });
 
-  h += '<div class="note" style="margin-top:6px"><span class="note-body">季度末对每个目标<b>只做一个决定：继续，或者放弃</b>。'
-     + '不许「挂着」——挂着的目标会一路拖到年底，然后让你觉得这一年什么都没做成。</span></div>';
+  h += '<div class="note" style="margin-top:16px"><span class="note-body">'
+     + '季度末对每个目标<b>只做一个决定：继续，或者放弃</b>。不许「挂着」——'
+     + '挂着的目标会一路拖到年底，然后让你觉得这一年什么都没做成。</span></div>';
+  h += '</section>';
   return h;
 }
 
@@ -2686,7 +3345,11 @@ function viewData(){
   try{ bytes = (localStorage.getItem(STORE_KEY)||'').length; }catch(e){}
   var kb = (bytes/1024).toFixed(1);
   var dn = Object.keys(DB.daily).filter(hasDaily).length;
-  var h = '';
+  var trash = trashList();
+
+  var h = pageHead('data', {
+    actions: '<button class="btn" data-act="guide-open">❓ 怎么用</button>'
+  });
 
   if(!storageOK){
     h += '<section class="card"><div class="note bad"><span class="note-body">'
@@ -2700,27 +3363,34 @@ function viewData(){
   h += '<section class="card">' + cardHead('📦','数据概况','');
   h += '<div class="stats">';
   h += statHTML({k:'已记录天数', v:dn});
-  h += statHTML({k:'任务', v:DB.tasks.length});
-  h += statHTML({k:'灵感', v:DB.notes.length});
+  h += statHTML({k:'任务', v:alive(DB.tasks).length});
+  h += statHTML({k:'灵感', v:alive(DB.notes).length});
+  h += statHTML({k:'决策', v:alive(DB.decisions).length});
   h += statHTML({k:'周复盘', v:Object.keys(DB.weekly).length});
-  h += statHTML({k:'目标', v:DB.goals.length});
+  h += statHTML({k:'目标', v:alive(DB.goals).length});
+  h += statHTML({k:'回收站', v:trash.length, tone: trash.length ? 'warn' : ''});
   h += statHTML({k:'占用', v:kb, unit:'KB'});
   h += '</div></section>';
 
+  h += aiCardHTML();
+  h += syncCardHTML();
+  h += installCardHTML();
+  h += trashCardHTML();
+
   h += '<section class="card">' + cardHead('💾','备份与导出','');
   if(SYNC.token){
-    h += '<div class="note"><span class="note-body">你已经开了云同步，换电脑装回来只要重新填一次令牌就行。'
-       + '不过<b>导出一份本地备份仍然值得做</b>——令牌过期、账号异常、云端误删，本地那份是最后的保险。'
+    h += '<div class="note"><span class="note-body">你已经开了云同步，换电脑装回来只要重新填一次密钥就行。'
+       + '不过<b>导出一份本地备份仍然值得做</b>——密钥过期、账号异常、云端误删，本地那份是最后的保险。'
        + '</span></div>';
   }else{
-    h += '<div class="note warn"><span class="note-body">数据存在这台电脑的这个浏览器里。'
-       + '<b>换电脑、清缓存、换浏览器都会丢。</b>'
+    h += '<div class="note warn"><span class="note-body">数据存在这台设备的浏览器里。'
+       + '<b>换设备、清缓存、换浏览器都会丢。</b>'
        + '建议每周复盘时顺手点一次「导出备份」，或者打开上面的「云端同步」。</span></div>';
   }
   h += '<div class="row" style="margin-top:16px">';
-  h += '<button class="btn pri" data-act="export-json">⬇ 导出完整备份（JSON）</button>';
-  h += '<button class="btn" data-act="export-daily-csv">导出每日记录（CSV）</button>';
-  h += '<button class="btn" data-act="export-task-csv">导出任务（CSV）</button>';
+  h += '<button class="btn pri" data-act="export-json">⬇ 导出完整备份</button>';
+  h += '<button class="btn" data-act="export-daily-csv">导出每日记录（表格）</button>';
+  h += '<button class="btn" data-act="export-task-csv">导出任务（表格）</button>';
   h += '</div>';
   if(DB.lastExport){
     h += '<div class="hint" style="margin-top:12px">上次备份：'+esc(fmtFull(DB.lastExport))
@@ -2751,17 +3421,18 @@ function viewData(){
      + '<b>1. 每天</b>：打开「今天」页，填心情、能量、今日一句三个必填项，30 秒。<br>'
      + '<b>2. 随时</b>：完成或卡住一件事，去「任务」页记一条；想到什么，去「灵感」页丢进去。<br>'
      + '<b>3. 每天</b>：「打卡」页打勾。<br>'
-     + '<b>4. 每周</b>：去「复盘」页，指标已经自动算好，你只写三句话。<br>'
-     + '<b>5. 每月</b>：「目标」页更新进度。'
+     + '<b>4. 拍板时</b>：去「决策」页记下当时怎么想的 —— 这是最容易被忘掉、却最值钱的资产。<br>'
+     + '<b>5. 每周</b>：去「复盘」页，指标已经自动算好，还会直接告诉你下周该做什么。'
      + '</div>';
   h += '<div class="note" style="margin-top:16px"><span class="note-body">'
      + '<b>分阶段上线：</b>第 1-2 周只开「今天」+「灵感」；第 3-4 周再加「任务」+「打卡」；'
-     + '第 5 周起用「复盘」；第 2 个月才动「目标」。一次全开，两周后就会放弃。</span></div>';
+     + '第 5 周起用「复盘」；决策和目标按需再动。一次全开，两周后就会放弃。</span></div>';
   h += '<div class="hint" style="margin-top:14px">'
      + '<b>月度体检：</b>每月末看一眼哪个字段从来没用过 → 删掉它。表只减不增。</div>';
   h += '<div class="hint" style="margin-top:10px">'
-     + '<b>小技巧：</b>在「今天」页直接按数字键 <b>1-5</b> 就能给心情打分；'
-     + '图表上移动鼠标可以看每天的具体数值。</div>';
+     + '<b>小技巧：</b>数字键 <b>1-5</b> 直接打心情分；<b>Ctrl+K</b> 全局搜索；'
+     + '<b>Ctrl+Enter</b> 保存；图表上移动鼠标看具体数值。'
+     + (PWA.standalone ? '' : '装在桌面上的话，长按图标可以直接跳到「记灵感」。') + '</div>';
   h += '</section>';
 
   return h;
@@ -2996,6 +3667,272 @@ function installCardHTML(){
 }
 
 /* ==========================================================================
+   回收站
+   借鉴自 每日工作台 的 renderTrashList / autoPurgeTrash。
+   删除改成软删除后，误删不再是永久损失。
+   ========================================================================== */
+function trashCardHTML(){
+  var list = trashList();
+  var h = '<section class="card">' + cardHead('🗑','回收站',
+     list.length ? '<button class="btn sm danger" data-act="trash-empty">清空回收站</button>' : '');
+  if(!list.length){
+    h += '<div class="hint">删掉的东西会先放到这里，<b>30 天后自动清除</b>。误删了随时能捞回来。</div>';
+    h += '</section>';
+    return h;
+  }
+  h += '<div class="hint" style="margin-bottom:12px">共 '+list.length+' 项，<b>30 天后自动清除</b>。</div>';
+  list.forEach(function(x){
+    var r = x.rec;
+    var title = r.title || r.content || r.goal || '(无标题)';
+    var days = Math.max(0, TRASH_DAYS - Math.floor((Date.now()-x.at)/86400000));
+    h += '<div class="trash-item">'
+       + '<span style="font-size:16px;flex:none">'+KIND_ICON[x.kind]+'</span>'
+       + '<div class="ti-b"><div class="ti-t">'+esc(String(title).slice(0,60))+'</div>'
+       + '<div class="ti-m">'+esc(KIND_NAME[x.kind])+' · '+(x.at?esc(timeAgo(x.at))+'删的':'')+' · 还有 '+days+' 天清除</div></div>'
+       + '<button class="btn sm" data-act="trash-restore" data-kind="'+x.kind+'" data-id="'+esc(r.id)+'">恢复</button>'
+       + '<button class="btn sm danger" data-act="trash-purge" data-kind="'+x.kind+'" data-id="'+esc(r.id)+'">彻底删</button>'
+       + '</div>';
+  });
+  h += '</section>';
+  return h;
+}
+
+/* ==========================================================================
+   全局搜索
+   借鉴自 每日工作台 的 renderGlobalSearch。记录攒到几百条后，找不到就等于废数据。
+   ========================================================================== */
+function runSearch(qRaw){
+  var q = String(qRaw||'').trim().toLowerCase();
+  if(!q) return [];
+  var out = [];
+  function add(kind, icon, title, meta, id, tab, date){
+    out.push({ kind:kind, icon:icon, title:String(title||''), meta:meta||'', id:id, tab:tab, date:date||'' });
+  }
+  Object.keys(DB.daily).forEach(function(d){
+    var x = DB.daily[d]; if(!x) return;
+    var hay = ((x.line||'')+' '+(x.note||'')+' '+((x.tags||[]).join(' '))).toLowerCase();
+    if(hay.indexOf(q) >= 0) add('daily','📅', x.line||'(无描述)', fmtFull(d), d, 'today', d);
+  });
+  alive(DB.tasks).forEach(function(t){
+    var hay = ((t.title||'')+' '+(t.output||'')+' '+(t.blocker||'')+' '+(t.project||'')).toLowerCase();
+    if(hay.indexOf(q) >= 0) add('task','✅', t.title, (t.date||'')+' · '+(t.type||'')+' · '+(t.status||''), t.id, 'tasks', t.date);
+  });
+  alive(DB.notes).forEach(function(n){
+    var hay = ((n.content||'')+' '+(n.source||'')).toLowerCase();
+    if(hay.indexOf(q) >= 0) add('note','💡', n.content, (n.date||'')+' · '+(n.type||'')+' · '+(n.status||'待整理'), n.id, 'notes', n.date);
+  });
+  alive(DB.decisions).forEach(function(x){
+    var hay = ((x.title||'')+' '+(x.conclusion||'')+' '+(x.basis||'')+' '+(x.options||'')).toLowerCase();
+    if(hay.indexOf(q) >= 0) add('decision','🧭', x.title, (x.date||'')+' · '+(x.status||''), x.id, 'decisions', x.date);
+  });
+  alive(DB.goals).forEach(function(g){
+    if(((g.goal||'')+' '+(g.krs||'')).toLowerCase().indexOf(q) >= 0)
+      add('goal','🎯', g.goal, (g.period||'')+' · '+(g.status||''), g.id, 'review', '');
+  });
+  out.sort(function(a,b){ return (a.date||'') < (b.date||'') ? 1 : ((a.date||'') > (b.date||'') ? -1 : 0); });
+  return out.slice(0, 60);
+}
+function hl(text, q){
+  var s = esc(text);
+  if(!q) return s;
+  try{
+    var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+    return s.replace(re, '<mark>$1</mark>');
+  }catch(e){ return s; }
+}
+function searchResultsHTML(q){
+  if(!String(q||'').trim())
+    return '<div class="hint" style="padding:20px 0;text-align:center">输入关键词，搜日记、任务、灵感、决策、目标</div>';
+  var hits = runSearch(q);
+  if(!hits.length)
+    return '<div class="hint" style="padding:20px 0;text-align:center">没找到「'+esc(q)+'」相关的记录</div>';
+  var h = '<div class="hint" style="margin-bottom:6px">找到 '+hits.length+' 条</div>';
+  hits.forEach(function(x){
+    h += '<div class="search-hit" data-act="search-goto" data-tab="'+x.tab+'"'
+       + ' data-date="'+esc(x.date||'')+'" data-id="'+esc(x.id||'')+'">'
+       + '<span class="sh-i">'+x.icon+'</span>'
+       + '<div class="sh-b"><div class="sh-t">'+hl(String(x.title).slice(0,120), q)+'</div>'
+       + '<div class="sh-m">'+esc(x.meta)+'</div></div></div>';
+  });
+  return h;
+}
+
+/* ==========================================================================
+   AI 助手
+   借鉴自 每日工作台：用户自己的 Key，直连官方接口，不经过任何中间服务器。
+   默认 DeepSeek —— 它兼容 OpenAI 格式，国内可直连，也可以换成别家。
+   ========================================================================== */
+var AI_LS = 'life_records_ai_v1';
+var AI_DEF_URL = 'https://api.deepseek.com/chat/completions';
+var AI_DEF_MODEL = 'deepseek-chat';
+var AI = { key:'', url:AI_DEF_URL, model:AI_DEF_MODEL, log:[], busy:false };
+
+function loadAI(){
+  try{
+    var raw = localStorage.getItem(AI_LS);
+    if(!raw) return;
+    var o = JSON.parse(raw);
+    if(o && typeof o === 'object'){
+      if(o.key) AI.key = o.key;
+      if(o.url) AI.url = o.url;
+      if(o.model) AI.model = o.model;
+    }
+  }catch(e){}
+}
+function saveAI(){
+  try{ localStorage.setItem(AI_LS, JSON.stringify({key:AI.key, url:AI.url, model:AI.model})); }catch(e){}
+}
+
+/* 把最近的数据压成一段上下文。
+   不能把整个 DB 丢过去 —— 太大、太贵，而且大部分跟问题无关。 */
+function aiContext(){
+  var today = todayStr();
+  var wk = isoWeek(today);
+  var s = weekSummary(wk);
+  var lines = [];
+  lines.push('【最近 7 天记录】');
+  lastNDates(7, today).forEach(function(d){
+    var x = dpeek(d);
+    if(!x || !hasDaily(d)){ lines.push('  '+fmtShort(d)+' 未记录'); return; }
+    var t = [];
+    if(num(x.mood)!=null) t.push('心情'+num(x.mood));
+    if(num(x.energy)!=null) t.push('能量'+num(x.energy));
+    if(num(x.sleep)!=null) t.push('睡眠'+x.sleep+'h');
+    if((x.tags||[]).length) t.push(x.tags.join('/'));
+    lines.push('  '+fmtShort(d)+' '+t.join(' ')+(x.line?(' — '+x.line):''));
+  });
+  lines.push('');
+  lines.push('【本周统计】记录 '+s.recorded+'/7 天；任务 '+s.taskTotal+' 条（完成 '+s.taskDone+'、阻塞 '+s.taskBlocked
+    +'）；救火占比 '+(s.fireRate==null?'—':pct(s.fireRate))+'；总耗时 '+r1(s.minutes/60)+'h');
+  var ts = tasksIn(weekDates(wk)).slice(0,15).map(function(t){ return t.title+'('+t.type+'/'+t.status+')'; });
+  if(ts.length) lines.push('【本周任务】'+ts.join('；'));
+  var ns = alive(DB.notes).slice(0,8).map(function(n){ return String(n.content||'').slice(0,40); });
+  if(ns.length) lines.push('【最近灵感】'+ns.join('；'));
+  var ds = decisionsAll().slice(0,5).map(function(x){ return x.title+' → '+(x.conclusion||'未定'); });
+  if(ds.length) lines.push('【最近决策】'+ds.join('；'));
+  var w = DB.weekly[wk];
+  if(w && (w.gain||w.problem||w.oneThing)){
+    lines.push('【本周复盘】收获：'+(w.gain||'—')+'；问题：'+(w.problem||'—')+'；下周只做一件：'+(w.oneThing||'—'));
+  }
+  return lines.join('\n');
+}
+
+var AI_PRESETS = [
+  '帮我看看这周状态怎么样，有什么值得注意的',
+  '把这周的记录总结成一段可以发给领导的周报',
+  '我最近是不是有什么反复出现的问题？',
+  '根据我的记录，下周最该改的一件事是什么'
+];
+
+function renderAILog(){
+  var el = $('#aiLog'); if(!el) return;
+  if(!AI.log.length){
+    el.innerHTML = '<div class="hint">它能看到你最近 7 天的记录和本周统计。'
+      + '数据只发给你自己填的那个接口，不经过任何第三方。</div>';
+  }else{
+    var h = '';
+    AI.log.slice(-20).forEach(function(m){
+      var cls = m.role==='me' ? 'me' : (m.role==='err' ? 'err' : 'ai');
+      h += '<div class="ai-msg '+cls+'">'+esc(m.text)+'</div>';
+    });
+    el.innerHTML = h;
+  }
+  var chips = $('#aiChips');
+  if(chips){
+    chips.innerHTML = AI.log.length ? '' : AI_PRESETS.map(function(p){
+      return '<button class="chip" data-act="ai-preset" data-q="'+esc(p)+'">'+esc(p)+'</button>';
+    }).join('');
+  }
+  if(el.scrollIntoView) { try{ el.scrollIntoView({block:'end'}); }catch(e){} }
+}
+function setAIBusy(b){
+  var btn = $('#aiSend');
+  if(btn){ btn.disabled = !!b; btn.textContent = b ? '思考中…' : '发送'; }
+}
+
+async function aiAsk(text){
+  var q = String(text||'').trim();
+  if(!q) return;
+  if(!AI.key){
+    toast('先去「设置」页填 API Key','err');
+    return;
+  }
+  if(AI.busy) return;
+  AI.log.push({role:'me', text:q});
+  renderAILog();
+  AI.busy = true; setAIBusy(true);
+  try{
+    var sys = '你是用户的私人记录助理。下面是用户自己记的生活与工作数据。\n'
+      + '请基于这些数据回答。要求：简洁、具体、直接给结论，不要说客套话，不要复述数据本身。'
+      + '如果数据不足以回答，就直说。用中文回答。\n\n' + aiContext();
+    var msgs = [{role:'system', content:sys}];
+    AI.log.slice(-8).forEach(function(m){
+      if(m.role==='me') msgs.push({role:'user', content:m.text});
+      else if(m.role==='ai') msgs.push({role:'assistant', content:m.text});
+    });
+    var r = await fetch(AI.url, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+AI.key },
+      body: JSON.stringify({ model:AI.model, messages:msgs, temperature:0.6, max_tokens:900 })
+    });
+    var raw = await r.text();
+    var data = null;
+    try{ data = raw ? JSON.parse(raw) : null; }catch(e){}
+    if(!r.ok){
+      var em = (data && data.error && (data.error.message || data.error)) || ('HTTP '+r.status);
+      throw new Error(typeof em === 'string' ? em : JSON.stringify(em));
+    }
+    var ans = data && data.choices && data.choices[0] && data.choices[0].message
+      && data.choices[0].message.content;
+    if(!ans) throw new Error('接口没有返回内容');
+    AI.log.push({role:'ai', text:String(ans).trim()});
+  }catch(e){
+    AI.log.push({role:'err', text:'调用失败：'+((e && e.message) || e)});
+  }finally{
+    AI.busy = false; setAIBusy(false); renderAILog();
+  }
+}
+
+function aiCardHTML(){
+  var on = !!AI.key;
+  var h = '<section class="card">' + cardHead('🤖','AI 助手',
+     on ? '<button class="btn sm pri" data-act="ai-open">打开对话</button>' : '');
+  h += '<div class="hint">把它当成一个<b>看过你所有记录的助理</b>：'
+     + '问它「我这周状态怎么样」「帮我把这周总结成周报」「我是不是有个反复出现的问题」。<br>'
+     + '用的是<b>你自己的 API Key</b>，直连官方接口，不经过任何中间服务器。</div>';
+
+  if(ui.aiSettings){
+    h += '<div class="field" style="margin-top:16px"><label class="f">API Key</label>'
+       + '<input type="password" id="ai_key" placeholder="sk-..." value="'+esc(AI.key)+'" autocomplete="off"></div>'
+       + '<div class="grid g2" style="margin-top:12px">'
+       + '<div class="field"><label class="f">接口地址</label><input type="text" id="ai_url" value="'+esc(AI.url)+'"></div>'
+       + '<div class="field"><label class="f">模型</label><input type="text" id="ai_model" value="'+esc(AI.model)+'"></div>'
+       + '</div>'
+       + '<div class="row" style="margin-top:14px">'
+       + '<button class="btn pri" data-act="ai-save">保存</button>'
+       + '<button class="btn" data-act="ai-cancel">取消</button>'
+       + '<span class="hint">兼容 OpenAI 格式的服务都能换，默认 DeepSeek</span></div>'
+       + '<div class="hint" style="margin-top:12px">'
+       + 'Key 在 <a class="lnk" href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">platform.deepseek.com</a> 创建，'
+       + '只存在这台设备的浏览器里。</div>';
+  }else{
+    if(on){
+      h += '<div class="row" style="margin-top:14px;gap:9px">'
+         + '<span class="sync-dot on"></span>'
+         + '<span style="font-size:13px;font-weight:640">已配置</span>'
+         + '<span class="hint" style="margin-left:auto">'+esc(AI.model)+'</span></div>';
+    }else{
+      h += '<div class="note warn" style="margin-top:14px"><span class="note-body">'
+         + '还没配置。需要一个 DeepSeek 的 API Key（按量付费，很便宜），填进来就能用。</span></div>';
+    }
+    h += '<div class="row" style="margin-top:14px">'
+       + '<button class="btn" data-act="ai-settings">'+(on?'修改配置':'去配置')+'</button></div>';
+  }
+  h += '</section>';
+  return h;
+}
+
+/* ==========================================================================
    新手引导
    「看不懂怎么用」是这类工具最常见的死因，所以内置一份随时可查的说明：
    首次打开自动弹，之后点顶栏的「怎么用」随时再看。
@@ -3032,12 +3969,14 @@ var GUIDE = [
        + '<span class="mw">睡前打勾。看最近 30 天坚持得怎么样</span></div>'
        + '<div class="map-row"><span class="mi">💡</span><span class="mn">灵感</span>'
        + '<span class="mw">想到什么就丢进去，当场不用整理。每周整理一次</span></div>'
+       + '<div class="map-row"><span class="mi">🧭</span><span class="mn">决策</span>'
+       + '<span class="mw">拍板的时候记一条：备选方案、结论、<b>以及当时为什么这么判断</b>。'
+       + '<em>半年后回头看最值钱</em></span></div>'
        + '<div class="map-row"><span class="mi">📊</span><span class="mn">复盘</span>'
-       + '<span class="mw"><b>每周一次。</b>指标已经自动算好，你只写三句话</span></div>'
-       + '<div class="map-row"><span class="mi">🎯</span><span class="mn">目标</span>'
-       + '<span class="mw">每月一次。季度末只做一个决定：继续，或放弃</span></div>'
-       + '<div class="map-row"><span class="mi">⚙️</span><span class="mn">数据</span>'
-       + '<span class="mw">平时不用碰。备份、云同步、装成 App 都在这儿</span></div>'
+       + '<span class="mw"><b>每周一次。</b>指标已经自动算好，还会直接告诉你「下周该做什么」。'
+       + '下面还有本月/本季目标（每月看一次）</span></div>'
+       + '<div class="map-row"><span class="mi">⚙️</span><span class="mn">设置</span>'
+       + '<span class="mw">在右上角齿轮里，平时不用碰。备份、云同步、回收站、AI 助手都在这儿</span></div>'
   },
   {
     icon:'☁️', title:'数据存在哪、怎么不丢', sub:'这一条最要紧',
@@ -3090,34 +4029,234 @@ function guideSeen(){
 }
 
 /* ==========================================================================
+   弹窗 —— 新建表单不再常驻首屏
+   诊断原话："每个模块顶部都放一整块新建表单，要滚过录入区才能看到清单，
+   而实际使用频率正好相反。"
+   ========================================================================== */
+var MODAL = { kind:null, id:null };
+var DEC_STATUS = ['已决定','待定','已复盘'];
+
+var MODAL_DEF = {
+  task: {
+    ico:'✅', color:'--m-task', title:'记一条任务', hint:'只有「事项」是必填',
+    form: function(r){
+      r = r || {};
+      return '<div class="field"><label class="f">事项 <span class="req">*</span></label>'
+        + '<input type="text" id="m_title" placeholder="动词开头，比如「重写Q4方案」" value="'+esc(r.title||'')+'"></div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">类型</label>'+selectHTML('m_type', TASK_TYPES, r.type||'推进')+'</div>'
+        + '<div class="field"><label class="f">状态</label>'+selectHTML('m_status', TASK_STATUS, r.status||'完成')+'</div>'
+        + '</div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">日期</label><input type="date" id="m_date" value="'+esc(r.date||(ui.todayDate||todayStr()))+'"></div>'
+        + '<div class="field"><label class="f">项目</label><input type="text" id="m_project" placeholder="可留空" value="'+esc(r.project||'')+'"></div>'
+        + '</div>'
+        + '<details class="adv"' + ((r.estMin!=null||r.minutes!=null||r.output||r.blocker)?' open':'') + '>'
+        + '<summary>更多（耗时 / 产出 / 卡点）</summary><div>'
+        + '<div class="grid g2">'
+        + '<div class="field"><label class="f">预计耗时（分钟）</label><input type="number" id="m_est" min="0" placeholder="60" value="'+(r.estMin!=null?r.estMin:'')+'"></div>'
+        + '<div class="field"><label class="f">实际耗时（分钟）</label><input type="number" id="m_min" min="0" placeholder="90" value="'+(r.minutes!=null?r.minutes:'')+'"></div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:12px"><label class="f">产出</label>'
+        + '<input type="text" id="m_output" placeholder="具体交付物，没产出的不算数" value="'+esc(r.output||'')+'"></div>'
+        + '<div class="field" style="margin-top:12px"><label class="f">卡点</label>'
+        + '<input type="text" id="m_blocker" placeholder="阻塞原因，写具体" value="'+esc(r.blocker||'')+'"></div>'
+        + '</div></details>';
+    }
+  },
+  note: {
+    ico:'💡', color:'--m-note', title:'记一条灵感', hint:'想到就写，整理是每周的事',
+    form: function(r){
+      r = r || {};
+      return '<div class="field"><label class="f">内容 <span class="req">*</span></label>'
+        + '<textarea id="m_content" style="min-height:110px" placeholder="想到什么就写下来，不求通顺">'+esc(r.content||'')+'</textarea></div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">类型</label>'+selectHTML('m_ntype', NOTE_TYPES, r.type||'灵感')+'</div>'
+        + '<div class="field"><label class="f">来源</label><input type="text" id="m_source" placeholder="书名 / 谁说的" value="'+esc(r.source||'')+'"></div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">日期</label>'
+        + '<input type="date" id="m_ndate" value="'+esc(r.date||(ui.todayDate||todayStr()))+'"></div>';
+    }
+  },
+  decision: {
+    ico:'🧭', color:'--m-dec', title:'记一个决策', hint:'写清"当时怎么想的"，半年后最值钱',
+    form: function(r){
+      r = r || {};
+      return '<div class="field"><label class="f">决策事项 <span class="req">*</span></label>'
+        + '<input type="text" id="m_dtitle" placeholder="要拍板的是什么" value="'+esc(r.title||'')+'"></div>'
+        + '<div class="grid g2" style="margin-top:14px">'
+        + '<div class="field"><label class="f">日期</label><input type="date" id="m_ddate" value="'+esc(r.date||(ui.todayDate||todayStr()))+'"></div>'
+        + '<div class="field"><label class="f">状态</label>'+selectHTML('m_dstatus', DEC_STATUS, r.status||'已决定')+'</div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">备选方案（一行一个）</label>'
+        + '<textarea id="m_options" placeholder="A 方案…&#10;B 方案…">'+esc(r.options||'')+'</textarea></div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">最终结论</label>'
+        + '<input type="text" id="m_conclusion" placeholder="最后选了哪个" value="'+esc(r.conclusion||'')+'"></div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">决策依据</label>'
+        + '<textarea id="m_basis" placeholder="当时是基于什么判断的 —— 这条最值钱">'+esc(r.basis||'')+'</textarea></div>';
+    }
+  },
+  goal: {
+    ico:'🎯', color:'--m-goal', title:'加一个目标', hint:'具体、可验证。不写「多读书」，写「读完 4 本书」',
+    form: function(r){
+      r = r || {};
+      return '<div class="field"><label class="f">目标 <span class="req">*</span></label>'
+        + '<input type="text" id="m_goal" placeholder="比如「把睡眠拉回 7.5 小时」" value="'+esc(r.goal||'')+'"></div>'
+        + '<div class="grid g3" style="margin-top:14px">'
+        + '<div class="field"><label class="f">周期</label><input type="text" id="m_period" value="'+esc(r.period||quarterOf(todayStr()))+'"></div>'
+        + '<div class="field"><label class="f">领域</label>'+selectHTML('m_area', AREAS, r.area||'工作')+'</div>'
+        + '<div class="field"><label class="f">状态</label>'+selectHTML('m_gstatus', ['进行中','达成','放弃'], r.status||'进行中')+'</div>'
+        + '</div>'
+        + '<div class="field" style="margin-top:14px"><label class="f">关键结果（1-3 条，最好带数字）</label>'
+        + '<input type="text" id="m_krs" placeholder="比如「早睡≤23:30 达到 60%；体重 -2kg」" value="'+esc(r.krs||'')+'"></div>';
+    }
+  }
+};
+
+function openModal(kind, id){
+  var d = MODAL_DEF[kind];
+  if(!d){ toast('未知类型','err'); return; }
+  MODAL.kind = kind;
+  MODAL.id = id || null;
+  var ico = $('#modalIco');
+  if(ico){ ico.textContent = d.ico; ico.setAttribute('style',
+    '--mc:var('+d.color+');width:34px;height:34px;font-size:16px;border-radius:11px'); }
+  var ti = $('#modalTitle'); if(ti) ti.textContent = (id ? '编辑：' : '') + d.title;
+  var bd = $('#modalBody'); if(bd) bd.innerHTML = d.form(id ? findRec(kind, id) : null);
+  var hn = $('#modalHint'); if(hn) hn.textContent = d.hint || '';
+  var sv = $('#modalSave'); if(sv) sv.textContent = id ? '保存修改' : '保存';
+  var m = $('#modal'); if(m) m.classList.add('show');
+  setTimeout(function(){
+    var f = document.querySelector('#modalBody input, #modalBody textarea');
+    if(f && f.focus) f.focus();
+  }, 140);
+}
+function closeModal(){
+  var m = $('#modal'); if(m) m.classList.remove('show');
+  MODAL.kind = null; MODAL.id = null;
+}
+function saveModal(){
+  var kind = MODAL.kind; if(!kind) return;
+  var rec = MODAL.id ? findRec(kind, MODAL.id) : null;
+  var isNew = !rec;
+  var v = function(id){ var e = $(id); return e ? e.value : ''; };
+  var n = function(id){ return num(v(id)); };
+
+  if(kind === 'task'){
+    var title = (v('#m_title')||'').trim();
+    if(!title){ toast('「事项」是必填的','err'); return; }
+    if(isNew) rec = { id: uid(), updatedAt: Date.now() };
+    rec.title = title;
+    rec.type = v('#m_type') || '推进';
+    rec.status = v('#m_status') || '完成';
+    rec.date = v('#m_date') || todayStr();
+    rec.project = (v('#m_project')||'').trim();
+    rec.estMin = n('#m_est');
+    rec.minutes = n('#m_min');
+    rec.output = (v('#m_output')||'').trim();
+    rec.blocker = (v('#m_blocker')||'').trim();
+    if(rec.status === '完成' && !rec.doneDate) rec.doneDate = rec.date;
+    if(rec.status !== '完成') delete rec.doneDate;
+    touch(rec);
+    if(isNew) DB.tasks.push(rec);
+    if(MODAL.id){ /* 编辑已有 */ }
+  }else if(kind === 'note'){
+    var content = (v('#m_content')||'').trim();
+    if(!content){ toast('内容不能为空','err'); return; }
+    if(isNew) rec = { id: uid(), status:'待整理', updatedAt: Date.now() };
+    rec.content = content;
+    rec.type = v('#m_ntype') || '灵感';
+    rec.source = (v('#m_source')||'').trim();
+    rec.date = v('#m_ndate') || todayStr();
+    touch(rec);
+    if(isNew) DB.notes.push(rec);
+  }else if(kind === 'decision'){
+    var dt = (v('#m_dtitle')||'').trim();
+    if(!dt){ toast('「决策事项」是必填的','err'); return; }
+    if(isNew) rec = { id: uid(), updatedAt: Date.now() };
+    rec.title = dt;
+    rec.date = v('#m_ddate') || todayStr();
+    rec.status = v('#m_dstatus') || '已决定';
+    rec.options = (v('#m_options')||'').trim();
+    rec.conclusion = (v('#m_conclusion')||'').trim();
+    rec.basis = (v('#m_basis')||'').trim();
+    touch(rec);
+    if(isNew) DB.decisions.push(rec);
+  }else if(kind === 'goal'){
+    var gtext = (v('#m_goal')||'').trim();
+    if(!gtext){ toast('「目标」是必填的','err'); return; }
+    if(isNew) rec = { id: uid(), progress:0, review:'', updatedAt: Date.now() };
+    rec.goal = gtext;
+    rec.period = (v('#m_period')||'').trim() || quarterOf(todayStr());
+    rec.area = v('#m_area') || '其他';
+    rec.status = v('#m_gstatus') || '进行中';
+    rec.krs = (v('#m_krs')||'').trim();
+    touch(rec);
+    if(isNew) DB.goals.push(rec);
+  }
+  save(true);
+  closeModal();
+  toast(isNew ? '已记下' : '已保存','ok');
+  rerenderKeepScroll();
+}
+
+/* ==========================================================================
    渲染调度
    ========================================================================== */
 var TABS = [
-  {id:'today',  label:'今天',  icon:'📅', render:viewToday},
-  {id:'tasks',  label:'任务',  icon:'✅', render:viewTasks},
-  {id:'habits', label:'打卡',  icon:'🔥', render:viewHabits},
-  {id:'notes',  label:'灵感',  icon:'💡', render:viewNotes},
-  {id:'review', label:'复盘',  icon:'📊', render:viewReview},
-  {id:'goals',  label:'目标',  icon:'🎯', render:viewGoals},
-  {id:'data',   label:'数据',  icon:'⚙️', render:viewData}
+  {id:'today',    label:'今天', icon:'📅', color:'--m-today',
+   purpose:'每天 30 秒：填心情、能量、一句话', render:viewToday},
+  {id:'tasks',    label:'任务', icon:'✅', color:'--m-task',
+   purpose:'完成一件事、或被卡住一件事时记一条。月末能看出多少时间花在"救火"上', render:viewTasks},
+  {id:'habits',   label:'打卡', icon:'🔥', color:'--m-habit',
+   purpose:'睡前打勾。看最近 30 天坚持得怎么样', render:viewHabits},
+  {id:'notes',    label:'灵感', icon:'💡', color:'--m-note',
+   purpose:'想到什么就丢进去，当场不用整理。每周整理一次', render:viewNotes},
+  {id:'decisions',label:'决策', icon:'🧭', color:'--m-dec',
+   purpose:'把"当时怎么想的"记下来，过一阵回来验证。这是最容易被忘掉、却最值钱的资产', render:viewDecisions},
+  {id:'review',   label:'复盘', icon:'📊', color:'--m-review',
+   purpose:'每周一次：指标已经算好，你只写三句话。下面还有本月/本季目标', render:viewReview},
+  {id:'data',     label:'设置', icon:'⚙️', color:'--m-trash', nav:false,
+   purpose:'备份、云同步、回收站、AI 助手、装成 App', render:viewData}
 ];
 
+/* 页面标题：解决"层级塌陷"和"不知道这是哪一页、这页干什么" */
+function pageHead(id, opt){
+  opt = opt || {};
+  var t = null;
+  for(var i=0;i<TABS.length;i++){ if(TABS[i].id===id){ t = TABS[i]; break; } }
+  if(!t) return '';
+  return '<header class="page-head" style="--mc:var('+t.color+')">'
+    + '<span class="ph-ico">'+t.icon+'</span>'
+    + '<div style="flex:1;min-width:0"><h1>'+esc(t.label)
+    + (opt.count!=null ? '<span class="ph-n">'+esc(opt.count)+'</span>' : '')
+    + '</h1><p>'+esc(opt.purpose || t.purpose)+'</p></div>'
+    + (opt.actions ? '<div class="ph-act">'+opt.actions+'</div>' : '')
+    + '</header>';
+}
+
 function renderTabs(){
-  var pending = DB.notes.filter(function(n){ return !n.status || n.status==='待整理'; }).length;
+  var pending = DB.notes.filter(function(n){ return !n.deleted && (!n.status || n.status==='待整理'); }).length;
   var todayDone = hasDaily(todayStr());
   var hd = '', hm = '';
   TABS.forEach(function(t){
+    if(t.nav === false) return;                     /* 设置页走顶栏齿轮，不占导航 */
     var on = (TAB===t.id) ? ' on' : '';
     var n = (t.id==='notes' && pending) ? '<span class="n">'+pending+'</span>' : '';
     var dot = (t.id==='today' && !todayDone) ? '<span class="dot-red"></span>' : '';
-    hd += '<button class="tab'+on+'" data-act="go" data-tab="'+t.id+'">'
+    hd += '<button class="tab'+on+'" data-act="go" data-tab="'+t.id+'"'
+        + ' style="--mc:var('+t.color+')">'
         + '<span aria-hidden="true">'+t.icon+'</span><span>'+t.label+'</span>'+n+dot+'</button>';
-    hm += '<button class="mtab'+on+'" data-act="go" data-tab="'+t.id+'">'
+    hm += '<button class="mtab'+on+'" data-act="go" data-tab="'+t.id+'"'
+        + ' style="--mc:var('+t.color+')">'
         + '<span class="mtab-i" aria-hidden="true">'+t.icon+'</span>'
         + '<span class="mtab-t">'+t.label+'</span>'+n+dot+'</button>';
   });
   $('#tabs').innerHTML = hd;
   $('#mnav').innerHTML = hm;
+  /* 「设置」不在导航里，但在设置页时齿轮要看起来是选中的 */
+  var gear = $('#topGear');
+  if(gear) gear.className = 'pill clickable' + (TAB==='data' ? ' on-gear' : '');
 }
 
 function render(){
@@ -3234,13 +4373,8 @@ document.addEventListener('click', function(e){
     rerenderKeepScroll();
     return;
   }
-  if(act==='task-del'){
-    if(!confirm('删除这条任务？')) return;
-    var tid = el.getAttribute('data-id');
-    tombstone('task', tid);
-    DB.tasks = DB.tasks.filter(function(t){ return t.id!==tid; });
-    save(true); toast('已删除'); rerenderKeepScroll(); return;
-  }
+  if(act==='task-del'){ deleteWithUndo('task', el.getAttribute('data-id'), '任务'); return; }
+  if(act==='task-timer'){ toggleTimer(el.getAttribute('data-id')); return; }
   if(act==='task-filter'){ ui.taskFilter = el.getAttribute('data-f'); render(); return; }
 
   /* --- 打卡 --- */
@@ -3269,28 +4403,8 @@ document.addEventListener('click', function(e){
   }
 
   /* --- 灵感 --- */
-  if(act==='note-add'){
-    var cEl = $('#n_content');
-    var content = (cEl.value||'').trim();
-    if(!content){ toast('内容不能为空','err'); cEl.focus(); return; }
-    DB.notes.push({
-      id: uid(),
-      date: ($('#n_date')||{}).value || todayStr(),
-      content: content,
-      type: ($('#n_type')||{}).value || '灵感',
-      source: (($('#n_source')||{}).value||'').trim(),
-      status: '待整理',
-      updatedAt: Date.now()
-    });
-    save(true); toast('已收进灵感池','ok'); rerenderKeepScroll(); return;
-  }
-  if(act==='note-del'){
-    if(!confirm('删除这条记录？')) return;
-    var nid = el.getAttribute('data-id');
-    tombstone('note', nid);
-    DB.notes = DB.notes.filter(function(n){ return n.id!==nid; });
-    save(true); toast('已删除'); rerenderKeepScroll(); return;
-  }
+  /* 新建走 openModal('note')，快速记录走 note-quick，这里不再有常驻表单 */
+  if(act==='note-del'){ deleteWithUndo('note', el.getAttribute('data-id'), '灵感'); return; }
   if(act==='note-status'){
     var nid2 = el.getAttribute('data-id');
     var st = el.getAttribute('data-st');
@@ -3333,13 +4447,8 @@ document.addEventListener('click', function(e){
     });
     save(true); toast('目标已添加','ok'); rerenderKeepScroll(); return;
   }
-  if(act==='goal-del'){
-    if(!confirm('删除这个目标？')) return;
-    var gid = el.getAttribute('data-id');
-    tombstone('goal', gid);
-    DB.goals = DB.goals.filter(function(g){ return g.id!==gid; });
-    save(true); toast('已删除'); rerenderKeepScroll(); return;
-  }
+  if(act==='goal-del'){ deleteWithUndo('goal', el.getAttribute('data-id'), '目标'); return; }
+  if(act==='dec-del'){ deleteWithUndo('decision', el.getAttribute('data-id'), '决策'); return; }
   if(act==='goal-status'){
     var gid2 = el.getAttribute('data-id'), st2 = el.getAttribute('data-st');
     DB.goals.forEach(function(g){
@@ -3349,6 +4458,65 @@ document.addEventListener('click', function(e){
       touch(g);
     });
     save(true); toast('已标为'+st2,'ok'); rerenderKeepScroll(); return;
+  }
+
+  /* --- 弹窗（新建 / 编辑表单都收在这里） --- */
+  if(act==='modal-close'){ closeModal(); return; }
+  if(act==='modal-save'){ saveModal(); return; }
+  if(act==='new-task'){ openModal('task'); return; }
+  if(act==='new-note'){ openModal('note'); return; }
+  if(act==='new-decision'){ openModal('decision'); return; }
+  if(act==='new-goal'){ openModal('goal'); return; }
+  if(act==='task-edit'){ openModal('task', el.getAttribute('data-id')); return; }
+  if(act==='note-edit'){ openModal('note', el.getAttribute('data-id')); return; }
+  if(act==='dec-edit'){ openModal('decision', el.getAttribute('data-id')); return; }
+  if(act==='note-quick'){ quickNote(); return; }
+
+  /* --- 全局搜索 --- */
+  if(act==='search-open'){ openSearch(); return; }
+  if(act==='search-close'){ closeSearch(); return; }
+  if(act==='search-goto'){
+    var stb = el.getAttribute('data-tab'), sd = el.getAttribute('data-date');
+    closeSearch();
+    if(sd){ ui.todayDate = sd; ui.habitDate = sd; ui.week = isoWeek(sd); }
+    go(stb);
+    return;
+  }
+
+  /* --- AI --- */
+  if(act==='ai-open'){ openAI(); return; }
+  if(act==='ai-close'){ closeAI(); return; }
+  if(act==='ai-settings'){ aiOpenOrSettings(); return; }
+  if(act==='ai-cancel'){ ui.aiSettings = false; render(); return; }
+  if(act==='ai-save'){ saveAISettings(); return; }
+  if(act==='ai-send'){ aiSendFromInput(); return; }
+  if(act==='ai-preset'){ aiPreset(el.getAttribute('data-q')); return; }
+
+  /* --- 回收站 --- */
+  if(act==='toast-act'){ runToastAction(); return; }
+  if(act==='trash-restore'){
+    undelete(el.getAttribute('data-kind'), el.getAttribute('data-id'));
+    save(true); toast('已恢复','ok'); render(); return;
+  }
+  if(act==='trash-purge'){
+    if(!confirm('彻底删除？这一步没法撤销。')) return;
+    purgeRecord(el.getAttribute('data-kind'), el.getAttribute('data-id'));
+    save(true); toast('已彻底删除'); render(); return;
+  }
+  if(act==='trash-empty'){
+    var tn = trashList().length;
+    if(!tn){ toast('回收站是空的'); return; }
+    if(!confirm('清空回收站？这 '+tn+' 项将无法恢复。')) return;
+    toast('已彻底删除 '+purgeAllTrash()+' 项');
+    render(); return;
+  }
+
+  /* --- 任务筛选条 --- */
+  if(act==='task-toggle-filter'){
+    var openNow = ui.taskShowFilter || ui.taskFilter !== 'all';
+    if(openNow){ ui.taskShowFilter = false; ui.taskFilter = 'all'; }
+    else { ui.taskShowFilter = true; }
+    render(); return;
   }
 
   /* --- 新手引导 --- */
@@ -3503,6 +4671,11 @@ document.addEventListener('change', function(e){
 document.addEventListener('input', function(e){
   var el = e.target;
 
+  /* 搜索框：边打边搜 */
+  if(el.id === 'searchInput'){ liveSearch(); return; }
+  /* AI 输入框由 keydown 处理回车 */
+  if(el.id === 'aiInput'){ return; }
+
   /* 同步设置：改服务或换令牌，就必须作废旧的片段 ID，
      否则新令牌会往旧令牌的片段里写（或者干脆写失败） */
   if(el.id==='s_provider'){ return; }
@@ -3572,19 +4745,39 @@ document.addEventListener('mouseout', function(e){
   if(box && !box.contains(e.relatedTarget)) chartLeave(box);
 });
 
-/* 快捷键：灵感页 Ctrl/Cmd+Enter 保存；今天页数字键 1-5 打心情；Esc 关引导 */
+/* 快捷键：灵感页 Ctrl/Cmd+Enter 保存；今天页数字键 1-5 打心情；Esc 关弹窗；Ctrl+K 搜索 */
 document.addEventListener('keydown', function(e){
+  /* Ctrl/Cmd + K 全局搜索 */
+  if((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')){
+    e.preventDefault();
+    var sm = $('#searchModal');
+    if(sm && sm.classList.contains('show')) closeSearch(); else openSearch();
+    return;
+  }
   if(e.key === 'Escape'){
     var g = $('#guide');
     if(g && g.classList.contains('show')){ closeGuide(); return; }
+    var md = $('#modal');
+    if(md && md.classList.contains('show')){ closeModal(); return; }
+    var s2 = $('#searchModal');
+    if(s2 && s2.classList.contains('show')){ closeSearch(); return; }
+    var am = $('#aiModal');
+    if(am && am.classList.contains('show')){ closeAI(); return; }
   }
-  if((e.ctrlKey||e.metaKey) && e.key==='Enter'){
-    if(e.target && e.target.id==='n_content'){
-      e.preventDefault();
-      var btn = document.querySelector('[data-act="note-add"]');
-      if(btn) btn.click();
-    }
-    return;
+  /* 弹窗里 Ctrl/Cmd + Enter 直接保存 / 发送 */
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+    var md2 = $('#modal');
+    if(md2 && md2.classList.contains('show')){ e.preventDefault(); saveModal(); return; }
+    var am2 = $('#aiModal');
+    if(am2 && am2.classList.contains('show')){ e.preventDefault(); aiSendFromInput(); return; }
+  }
+  /* 灵感页一行速记：回车即存 */
+  if(e.key === 'Enter' && e.target && e.target.id === 'n_quick'){
+    e.preventDefault(); quickNote(); return;
+  }
+  /* AI 输入框：回车发送 */
+  if(e.key === 'Enter' && e.target && e.target.id === 'aiInput'){
+    e.preventDefault(); aiSendFromInput(); return;
   }
   if(TAB==='today' && !e.ctrlKey && !e.metaKey && !e.altKey && e.key>='1' && e.key<='5'){
     var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
@@ -3773,6 +4966,10 @@ function loadDemo(){
    ========================================================================== */
 DB = loadDB();
 loadSync();
+loadAI();
+/* 回收站里超过 30 天的，启动时清掉 */
+try{ autoPurgeTrash(); }catch(e){}
+startTimerTick();
 ui.todayDate = todayStr();
 ui.habitDate = todayStr();
 ui.week = isoWeek(todayStr());
