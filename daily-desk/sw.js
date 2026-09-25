@@ -7,7 +7,7 @@
  * 涓ゆ潯閾佸緥鍜屾牴鐩綍閭ｄ釜涓€鑷达細
  *   1. 璺ㄥ煙涓€寰嬩笉纰帮紙api.github.com / gitee.com 杩欎簺鍚屾鎺ュ彛缁濅笉鑳界紦瀛橈級銆? *   2. 椤甸潰鏈綋鐢?缂撳瓨浼樺厛 + 鍚庡彴鏇存柊"锛屽洜涓轰粠鍥藉唴璁块棶 github.io 甯搁娆¤秴鏃躲€? *
  * 鏀逛簡 daily-desk 閲岀殑涓滆タ瑕佸彂甯冩椂锛氭妸 VERSION 鍔犱竴銆? */
-const VERSION = 'desk-v7';
+const VERSION = 'desk-v8';
 const CACHE = 'daily-desk-' + VERSION;
 
 const ASSETS = [
