@@ -237,6 +237,23 @@ nav.mnav{ display:none }
   padding:14px 20px; background:var(--surface-2); border-bottom:1px solid var(--line);
 }
 .hero-body{ padding:18px 20px 20px }
+
+/* 今日记录摘要：让"点了一下"变成"看得见的一条记录" */
+.rec-line{
+  padding:11px 20px; font-size:13px; font-weight:600; line-height:1.7;
+  color:var(--text-2); background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
+}
+.rec-line::before{
+  content:'今日已记'; flex:none; font-size:11.5px; font-weight:700;
+  color:var(--accent); background:var(--accent-soft);
+  border:1px solid var(--accent-line); border-radius:6px; padding:2px 8px;
+}
+.rec-line.ok{ color:var(--text) }
+.rec-line.ok::before{ content:'✓ 今天记好了'; color:var(--ok); background:var(--ok-soft); border-color:transparent }
+.rec-line.empty{ color:var(--text-3); font-weight:500; background:transparent }
+.rec-line.empty::before{ content:'还没记'; color:var(--text-3); background:var(--surface-3); border-color:transparent }
 .ring{ width:62px; height:62px; flex:none }
 .ring circle{ transition:stroke-dashoffset .7s var(--ease) }
 
@@ -594,6 +611,59 @@ a.lnk:hover{ border-bottom-color:var(--accent) }
 .sync-dot.err{ background:var(--bad); box-shadow:0 0 0 3px color-mix(in srgb, var(--bad) 20%, transparent) }
 .sync-dot.busy{ background:var(--accent); animation:blink .8s infinite }
 
+/* ---------------- 新手引导 ---------------- */
+.guide{
+  position:fixed; inset:0; z-index:100;
+  background:rgba(12,15,23,.58);
+  -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px);
+  display:none; align-items:center; justify-content:center; padding:18px;
+}
+.guide.show{ display:flex; animation:fadeIn .22s var(--ease) }
+.guide-box{
+  background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:540px;
+  max-height:88vh; display:flex; flex-direction:column; overflow:hidden;
+  box-shadow:var(--sh-3); animation:guideIn .34s var(--ease);
+}
+.guide-head{
+  padding:22px 24px 0; display:flex; align-items:flex-start; gap:12px;
+}
+.guide-ico{
+  width:44px; height:44px; border-radius:13px; flex:none; display:grid; place-items:center;
+  font-size:22px; background:linear-gradient(140deg, var(--accent-soft), var(--surface-3));
+  border:1px solid var(--accent-line);
+}
+.guide-head h2{ font-size:19px; letter-spacing:-.02em; margin-bottom:4px }
+.guide-head p{ margin:0; font-size:12.5px; color:var(--text-3) }
+.guide-x{
+  margin-left:auto; border:0; background:transparent; color:var(--text-3);
+  font-size:17px; padding:4px 6px; border-radius:8px; line-height:1; flex:none;
+}
+.guide-x:hover{ background:var(--surface-3); color:var(--text) }
+.guide-body{ padding:18px 24px; overflow-y:auto; flex:1 }
+.guide-body > p{ margin:0 0 14px; font-size:13.5px; line-height:1.85; color:var(--text-2) }
+.guide-body b{ color:var(--text); font-weight:680 }
+.guide-foot{
+  padding:16px 24px 20px; border-top:1px solid var(--line);
+  display:flex; align-items:center; gap:12px;
+}
+.guide-dots{ display:flex; gap:6px; margin-right:auto }
+.guide-dots i{
+  width:7px; height:7px; border-radius:50%; background:var(--line-strong);
+  transition:all .25s var(--ease);
+}
+.guide-dots i.on{ background:var(--accent); width:20px; border-radius:99px }
+.map-row{
+  display:flex; gap:11px; padding:11px 0; border-bottom:1px solid var(--line);
+  align-items:baseline;
+}
+.map-row:last-child{ border-bottom:0 }
+.map-row .mi{ font-size:16px; flex:none; width:22px }
+.map-row .mn{ font-weight:680; font-size:13.5px; flex:none; width:56px }
+.map-row .mw{ font-size:12.5px; color:var(--text-2); line-height:1.65; flex:1 }
+.map-row .mw em{ color:var(--warn); font-style:normal; font-weight:650 }
+@keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+@keyframes guideIn{ from{ opacity:0; transform:translateY(14px) scale(.97) } to{ opacity:1; transform:none } }
+
 details.adv{ border-top:1px solid var(--line); margin-top:18px; padding-top:14px }
 details.adv summary{
   cursor:pointer; font-size:13px; color:var(--text-2); font-weight:650;
@@ -692,6 +762,8 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
       <span class="brand-t">我的记录表</span>
     </div>
     <span class="pill" id="saveState"><i class="dot"></i><span id="saveText">就绪</span></span>
+    <button class="pill clickable" id="helpBtn" data-act="guide-open"
+            title="怎么用" aria-label="怎么用">❓ <span>怎么用</span></button>
     <button class="pill clickable s-off" id="syncPill" data-act="go" data-tab="data"
             title="云端同步"><i class="dot"></i><span id="syncText">未开启同步</span></button>
   </div>
@@ -701,6 +773,24 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
 <main class="wrap" id="app"></main>
 <nav class="mnav" id="mnav"></nav>
 <div class="toast" id="toast"></div>
+<div class="guide" id="guide">
+  <div class="guide-box" role="dialog" aria-modal="true" aria-label="怎么用">
+    <div class="guide-head">
+      <span class="guide-ico" id="guideIco">📓</span>
+      <div style="flex:1;min-width:0">
+        <h2 id="guideTitle"></h2>
+        <p id="guideSub"></p>
+      </div>
+      <button class="guide-x" data-act="guide-close" aria-label="关闭">✕</button>
+    </div>
+    <div class="guide-body" id="guideBody"></div>
+    <div class="guide-foot">
+      <div class="guide-dots" id="guideDots"></div>
+      <button class="btn sm" data-act="guide-prev" id="guidePrev">上一步</button>
+      <button class="btn pri" data-act="guide-next" id="guideNext">下一步</button>
+    </div>
+  </div>
+</div>
 <div class="install-bar" id="installBar">
   <span class="install-ico" id="installIco">📲</span>
   <div class="install-tx">
@@ -1754,12 +1844,31 @@ function scaleHTML(key, value, kind){
   for(var i=1;i<=5;i++){
     var on = (value===i) ? ' on' : '';
     var label = (kind==='mood') ? faces[i-1] : String(i);
-    h += '<button type="button" class="sc-btn'+on+'" data-v="'+i+'" style="--c:'+colors[i-1]+'"'
-       + ' aria-label="'+kind+' '+i+'"'+(value===i?' aria-pressed="true"':'')+'>'+label+'</button>';
+    /* data-act 不能少！事件委托第一行就是 closest('[data-act]')，
+       少了它按钮点下去会被整个吞掉，不报错、没反应。 */
+    h += '<button type="button" class="sc-btn'+on+'" data-act="scale" data-v="'+i+'"'
+       + ' style="--c:'+colors[i-1]+'" aria-label="'+kind+' '+i+'"'
+       + (value===i?' aria-pressed="true"':'')+'>'+label+'</button>';
   }
   return h + '</div>';
 }
 function scaleEnds(a,b){ return '<div class="scale-ends"><span>'+a+'</span><span>'+b+'</span></div>'; }
+
+/* 把一天的记录汇总成一句话，显示在今日卡上。
+   目的：点心情/能量之后不只是"按钮变色"，而是当场长出一条看得见的记录。 */
+function recSummary(d){
+  var parts = [];
+  var faces = ['😞','😕','😐','🙂','😄'];
+  if(num(d.mood)!=null) parts.push('心情 ' + faces[num(d.mood)-1] + ' ' + num(d.mood));
+  if(num(d.energy)!=null) parts.push('能量 ' + num(d.energy) + '/5');
+  if(num(d.sleep)!=null) parts.push('睡眠 ' + d.sleep + ' 小时');
+  if(d.exercise) parts.push('运动');
+  if(Array.isArray(d.tags) && d.tags.length){
+    parts.push(d.tags.map(function(t){ return '#'+t; }).join(' '));
+  }
+  if(d.line && d.line.trim()) parts.push('「' + d.line.trim() + '」');
+  return parts;
+}
 function cardHead(icon, title, right){
   return '<div class="card-h"><h3>'
     + (icon ? '<span class="ci">'+icon+'</span>' : '')
@@ -1970,6 +2079,13 @@ function viewToday(){
   h += '</div>';
   h += '</div>';
 
+  /* 今日记录摘要 —— 点完心情/能量/一句话，这里立刻长出一条看得见的记录 */
+  var recParts = recSummary(d);
+  var recDone = (num(d.mood)!=null?1:0) + (num(d.energy)!=null?1:0) + ((d.line&&d.line.trim())?1:0);
+  h += '<div class="rec-line'+(recDone===3?' ok':(recParts.length?'':' empty'))+'" id="recLine">'
+     + (recParts.length ? esc(recParts.join('　·　')) : '填下面三项就行，30 秒')
+     + '</div>';
+
   h += '<div class="hero-body">';
   h += '<div class="grid g2">';
   h += '<div class="field"><label class="f">心情 <span class="req">*</span></label>'
@@ -2003,19 +2119,51 @@ function viewToday(){
   h += '</div></details>';
   h += '</div></section>';
 
-  /* 这天的任务 */
+  /* ---- 今日总览：今天打了什么卡、做了什么、想了什么，一屏看完 ---- */
+  var dayWord = isToday ? '今天' : '这天';
+
+  /* 打卡：直接放这儿，不用再跳到打卡页 */
+  var hcfg = DB.habits.config;
+  var hrow = DB.habits.log[date] || {};
+  var hdone = hcfg.filter(function(hb){ return hrow[hb.id]===true; }).length;
+  h += '<section class="card">'
+     + cardHead('🔥', dayWord+'的打卡',
+         '<span class="hint">'+hdone+'/'+hcfg.length+'</span>'
+         + '<button class="btn sm ghost" data-act="go" data-tab="habits">看 30 天 →</button>');
+  if(hcfg.length){
+    h += habitToggleListHTML(date);
+  }else{
+    h += emptyHTML('🔥','还没有习惯','去「打卡」页加几个想坚持的事，5 个以内最好');
+  }
+  h += '</section>';
+
+  /* 任务 */
   if(todayTasks.length){
     h += '<section class="card">'
-       + cardHead('✅','这天的任务 · '+todayTasks.length+' 条',
+       + cardHead('✅', dayWord+'做了什么 · '+todayTasks.length+' 条',
            '<button class="btn sm ghost" data-act="go" data-tab="tasks">去任务页 +</button>');
     todayTasks.forEach(function(t){ h += taskItemHTML(t); });
     h += '</section>';
   }else{
     h += '<section class="card tight"><div class="row">'
-       + '<span class="hint">这天还没有任务记录。</span>'
+       + '<span class="hint">'+dayWord+'还没有任务记录。</span>'
        + '<button class="btn sm ghost" data-act="go" data-tab="tasks" style="margin-left:auto">去记一条 →</button>'
        + '</div></section>';
   }
+
+  /* 灵感 */
+  var todayNotes = DB.notes.filter(function(n){ return n.date === date; });
+  h += '<section class="card">'
+     + cardHead('💡', dayWord+'记的灵感 · '+todayNotes.length+' 条',
+         '<button class="btn sm ghost" data-act="go" data-tab="notes">去灵感页 +</button>');
+  if(todayNotes.length){
+    todayNotes.forEach(function(n){ h += noteItemHTML(n); });
+  }else{
+    h += '<div class="row"><span class="hint">'+dayWord+'还没有灵感记录。想到什么随手丢进去，不用整理。</span>'
+       + '<button class="btn sm ghost" data-act="go" data-tab="notes" style="margin-left:auto">去记一条 →</button>'
+       + '</div>';
+  }
+  h += '</section>';
 
   /* 近 7 天 */
   h += '<section class="card">' + cardHead('🗓','近 7 天') + '<div style="overflow-x:auto">';
@@ -2150,6 +2298,25 @@ function viewTasks(){
 /* ==========================================================================
    视图：打卡
    ========================================================================== */
+/* 打卡开关列表 —— 「今天」页和「打卡」页共用同一份渲染，避免两处各写一遍慢慢跑偏 */
+function habitToggleListHTML(date){
+  var cfg = DB.habits.config;
+  var row = DB.habits.log[date] || {};
+  var h = '<div style="display:grid;gap:10px">';
+  cfg.forEach(function(hb){
+    var on = row[hb.id]===true;
+    h += '<label class="tgl" style="justify-content:space-between;background:var(--surface-2);'
+       + 'border:1.5px solid '+(on?'var(--accent-line)':'var(--line)')+';border-radius:var(--r-md);'
+       + 'padding:13px 15px">';
+    h += '<span class="lbl" style="font-weight:640">'+esc(hb.name)+'</span>';
+    h += '<span class="row" style="gap:13px"><span class="badge b-gray">连续 '+habitStreak(hb.id)+' 天</span>';
+    h += '<input type="checkbox" data-act="habit-toggle" data-hid="'+esc(hb.id)+'" data-date="'+date+'"'
+       + (on?' checked':'')+'><span class="track"></span></span>';
+    h += '</label>';
+  });
+  return h + '</div>';
+}
+
 function viewHabits(){
   var date = ui.habitDate || todayStr();
   var row = DB.habits.log[date] || {};
@@ -2177,19 +2344,7 @@ function viewHabits(){
   h += '<div class="stat-d">'+(allDone ? '✓ 今天全打完了' : '点下面的开关打卡')+'</div></div>';
   h += '</div>';
 
-  h += '<div style="display:grid;gap:10px">';
-  cfg.forEach(function(hb){
-    var on = row[hb.id]===true;
-    h += '<label class="tgl" style="justify-content:space-between;background:var(--surface-2);'
-       + 'border:1.5px solid '+(on?'var(--accent-line)':'var(--line)')+';border-radius:var(--r-md);'
-       + 'padding:13px 15px">';
-    h += '<span class="lbl" style="font-weight:640">'+esc(hb.name)+'</span>';
-    h += '<span class="row" style="gap:13px"><span class="badge b-gray">连续 '+habitStreak(hb.id)+' 天</span>';
-    h += '<input type="checkbox" data-act="habit-toggle" data-hid="'+esc(hb.id)+'" data-date="'+date+'"'
-       + (on?' checked':'')+'><span class="track"></span></span>';
-    h += '</label>';
-  });
-  h += '</div>';
+  h += habitToggleListHTML(date);
 
   if(cfg.length>7){
     h += '<div class="note warn" style="margin-top:14px"><span class="note-body">'
@@ -2742,25 +2897,29 @@ function setupPWA(){
     });
   }
 
-  /* 延迟弹安装提示，别一进来就糊在脸上 */
-  if(!PWA.standalone && !installDismissed()){
-    setTimeout(function(){
-      if(PWA.standalone || installDismissed() || PWA.deferred) return;
-      if(PWA.local){
-        showInstallBar('📄','你现在是直接打开文件',
-          '这种打开方式装不成 App（浏览器只允许从网址安装），手机上数据也可能不保存。'
-          + '想真正用起来，看「数据」页最上面的说明。', null);
-      }else if(isIOSDevice()){
-        showInstallBar('📲','装到 iPhone 桌面',
-          '点底部的「分享」按钮 → 选「添加到主屏幕」。装好后请固定用桌面图标打开 —— Safari 里打开是另一份数据。', null);
-      }else if(isAndroidDevice()){
-        showInstallBar('📲','装到手机桌面',
-          '点浏览器右上角「⋮」→ 选「安装应用」或「添加到主屏幕」。', null);
-      }else{
-        showInstallBar('📲','装成桌面 App',
-          '点地址栏右侧的「安装」图标，之后就是一个独立窗口，出现在任务栏和开始菜单里。', null);
-      }
-    }, 2600);
+  /* 延迟弹安装提示，别一进来就糊在脸上；也等新手引导说完 */
+  if(!PWA.standalone && !installDismissed()) setTimeout(promptInstall, 2600);
+}
+
+/* 什么时候该提示"装成 App"。抽出来是因为引导关闭后要再检查一次。 */
+function promptInstall(){
+  if(PWA.standalone || installDismissed() || PWA.deferred) return;
+  if(!guideSeen()) return;                       /* 引导还没看完，先别说这个 */
+  var g = $('#guide');
+  if(g && g.classList.contains('show')) return;
+  if(PWA.local){
+    showInstallBar('📄','你现在是直接打开文件',
+      '这种打开方式装不成 App（浏览器只允许从网址安装），手机上数据也可能不保存。'
+      + '想真正用起来，看「数据」页最上面的说明。', null);
+  }else if(isIOSDevice()){
+    showInstallBar('📲','装到 iPhone 桌面',
+      '点底部的「分享」按钮 → 选「添加到主屏幕」。装好后请固定用桌面图标打开 —— Safari 里打开是另一份数据。', null);
+  }else if(isAndroidDevice()){
+    showInstallBar('📲','装到手机桌面',
+      '点浏览器右上角「⋮」→ 选「安装应用」或「添加到主屏幕」。', null);
+  }else{
+    showInstallBar('📲','装成桌面 App',
+      '点地址栏右侧的「安装」图标，之后就是一个独立窗口，出现在任务栏和开始菜单里。', null);
   }
 }
 
@@ -2837,6 +2996,100 @@ function installCardHTML(){
 }
 
 /* ==========================================================================
+   新手引导
+   「看不懂怎么用」是这类工具最常见的死因，所以内置一份随时可查的说明：
+   首次打开自动弹，之后点顶栏的「怎么用」随时再看。
+   ========================================================================== */
+var GUIDE_KEY = 'life_records_guide_v2';
+var guideStep = 0;
+
+var GUIDE = [
+  {
+    icon:'📓', title:'这是你自己的记录表', sub:'记录 生活 · 工作 · 复盘',
+    body:'<p><b>只给你自己用。</b>数据存在你自己的设备上，不经过任何第三方服务器。</p>'
+       + '<p>它帮你把每天的状态和做过的事记下来，然后<b>自动汇总成每周复盘</b> —— '
+       + '平均心情、打卡率、任务完成率、"救火"占比，这些都替你算好了。</p>'
+       + '<p>每天投入不到 1 分钟，每周 15 分钟复盘。</p>'
+  },
+  {
+    icon:'⏱', title:'每天只做一件事', sub:'打开「今天」页，30 秒',
+    body:'<p>在「今天」页填<b>三个必填项</b>就够了：</p>'
+       + '<p style="font-size:15px;font-weight:680;color:var(--text);margin:14px 0">'
+       + '心情　·　能量　·　今日一句</p>'
+       + '<p>其他（睡眠、运动、备注、标签）<b>全是可选的</b>，不填不扣分。</p>'
+       + '<div class="note warn" style="margin-top:16px"><span class="note-body">'
+       + '别想着一上来就把七个页面全用上 —— 那是这类工具最常见的死法，两周后就放弃了。'
+       + '</span></div>'
+  },
+  {
+    icon:'🗺', title:'哪个页面什么时候用', sub:'除了「今天」，其他都是按需用',
+    body:'<div class="map-row"><span class="mi">📅</span><span class="mn">今天</span>'
+       + '<span class="mw"><b>每天打开。</b>填心情/能量/一句话，顺便看今天打了什么卡、做了什么'
+       + '<em> · 最重要的一页</em></span></div>'
+       + '<div class="map-row"><span class="mi">✅</span><span class="mn">任务</span>'
+       + '<span class="mw">完成一件事、或被卡住一件事时记一条。一个月后能看出多少时间花在"救火"上</span></div>'
+       + '<div class="map-row"><span class="mi">🔥</span><span class="mn">打卡</span>'
+       + '<span class="mw">睡前打勾。看最近 30 天坚持得怎么样</span></div>'
+       + '<div class="map-row"><span class="mi">💡</span><span class="mn">灵感</span>'
+       + '<span class="mw">想到什么就丢进去，当场不用整理。每周整理一次</span></div>'
+       + '<div class="map-row"><span class="mi">📊</span><span class="mn">复盘</span>'
+       + '<span class="mw"><b>每周一次。</b>指标已经自动算好，你只写三句话</span></div>'
+       + '<div class="map-row"><span class="mi">🎯</span><span class="mn">目标</span>'
+       + '<span class="mw">每月一次。季度末只做一个决定：继续，或放弃</span></div>'
+       + '<div class="map-row"><span class="mi">⚙️</span><span class="mn">数据</span>'
+       + '<span class="mw">平时不用碰。备份、云同步、装成 App 都在这儿</span></div>'
+  },
+  {
+    icon:'☁️', title:'数据存在哪、怎么不丢', sub:'这一条最要紧',
+    body:'<p><b>数据存在这台设备上</b>（浏览器的本地存储）。清缓存、换设备都会丢。</p>'
+       + '<p>想让手机和电脑用同一份数据，去「数据」页打开 <b>云端同步</b> —— '
+       + '数据会存到<b>你自己账号</b>下的一个私密片段里，两边改完自动合并，不会互相覆盖。</p>'
+       + '<div class="note" style="margin-top:16px"><span class="note-body">'
+       + '云同步是方便，<b>备份才是保险</b>。建议每周复盘时顺手点一次「导出备份」。'
+       + '</span></div>'
+       + '<p style="margin-top:16px">准备好了 —— 去「今天」页记第一条吧。</p>'
+  }
+];
+
+function renderGuide(){
+  var s = GUIDE[guideStep];
+  if(!s) return;
+  var ico = $('#guideIco'), ti = $('#guideTitle'), su = $('#guideSub'), bd = $('#guideBody');
+  if(ico) ico.textContent = s.icon;
+  if(ti) ti.textContent = s.title;
+  if(su) su.textContent = s.sub;
+  if(bd) bd.innerHTML = s.body;
+  var dots = '';
+  for(var i=0;i<GUIDE.length;i++) dots += '<i'+(i===guideStep?' class="on"':'')+'></i>';
+  var d = $('#guideDots'); if(d) d.innerHTML = dots;
+  var pv = $('#guidePrev'); if(pv) pv.style.visibility = (guideStep===0) ? 'hidden' : '';
+  var nx = $('#guideNext');
+  if(nx) nx.textContent = (guideStep===GUIDE.length-1) ? '开始使用' : '下一步';
+  var box = $('.guide-body');
+  if(box) box.scrollTop = 0;
+}
+function openGuide(step){
+  guideStep = step || 0;
+  renderGuide();
+  var g = $('#guide'); if(g) g.classList.add('show');
+}
+function closeGuide(){
+  var g = $('#guide'); if(g) g.classList.remove('show');
+  try{ localStorage.setItem(GUIDE_KEY, '1'); }catch(e){}
+  setTimeout(promptInstall, 1400);      /* 引导看完了，再问要不要装成 App */
+}
+function guideGo(delta){
+  var n = guideStep + delta;
+  if(n < 0) return;
+  if(n >= GUIDE.length){ closeGuide(); return; }
+  guideStep = n;
+  renderGuide();
+}
+function guideSeen(){
+  try{ return localStorage.getItem(GUIDE_KEY) === '1'; }catch(e){ return true; }
+}
+
+/* ==========================================================================
    渲染调度
    ========================================================================== */
 var TABS = [
@@ -2898,6 +3151,13 @@ function updateTodayMetrics(date){
     v.appendChild(u);
   }
   if(hint) hint.textContent = (filled===3 ? '✓ 三项都填好了' : '还差 '+(3-filled)+' 项必填');
+  /* 摘要行同步更新 —— 否则点完心情，摘要还停在"还没记" */
+  var rl = $('#recLine');
+  if(rl){
+    var parts = recSummary(d);
+    rl.className = 'rec-line' + (filled===3 ? ' ok' : (parts.length ? '' : ' empty'));
+    rl.textContent = parts.length ? parts.join('　·　') : '填下面三项就行，30 秒';
+  }
 }
 
 /* ==========================================================================
@@ -3090,6 +3350,12 @@ document.addEventListener('click', function(e){
     });
     save(true); toast('已标为'+st2,'ok'); rerenderKeepScroll(); return;
   }
+
+  /* --- 新手引导 --- */
+  if(act==='guide-open'){ openGuide(0); return; }
+  if(act==='guide-close'){ closeGuide(); return; }
+  if(act==='guide-next'){ guideGo(1); return; }
+  if(act==='guide-prev'){ guideGo(-1); return; }
 
   /* --- 装成 App --- */
   if(act==='install-app'){ doInstall(); return; }
@@ -3306,8 +3572,12 @@ document.addEventListener('mouseout', function(e){
   if(box && !box.contains(e.relatedTarget)) chartLeave(box);
 });
 
-/* 快捷键：灵感页 Ctrl/Cmd+Enter 保存；今天页数字键 1-5 打心情 */
+/* 快捷键：灵感页 Ctrl/Cmd+Enter 保存；今天页数字键 1-5 打心情；Esc 关引导 */
 document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    var g = $('#guide');
+    if(g && g.classList.contains('show')){ closeGuide(); return; }
+  }
   if((e.ctrlKey||e.metaKey) && e.key==='Enter'){
     if(e.target && e.target.id==='n_content'){
       e.preventDefault();
@@ -3517,6 +3787,9 @@ render();
 if(!storageOK){ setPill('存储不可用','err'); }
 updateSyncPill();
 setupPWA();
+updateSyncPill();
+/* 第一次打开先讲清楚怎么用 —— "看不懂怎么用"是这类工具最常见的死因 */
+if(!guideSeen()) setTimeout(function(){ openGuide(0); }, 900);
 
 /* 回到前台就立刻同步一次：手机上记完，切回电脑就能看到 */
 document.addEventListener('visibilitychange', function(){
