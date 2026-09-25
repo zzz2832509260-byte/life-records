@@ -815,12 +815,16 @@ function blankDB(){
     daily: {},          /* { 'YYYY-MM-DD': {mood,energy,line,sleep,exercise,tags,note,updatedAt} } */
     tasks: [],          /* [{id,date,title,type,status,output,blocker,minutes,project,drain,updatedAt}] */
     habits: {
+      /* 出厂预置的习惯，updatedAt 故意设成 0：
+         它们是"默认值"不是"用户改过的内容"。如果给它们盖当前时间，
+         新设备第一次同步时会比你在别的设备上删除它们留下的墓碑还新 ——
+         结果就是删掉的习惯又冒出来。设成 0 就永远输给任何真实改动和删除。 */
       config: [
-        {id:'h_sleep',  name:'早睡 ≤23:30', ord:0},
-        {id:'h_sport',  name:'运动',        ord:1},
-        {id:'h_read',   name:'阅读≥20min',  ord:2},
-        {id:'h_water',  name:'喝水≥1.5L',   ord:3},
-        {id:'h_mind',   name:'冥想/散步',   ord:4}
+        {id:'h_sleep',  name:'早睡 ≤23:30', ord:0, updatedAt:0},
+        {id:'h_sport',  name:'运动',        ord:1, updatedAt:0},
+        {id:'h_read',   name:'阅读≥20min',  ord:2, updatedAt:0},
+        {id:'h_water',  name:'喝水≥1.5L',   ord:3, updatedAt:0},
+        {id:'h_mind',   name:'冥想/散步',   ord:4, updatedAt:0}
       ],
       log: {},          /* { 'YYYY-MM-DD': { habitId: true } } */
       ts: {}            /* { 'YYYY-MM-DD': { habitId: 时间戳 } } 每格各自的修改时间 */
@@ -1301,8 +1305,22 @@ async function ghTest(){
   var me = await httpJSON('https://api.github.com/user', {headers:ghHeaders()});
   return '已连接 GitHub：' + ((me && me.login) || '(未知账号)');
 }
-async function ghPull(){
-  if(!SYNC.gistId) return null;
+/* 在账号里找已有的同步片段。
+   为什么需要这个：第二台设备只填了令牌、没有片段 ID，
+   如果直接开始同步，它会"找不到云端数据 → 以为是空的 → 新建一个片段"，
+   结果两台设备各有一朵云，永远同步不到一起。
+   换令牌时同理：令牌变了会把片段 ID 作废，这里能自动找回来。 */
+async function ghFindGist(){
+  var list = await httpJSON('https://api.github.com/gists?per_page=100', {headers:ghHeaders()});
+  if(!Array.isArray(list)) return null;
+  for(var i=0;i<list.length;i++){
+    var g = list[i];
+    if(g && g.id && g.files && g.files[SYNC.file]) return g.id;
+  }
+  return null;
+}
+
+async function ghPull(){  if(!SYNC.gistId) return null;
   var d = await httpJSON('https://api.github.com/gists/'+encodeURIComponent(SYNC.gistId),
                          {headers:ghHeaders()});
   var f = d && d.files && d.files[SYNC.file];
@@ -1350,6 +1368,16 @@ async function gtPull(){
   var f = files[SYNC.file];
   if(f==null) return null;
   return (typeof f === 'string') ? f : (f.content || null);
+}
+/* 同 ghFindGist：Gitee 这边也要能自己找到已有的片段 */
+async function gtFindGist(){
+  var d = await httpJSON(gtUrl('/gists?per_page=100'), {});
+  var list = Array.isArray(d) ? d : (d && Array.isArray(d.gists) ? d.gists : []);
+  for(var i=0;i<list.length;i++){
+    var g = list[i];
+    if(g && (g.id || g.gist_id) && g.files && g.files[SYNC.file]) return g.id || g.gist_id;
+  }
+  return null;
 }
 async function gtWrite(build){
   var modes = (SYNC.giteeMode==='json') ? ['json','form'] : ['form','json'];
@@ -1411,6 +1439,7 @@ async function gtPush(text){
 function remoteTest(){ return SYNC.provider==='gitee' ? gtTest() : ghTest(); }
 function remotePull(){ return SYNC.provider==='gitee' ? gtPull() : ghPull(); }
 function remotePush(t){ return SYNC.provider==='gitee' ? gtPush(t) : ghPush(t); }
+function remoteFind(){ return SYNC.provider==='gitee' ? gtFindGist() : ghFindGist(); }
 function providerName(){ return SYNC.provider==='gitee' ? 'Gitee 码云' : 'GitHub'; }
 
 /* ---------------- 同步主流程：拉取 → 合并 → 回推 ---------------- */
@@ -1422,6 +1451,16 @@ async function syncNow(opts){
   syncBusy = true;
   setSyncStatus('busy','同步中…');
   try{
+    /* 没有片段 ID 时先找一遍已有的。
+       第二台设备、或者换过令牌的情况下，这一步决定了两台设备是"共用一朵云"
+       还是"各建一朵云、永远同步不到一起"。 */
+    if(!SYNC.gistId){
+      try{
+        var found = await remoteFind();
+        if(found){ SYNC.gistId = found; saveSync(); }
+      }catch(e){ /* 找不到就当没有，下面会新建一个 */ }
+    }
+
     var raw = await remotePull();
     var remote = null, remoteHash = null;
     if(raw){
@@ -1602,9 +1641,17 @@ function syncCardHTML(){
      + '<option value="github"'+(SYNC.provider==='github'?' selected':'')+'>GitHub（国际，已实测可用）</option>'
      + '<option value="gitee"'+(SYNC.provider==='gitee'?' selected':'')+'>Gitee 码云（国内，速度更快）</option>'
      + '</select></div>';
-  h += '<div class="field"><label class="f">访问令牌</label>'
+  h += '<div class="field"><label class="f">访问令牌'
+     + (SYNC.token ? ' <span style="color:var(--ok);font-weight:650">· 已保存</span>' : '')
+     + '</label><div class="row" style="flex-wrap:nowrap;gap:7px">'
      + '<input type="password" id="s_token" placeholder="粘贴令牌后点右边的保存" value="'+esc(SYNC.token)+'"'
-     + ' autocomplete="off" spellcheck="false"></div>';
+     + ' autocomplete="off" spellcheck="false" style="flex:1;min-width:0">'
+     + '<button class="btn sm" id="s_tokenBtn" data-act="sync-show-token" style="flex:none">显示</button>'
+     + '</div>'
+     + '<div class="hint" style="margin-top:8px">'
+     + 'GitHub 的令牌<b>只在生成时显示一次</b>，之后在网站上再也看不到。'
+     + '但已经填进来的这台设备存着 —— 点「显示」就能读到，抄到另一台设备上用即可。'
+     + '</div></div>';
   h += '</div>';
 
   h += '<div class="row" style="margin-top:16px">';
@@ -3047,6 +3094,20 @@ document.addEventListener('click', function(e){
   /* --- 装成 App --- */
   if(act==='install-app'){ doInstall(); return; }
   if(act==='install-dismiss'){ dismissInstall(); return; }
+
+  /* --- 显示/隐藏已保存的令牌（GitHub 网站上再也看不到它，只能从这里读） --- */
+  if(act==='sync-show-token'){
+    var f = $('#s_token'), b = $('#s_tokenBtn');
+    if(!f) return;
+    var showing = (f.type === 'text');
+    f.type = showing ? 'password' : 'text';
+    if(b) b.textContent = showing ? '显示' : '隐藏';
+    if(!showing){
+      f.focus(); f.select();
+      toast('已显示，Ctrl+C 复制','ok');
+    }
+    return;
+  }
 
   /* --- 云同步 --- */
   if(act==='sync-save'){ saveSyncSettings(); return; }
