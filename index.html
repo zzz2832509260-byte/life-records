@@ -63,9 +63,6 @@
 
   /* 字号阶梯：页面标题 > 卡片标题 > 正文 > 辅助 */
   --fs-page: 21px;
-  --fs-card: 13px;
-  --fs-body: 14.5px;
-  --fs-sub:  12.5px;
 
   --sh-1: 0 1px 2px rgba(16,23,41,.05), 0 1px 3px rgba(16,23,41,.04);
   --sh-2: 0 4px 14px rgba(16,23,41,.07), 0 1px 3px rgba(16,23,41,.04);
@@ -361,7 +358,6 @@ nav.mnav{ display:none }
 .ai-msg.me{ background:var(--accent-soft); color:var(--accent-deep); align-self:flex-end; max-width:86% }
 .ai-msg.ai{ background:var(--surface-2); border:1px solid var(--line); align-self:flex-start; max-width:94% }
 .ai-msg.err{ background:var(--bad-soft); color:var(--bad) }
-.ai-msg.think{ color:var(--text-3); font-style:italic }
 .ai-chips{ display:flex; gap:7px; flex-wrap:wrap; margin-top:4px }
 
 /* ==========================================================================
@@ -1225,7 +1221,9 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
   }
 }
 @media print{
-  .topbar,nav.mnav,.toast,.no-print{ display:none!important }
+  /* 原来这里还列了个 .no-print（"给元素挂上就不打印"的通用钩子），
+     但全文件没有任何地方挂过它 —— 顺手去掉，真要用再加回来。 */
+  .topbar,nav.mnav,.toast{ display:none!important }
   body{ background:#fff; padding:0 }
   .card{ box-shadow:none; border-color:#ddd; break-inside:avoid }
   .wrap > *{ animation:none }
@@ -1857,10 +1855,6 @@ function tasksIn(dates){
 function notesIn(dates){
   var set = {}; dates.forEach(function(d){ set[d]=1; });
   return alive(DB.notes).filter(function(n){ return set[n.date]; });
-}
-function decisionsIn(dates){
-  var set = {}; dates.forEach(function(d){ set[d]=1; });
-  return alive(DB.decisions).filter(function(n){ return set[n.date]; });
 }
 function decisionsAll(){
   return alive(DB.decisions).slice().sort(function(a,b){
@@ -2958,7 +2952,8 @@ function todayAgendaHTML(){
   }
 
   var pinned = pinnedTasks();
-  var top3 = pinned.length ? pinned.slice(0, 3) : suggestTop3();
+  /* top3Ids() 就是下面这两行的原文，抽出去过 —— 别再抄一遍，抄了会各自漂移 */
+  var top3 = top3Ids();
 
   var h = '<div class="agenda">';
   if(d.over.length){
@@ -5314,15 +5309,6 @@ function addImg(rec, im){
   if(!Array.isArray(rec.imgs)) rec.imgs = [];
   rec.imgs.push(im);
   return null;
-}
-function removeImg(rec, id){
-  if(!rec || !Array.isArray(rec.imgs)) return 0;
-  var before = rec.imgs.length;
-  var left = rec.imgs.filter(function(x){ return x.id !== id; });
-  /* 先算再删 —— 删掉字段之后再读 .length 就是对着 undefined 取长度 */
-  if(left.length) rec.imgs = left; else delete rec.imgs;
-  imgStore.del(id);
-  return before - left.length;
 }
 
 /* ---- 字节仓库：IndexedDB 优先，localStorage 兜底 ----
