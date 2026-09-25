@@ -1066,6 +1066,35 @@ body{background:var(--ds3-bg)}
   box-shadow:0 0 0 3px rgba(91,91,214,.14);
 }
 .ai-set input[type="text"]{ margin-top:8px }
+
+/* ---------------- AI 头部的模型名（可点，用来换模型） ---------------- */
+/* 它本来是页面里的 <span class="ai-sub">（一行灰色小字）。
+   补丁把它换成了 <button>，所以要在这里把按钮的默认皮肤抹掉，
+   让它看起来还是那行小字 —— 只是多一个 ▾ 提示可以点。 */
+button.ai-sub{
+  border:0; background:transparent; padding:2px 6px; margin-right:4px;
+  font:inherit; font-size:inherit; color:inherit; line-height:inherit;
+  border-radius:7px; cursor:pointer; transition:background .16s, color .16s;
+}
+button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd6) }
+
+/* ---------------- 模型切换条（贴在输入框上面） ---------------- */
+.ai-modelpick{
+  display:none; flex-direction:column; gap:6px;
+  padding:0 16px; margin-bottom:2px;
+}
+.ai-modelpick.on{ display:flex }
+.ai-pick-i{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:11px 13px; border-radius:10px; cursor:pointer; text-align:left;
+  border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
+  color:inherit; font:inherit; font-size:13.5px; font-weight:600;
+  transition:.16s;
+}
+.ai-pick-i:hover{ border-color:var(--accent,#5b5bd6); color:var(--accent,#5b5bd6) }
+.ai-pick-i.on{ border-color:var(--accent,#5b5bd6); background:rgba(91,91,214,.08) }
+.ai-pick-n{ flex:1; min-width:0 }
+.ai-pick-c{ color:var(--accent,#5b5bd6); font-weight:800 }
 .wb-btn{
   min-height:40px; padding:0 16px; font:inherit; font-size:13px; font-weight:650;
   border:1px solid var(--line,#e5e7ec); border-radius:9px;
@@ -3896,11 +3925,18 @@ AI 助手
   function imgObserve() {
     if (typeof MutationObserver === 'undefined' || !document.documentElement) return;
     var mo = new MutationObserver(function (muts) {
+      var touchedAI = false;
       for (var i = 0; i < muts.length; i++) {
         var m = muts[i];
         if (m.type === 'attributes') { hydrateEl(m.target); continue; }
-        for (var j = 0; j < m.addedNodes.length; j++) hydrateEl(m.addedNodes[j]);
+        for (var j = 0; j < m.addedNodes.length; j++) {
+          hydrateEl(m.addedNodes[j]);
+          touchedAI = true;
+        }
       }
+      /* AI 面板是每次打开都重建 innerHTML 的，所以每次新节点进来都要重新接一次线。
+         aiWireSwitcher 自己是幂等的（认 __wbWired），重复调用没关系。 */
+      if (touchedAI) { try { aiWireSwitcher(); } catch (e) {} }
     });
     mo.observe(document.documentElement, {
       childList: true, subtree: true, attributes: true,
@@ -4616,12 +4652,12 @@ AI 助手
   var AI_EFF_LS = 'wb_ai_effort_v1';      /* 本层新增：思考强度 */
   var AI_DEF_MODEL_NAME = 'deepseek-flash';
 
-  /* 兜底清单：连不上 /models 时也能选。按"推荐先用哪个"排序 */
+  /* 模型清单：**只留 DeepSeek 现在这两个**（用户明确要求）。
+     V3 的 deepseek-chat 和 R1 的 deepseek-reasoner 已经过时，留着只会让人选错。
+     接别家 OpenAI 兼容服务仍然可以 —— 走设置里的「自定义」。 */
   var AI_MODELS = [
-    { id: 'deepseek-flash', name: 'deepseek-flash · V4.1-Flash（推荐，快）' },
-    { id: 'deepseek-v4-pro', name: 'deepseek-v4-pro · V4-Pro（更强，慢一些）' },
-    { id: 'deepseek-chat', name: 'deepseek-chat · V3（旧）' },
-    { id: 'deepseek-reasoner', name: 'deepseek-reasoner · R1（旧思考模型）' }
+    { id: 'deepseek-flash', name: 'deepseek-flash · V4.1 Flash（快，推荐）' },
+    { id: 'deepseek-v4-pro', name: 'deepseek-v4-pro · V4 Pro（强，慢一些）' }
   ];
   var AI_EFFORTS = [
     { v: '', name: '自动（不传这个参数）' },
@@ -4634,6 +4670,66 @@ AI 助手
 
   function aiModelName() { return lsGet(AI_MODEL_LS) || AI_DEF_MODEL_NAME; }
   function aiEffort() { return lsGet(AI_EFF_LS) || ''; }
+  function aiSetModel(id) {
+    if (!id) return;
+    lsSet(AI_MODEL_LS, id);
+    /* 面板头部那个模型名要立刻跟着变，不用重开对话框 */
+    var b = document.getElementById('aiModelBtn');
+    if (b) b.textContent = shortModelName(id) + ' ▾';
+    aiPaintPicker();
+  }
+  function shortModelName(id) {
+    var hit = null;
+    AI_MODELS.forEach(function (m) { if (m.id === id) hit = m; });
+    if (hit) return hit.id;
+    return id;                                  /* 自定义的，原样显示 */
+  }
+  /* 头部 / 快速切换器里只列这两个模型；如果当前用的是自定义的，
+     额外补一条显示出来，免得用户以为被改掉了。 */
+  function aiPickerList() {
+    var cur = aiModelName();
+    var list = AI_MODELS.slice();
+    if (!list.some(function (m) { return m.id === cur; })) {
+      list.push({ id: cur, name: cur + '（自定义）' });
+    }
+    return list;
+  }
+  function aiPaintPicker() {
+    var box = document.getElementById('aiModelPick');
+    if (!box) return;
+    var cur = aiModelName();
+    var h = '';
+    aiPickerList().forEach(function (m) {
+      h += '<button type="button" class="ai-pick-i' + (m.id === cur ? ' on' : '') + '"'
+        + ' data-m="' + esc(m.id) + '">'
+        + '<span class="ai-pick-n">' + esc(m.name) + '</span>'
+        + (m.id === cur ? '<span class="ai-pick-c">✓</span>' : '')
+        + '</button>';
+    });
+    box.innerHTML = h;
+  }
+  /* 点头部的模型名 → 在面板**底下**展开/收起模型切换条 */
+  function aiWireSwitcher() {
+    var btn = document.getElementById('aiModelBtn');
+    var box = document.getElementById('aiModelPick');
+    if (!btn || !box || btn.__wbWired) return;
+    btn.__wbWired = true;
+    btn.textContent = shortModelName(aiModelName()) + ' ▾';
+    btn.onclick = function (e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      aiPaintPicker();
+      box.className = 'ai-modelpick' + (box.className.indexOf('on') >= 0 ? '' : ' on');
+    };
+    box.onclick = function (e) {
+      var t = e.target;
+      while (t && t !== box && !(t.getAttribute && t.getAttribute('data-m'))) t = t.parentNode;
+      if (!t || t === box) return;
+      aiSetModel(t.getAttribute('data-m'));
+      box.className = 'ai-modelpick';           /* 选完就收起来 */
+    };
+    aiPaintPicker();
+  }
+
   function aiBaseUrl() {
     var u = lsGet(AI_URL_LS) || 'https://api.deepseek.com/chat/completions';
     return String(u).replace(/\/chat\/completions\/?$/, '').replace(/\/+$/, '');
@@ -4675,6 +4771,7 @@ AI 助手
     var msel = document.getElementById('aiModelSel');
     var esel = document.getElementById('aiEffortSel');
     var minp = document.getElementById('aiModelIn');
+    aiWireSwitcher();
 
     function paintModels(list) {
       if (!msel) return;
@@ -4761,6 +4858,10 @@ AI 助手
     readModel: aiReadModel,
     saveEffort: aiSaveEffort,
     effort: aiEffort,
+    model: aiModelName,
+    setModel: aiSetModel,
+    wireSwitcher: aiWireSwitcher,
+    paintPicker: aiPaintPicker,
     baseUrl: aiBaseUrl,
     extraParams: aiExtraParams
   };
@@ -5089,7 +5190,7 @@ function aiOpen(){
   wrap.setAttribute("aria-label","AI 助手");
   wrap.innerHTML='<div class="ai-panel">'
     +'<div class="ai-head"><h4>AI 助手</h4>'
-    +'<span class="ai-sub">'+aiEsc(aiModel())+'</span>'
+    +'<button class="ai-sub" type="button" id="aiModelBtn" title="点这里换模型">'+aiEsc(aiModel())+'</button>'
     +'<button class="ai-x" type="button" id="aiCfg" title="设置">⚙</button>'
     +'<button class="ai-x" type="button" id="aiClose" title="关闭">×</button></div>'
     +'<div class="ai-chip">'
@@ -5099,6 +5200,7 @@ function aiOpen(){
     +'<button type="button" data-ai="我要开始一个新目标，先问我目标是什么，再帮我拆成可执行的任务">拆解目标</button>'
     +'</div>'
     +'<div class="ai-body" id="aiBody"></div>'
+    +'<div class="ai-modelpick" id="aiModelPick"></div>'
     +'<div class="ai-foot"><textarea id="aiIn" placeholder="问点什么，或说说你要做的事…" rows="1"></textarea>'
     +'<button class="ai-send" type="button" id="aiSend">发送</button></div>'
     +'</div>';
