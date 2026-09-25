@@ -981,6 +981,15 @@ body{background:var(--ds3-bg)}
    ============================================================================ */
 
 /* ---------------- 顶栏的同步按钮 ---------------- */
+/* 先把页面自带的那颗"同步"胶囊藏掉。
+   它是页面自己的状态指示（#syncState），由 setSync() 驱动，
+   文案是「同步中 / 已同步 / 未连接」—— 那个"已同步"指的是**数据从资料库读出来了**，
+   不是"同步到云上了"。离线版里它和一个真的云端同步按钮并排出现，
+   长得一模一样却各说各话，等于在骗人。
+   它唯一的点击功能是 retryConnect()（重新读一遍），
+   而顶栏本来就有个「刷新」按钮干同一件事，所以藏掉不丢功能。 */
+#syncState{ display:none !important }
+
 .wb-topbtn{
   display:inline-flex; align-items:center; gap:7px;
   min-height:38px; padding:0 13px;
@@ -1063,6 +1072,36 @@ body{background:var(--ds3-bg)}
   background:rgba(128,128,128,.15); border-radius:5px; padding:1px 6px;
   font-family:ui-monospace,Consolas,monospace; font-size:12px;
 }
+
+/* ---------------- AI 助手 ---------------- */
+.wb-ailog{
+  max-height:min(52vh,420px); overflow:auto;
+  display:flex; flex-direction:column; gap:9px;
+  padding:4px 2px 8px;
+}
+.wb-amsg{
+  font-size:13.5px; line-height:1.75; white-space:pre-wrap; word-break:break-word;
+  padding:10px 13px; border-radius:12px; max-width:88%;
+}
+.wb-amsg.me{
+  align-self:flex-end; background:#5b5bd6; color:#fff; border-bottom-right-radius:4px;
+}
+.wb-amsg.ai{
+  align-self:flex-start; background:var(--line-2,#f1f3f8); color:var(--text,#10131c);
+  border-bottom-left-radius:4px;
+}
+.wb-amsg.err{
+  align-self:stretch; max-width:none;
+  background:rgba(220,76,76,.1); color:#c0392b; font-size:12.5px;
+}
+.wb-aichips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:4px }
+.wb-chip{
+  border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
+  color:var(--muted,#6b7280); border-radius:999px;
+  padding:7px 13px; font:inherit; font-size:12.5px; font-weight:600;
+  cursor:pointer; transition:.16s;
+}
+.wb-chip:hover{ color:#5b5bd6; border-color:#5b5bd6 }
 
 /* ---------------- 轻提示 ---------------- */
 .wb-toast{
@@ -1155,8 +1194,12 @@ img[data-wbmissing]{
 
 @media (max-width:420px){
   .mobbar > * span{ font-size:9px }
-  .wb-topbtn span:not(.wb-dot){ display:none }   /* 极窄屏只留圆点 */
+  /* 极窄屏：按钮只留图标。
+     注意要放过 ✨ —— 它是 AI 按钮唯一的内容，
+     连它一起藏掉的话那颗按钮会变成一个空框。 */
+  .wb-topbtn span:not(.wb-dot):not(.wb-ai-ico){ display:none }
   .wb-topbtn{ padding:0 10px }
+  .wb-ai-ico{ font-size:15px }
 }
 
 </style>
@@ -4073,6 +4116,11 @@ AI 助手
     watchedIds: watchedIds,
     /* 存储满了以后，主库还能不能写 */
     storageBad: function () { return storageBad; },
+    /* AI：自检要能不开界面就把一次提问跑通 */
+    aiSetKey: function (k) { AI.key = k || ''; AI.settings = false; saveAI(); },
+    aiAsk: aiAsk,
+    aiContext: aiContext,
+    aiState: function () { return { log: AI.log, busy: AI.busy, settings: AI.settings, key: AI.key }; },
     /* 把合并结果落盘并通知页面 —— syncNow 里那一步的等价物。
        抽出来是为了能被测到：原来那句 saveLocal(true) 被 loading 挡掉了，
        而它藏在网络流程中间，光靠单测永远走不到。 */
@@ -4528,7 +4576,9 @@ AI 助手
   }
 
   function buildUI() {
-    /* 顶栏按钮 */
+    /* 顶栏按钮：真实的云端同步 + AI 助手。
+       插在最前面 —— 那里原本是页面自己的 #syncState，被注入样式藏掉了
+       （它写着「已同步」但指的只是"数据从资料库读出来了"，跟云同步没关系）。 */
     var acts = document.querySelector('.topbar-acts') || document.querySelector('.topbar-in');
     if (acts && !document.getElementById('wbSyncBtn')) {
       var btn = document.createElement('button');
@@ -4538,7 +4588,16 @@ AI 助手
       btn.title = '云端同步';
       btn.innerHTML = '<span class="wb-dot" id="wbSyncDot"></span><span>同步</span>';
       btn.onclick = openPanel;
-      acts.appendChild(btn);
+      acts.insertBefore(btn, acts.firstChild);
+
+      var ab = document.createElement('button');
+      ab.id = 'wbAiBtn';
+      ab.className = 'wb-topbtn';
+      ab.type = 'button';
+      ab.title = 'AI 助手（它能看到你自己的记录）';
+      ab.innerHTML = '<span class="wb-ai-ico">✨</span><span>AI</span>';
+      ab.onclick = openAI;
+      acts.insertBefore(ab, btn.nextSibling);
     }
     /* 面板 */
     if (!document.getElementById('wbSyncModal')) {
@@ -4564,20 +4623,419 @@ AI 助手
   }
 
   /* ==========================================================================
+     6. AI 助手
+     --------------------------------------------------------------------------
+     和「我的记录表」里那套同一个思路：**用户自己的 API Key，直连官方接口**，
+     不经过任何中间服务器。默认 DeepSeek（兼容 OpenAI 格式，国内可直连，
+     也能换成别家）。
+
+     它值钱的地方不是"能聊天"，而是**它看得到你自己的记录**：
+     每次提问都会把 今天/逾期/本周 的任务、项目、反省、决策、灵感、
+     最近一次周复盘 拼成一段上下文一起发过去。否则它只能给你通用的废话。
+
+     上下文有硬上限 —— 记录攒多了不能无限往上堆，那既费钱也没用。
+     ========================================================================== */
+  var AI_LS = 'wb_offline_ai_v1';
+  var AI_DEF_URL = 'https://api.deepseek.com/chat/completions';
+  var AI_DEF_MODEL = 'deepseek-chat';
+  var AI_CTX_MAX = 6000;                    /* 上下文正文的长度上限 */
+  var AI = { key: '', url: AI_DEF_URL, model: AI_DEF_MODEL, log: [], busy: false, settings: false };
+
+  var AI_PRESETS = [
+    '今天我最该先做哪一件？',
+    '把这周记录总结成一份周报',
+    '我最近有没有反复出现的问题？',
+    '这些项目里，哪个风险最大？'
+  ];
+
+  function loadAI() {
+    var raw = lsGet(AI_LS);
+    if (!raw) return;
+    try {
+      var o = JSON.parse(raw);
+      if (o && typeof o === 'object') {
+        if (o.key) AI.key = o.key;
+        if (o.url) AI.url = o.url;
+        if (o.model) AI.model = o.model;
+      }
+    } catch (e) {}
+  }
+  function saveAI() {
+    /* 只存本机：密钥绝不进 DB，否则会被同步到云端片段里 */
+    lsSet(AI_LS, JSON.stringify({ key: AI.key, url: AI.url, model: AI.model }));
+  }
+
+  /* ---- 表 id：从内嵌的 schema 里按标题找，别写死 ---- */
+  function idOfTitle(title) {
+    var out = null;
+    Object.keys(SCHEMA || {}).forEach(function (id) {
+      if (SCHEMA[id] && SCHEMA[id].title === title) out = id;
+    });
+    return out;
+  }
+  var TID = {
+    task: idOfTitle('每日任务'), project: idOfTitle('项目'), period: idOfTitle('每周复盘'),
+    log: idOfTitle('决策记录'), idea: idOfTitle('灵感速记'), reflect: idOfTitle('每日反省')
+  };
+
+  var todayISO = function () {
+    var d = new Date(), p = function (n) { return n < 10 ? '0' + n : '' + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  };
+  function addDaysISO(s, n) {
+    var p = String(s).split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    d.setDate(d.getDate() + n);
+    var q = function (x) { return x < 10 ? '0' + x : '' + x; };
+    return d.getFullYear() + '-' + q(d.getMonth() + 1) + '-' + q(d.getDate());
+  }
+  function live(dbId) {
+    return (DB.dbs[dbId] || []).filter(function (r) { return r && r['已删除'] !== true; });
+  }
+  function cut(s, n) {
+    s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+    return s.length > n ? s.slice(0, n) + '…' : s;
+  }
+  /* 周一到周日 */
+  function weekRange(iso) {
+    var p = iso.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    var dow = (d.getDay() + 6) % 7;                 /* 周一=0 */
+    var mon = addDaysISO(iso, -dow);
+    return { from: mon, to: addDaysISO(mon, 6) };
+  }
+
+  /* 把记录拼成一段给模型看的上下文。有上限，超了先丢优先级低的部分。 */
+  function aiContext() {
+    var t = todayISO(), wk = weekRange(t), L = [];
+
+    var tasks = live(TID.task);
+    var open = tasks.filter(function (r) { return r['状态'] !== '已完成'; });
+    var over = open.filter(function (r) { return r['计划日期'] && r['计划日期'] < t; });
+    var todayT = open.filter(function (r) { return r['计划日期'] === t; });
+    var weekDone = tasks.filter(function (r) {
+      return r['状态'] === '已完成' && r['完成日期'] && r['完成日期'] >= wk.from && r['完成日期'] <= wk.to;
+    });
+    var later = open.filter(function (r) { return r['计划日期'] && r['计划日期'] > t; });
+
+    var proj = live(TID.project);
+    var active = proj.filter(function (r) { return r['状态'] === '进行中' || r['状态'] === '规划中'; });
+    var refs = live(TID.reflect).slice().sort(function (a, b) {
+      return String(b['日期'] || '') < String(a['日期'] || '') ? -1 : 1;
+    });
+    var ideas = live(TID.idea).slice().sort(function (a, b) {
+      return String(b['记录时间'] || '') < String(a['记录时间'] || '') ? -1 : 1;
+    });
+    var logs = live(TID.log).slice().sort(function (a, b) {
+      return String(b['决策日期'] || '') < String(a['决策日期'] || '') ? -1 : 1;
+    });
+    var periods = live(TID.period).slice().sort(function (a, b) {
+      return String(b['起始日期'] || '') < String(a['起始日期'] || '') ? -1 : 1;
+    });
+
+    function taskLine(r) {
+      var bits = [];
+      if (r['优先级']) bits.push(r['优先级'].replace(/\s.*/, ''));
+      bits.push(cut(r['任务名称'], 40));
+      if (r['项目']) bits.push('(' + cut(r['项目'], 12) + ')');
+      if (r['状态'] && r['状态'] !== '已完成') bits.push('[' + r['状态'] + ']');
+      if (r['计划日期']) bits.push(r['计划日期']);
+      if (r['延期次数']) bits.push('延期' + r['延期次数'] + '次');
+      if (r['备注']) bits.push('备注：' + cut(r['备注'], 30));
+      return '  - ' + bits.join(' ');
+    }
+
+    L.push('今天是 ' + t + '（本周 ' + wk.from + ' ~ ' + wk.to + '）。');
+
+    var head = [];
+    head.push('【任务】共 ' + tasks.length + ' 条，未完成 ' + open.length
+      + '，逾期 ' + over.length + '，本周完成 ' + weekDone.length);
+    L.push(head.join(''));
+    if (open.length) {
+      L.push('未完成的：');
+      if (over.length) { L.push(' 逾期：'); over.slice(0, 8).forEach(function (r) { L.push(taskLine(r)); }); }
+      if (todayT.length) { L.push(' 今天到期：'); todayT.slice(0, 8).forEach(function (r) { L.push(taskLine(r)); }); }
+      var rest = later.slice(0, 6);
+      if (rest.length) { L.push(' 之后：'); rest.forEach(function (r) { L.push(taskLine(r)); }); }
+    }
+    if (weekDone.length) {
+      L.push('本周已完成（最近 8 条）：');
+      weekDone.slice(0, 8).forEach(function (r) { L.push(taskLine(r)); });
+    }
+
+    if (active.length) {
+      L.push('');
+      L.push('【进行中的项目 ' + active.length + ' 个】');
+      active.slice(0, 6).forEach(function (p) {
+        var bits = [cut(p['项目名称'], 24)];
+        if (p['优先级']) bits.push(p['优先级'].replace(/\s.*/, ''));
+        if (p['进度'] != null) bits.push('进度' + p['进度'] + '%');
+        if (p['截止日期']) bits.push('截止 ' + p['截止日期']);
+        if (p['目标描述']) bits.push('目标：' + cut(p['目标描述'], 30));
+        if (p['里程碑']) bits.push('里程碑：' + cut(p['里程碑'], 24));
+        if (p['风险点']) bits.push('风险：' + cut(p['风险点'], 30));
+        L.push('  - ' + bits.join(' '));
+      });
+    }
+
+    if (refs.length) {
+      L.push('');
+      L.push('【每日反省 · 最近 ' + Math.min(refs.length, 10) + ' 条】');
+      refs.slice(0, 10).forEach(function (r) {
+        L.push('  - ' + (r['日期'] || r['记录时间'] || '') + ' ' + cut(r['内容'], 90)
+          + (r['关联决策'] ? '（关联决策：' + cut(r['关联决策'], 20) + '）' : ''));
+      });
+    }
+    if (logs.length) {
+      L.push('');
+      L.push('【决策记录 · 最近 ' + Math.min(logs.length, 5) + ' 条】');
+      logs.slice(0, 5).forEach(function (r) {
+        L.push('  - ' + (r['决策日期'] || '') + ' ' + cut(r['决策事项'], 40)
+          + '｜结论：' + cut(r['最终结论'], 40)
+          + (r['决策依据'] ? '｜依据：' + cut(r['决策依据'], 50) : '')
+          + (r['复盘结论'] ? '｜事后：' + cut(r['复盘结论'], 40) : ''));
+      });
+    }
+    if (ideas.length) {
+      L.push('');
+      L.push('【灵感速记 · 最近 ' + Math.min(ideas.length, 8) + ' 条】');
+      ideas.slice(0, 8).forEach(function (r) {
+        L.push('  - ' + (r['记录时间'] || '') + (r['标签'] ? '[' + r['标签'] + ']' : '')
+          + ' ' + cut(r['内容'], 70));
+      });
+    }
+    if (periods.length) {
+      var p0 = periods[0];
+      L.push('');
+      L.push('【最近一次复盘】' + (p0['周期'] || p0['起始日期'] || ''));
+      if (p0['状态评分'] != null) L.push('  状态评分：' + p0['状态评分']);
+      if (p0['本期产出']) L.push('  本期产出：' + cut(p0['本期产出'], 90));
+      if (p0['做得好']) L.push('  做得好：' + cut(p0['做得好'], 90));
+      if (p0['待改进']) L.push('  待改进：' + cut(p0['待改进'], 90));
+      if (p0['下期重点']) L.push('  下期重点：' + cut(p0['下期重点'], 90));
+    }
+
+    var text = L.join('\n');
+    if (text.length > AI_CTX_MAX) text = text.slice(0, AI_CTX_MAX) + '\n（上下文过长已截断）';
+    return text;
+  }
+
+  function aiSystemPrompt() {
+    return '你是用户的私人工作助理。下面是用户自己记录的原始数据（任务、项目、每日反省、决策、灵感、周复盘）。\n'
+      + '请**基于这些数据**回答，要求：\n'
+      + '1. 简洁、具体、直接给结论，不要说客套话；\n'
+      + '2. 不要复述数据本身，除非用来支撑你的判断；\n'
+      + '3. 该说"这几件事里先做 X，因为 Y"就直说，别和稀泥；\n'
+      + '4. 如果数据不足以回答，就直说缺什么，不要编。\n'
+      + '用中文回答。\n\n===== 用户数据 =====\n' + aiContext();
+  }
+
+  function renderAILog() {
+    var el = document.getElementById('wbAiLog');
+    if (!el) return;
+    if (!AI.log.length) {
+      el.innerHTML = '<div class="wb-mut" style="padding:6px 2px">'
+        + '它能看到你记的<b>任务、项目、每日反省、决策、灵感、周复盘</b>，'
+        + '基于你自己的数据回答 —— 不是通用建议。<br>'
+        + '数据只发给你自己填的那个接口，不经过任何第三方。</div>';
+    } else {
+      var h = '';
+      AI.log.slice(-20).forEach(function (m) {
+        var cls = m.role === 'me' ? 'me' : (m.role === 'err' ? 'err' : 'ai');
+        h += '<div class="wb-amsg ' + cls + '">' + esc(m.text) + '</div>';
+      });
+      el.innerHTML = h;
+    }
+    el.scrollTop = el.scrollHeight;
+    var chips = document.getElementById('wbAiChips');
+    if (chips) {
+      chips.innerHTML = AI.log.length ? ''
+        : AI_PRESETS.map(function (q) {
+            return '<button class="wb-chip" data-aiq="' + esc(q) + '">' + esc(q) + '</button>';
+          }).join('');
+      Array.prototype.forEach.call(chips.querySelectorAll('[data-aiq]'), function (b) {
+        b.onclick = function () { aiAsk(b.getAttribute('data-aiq')); };
+      });
+    }
+  }
+
+  function setAIBusy(on) {
+    AI.busy = !!on;
+    var b = document.getElementById('wbAiSend');
+    if (b) { b.disabled = !!on; b.textContent = on ? '思考中…' : '发送'; }
+  }
+
+  function aiAsk(text) {
+    var q = String(text || '').trim();
+    if (!q) return;
+    if (!AI.key) { AI.settings = true; paintAIPanel(); toast('先填 API Key'); return; }
+    if (AI.busy) return;
+    AI.log.push({ role: 'me', text: q });
+    renderAILog();
+    setAIBusy(true);
+
+    var msgs = [{ role: 'system', content: aiSystemPrompt() }];
+    AI.log.slice(-8).forEach(function (m) {
+      if (m.role === 'me') msgs.push({ role: 'user', content: m.text });
+      else if (m.role === 'ai') msgs.push({ role: 'assistant', content: m.text });
+    });
+
+    return fetch(AI.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI.key },
+      body: JSON.stringify({ model: AI.model, messages: msgs, temperature: 0.6, max_tokens: 900 })
+    }).then(function (r) {
+      return r.text().then(function (raw) {
+        var d = null;
+        try { d = raw ? JSON.parse(raw) : null; } catch (e) {}
+        if (!r.ok) {
+          var em = (d && d.error && (d.error.message || d.error)) || ('HTTP ' + r.status);
+          throw new Error(typeof em === 'string' ? em : JSON.stringify(em));
+        }
+        var ans = d && d.choices && d.choices[0] && d.choices[0].message
+          && d.choices[0].message.content;
+        if (!ans) throw new Error('接口没有返回内容');
+        AI.log.push({ role: 'ai', text: String(ans).trim() });
+      });
+    }).catch(function (e) {
+      AI.log.push({ role: 'err', text: '调用失败：' + ((e && e.message) || e) });
+    }).then(function () {
+      setAIBusy(false);
+      renderAILog();
+    });
+  }
+
+  function aiPreset(q) { AI.log.length = 0; aiAsk(q); }
+
+  function paintAIPanel() {
+    var box = document.getElementById('wbAiBody');
+    if (!box) return;
+    if (!AI.key && AI.log.length === 0) AI.settings = true;
+    var settings = AI.settings;
+    var h = '';
+    if (settings) {
+      h += '<div class="wb-grid" style="margin-top:0">'
+        + '<label>API Key</label>'
+        + '<input type="password" id="wbAiKey" placeholder="sk-…" value="' + esc(AI.key) + '" autocomplete="off">'
+        + '<label>接口地址</label>'
+        + '<input type="text" id="wbAiUrl" value="' + esc(AI.url) + '" autocomplete="off">'
+        + '<label>模型</label>'
+        + '<input type="text" id="wbAiModel" value="' + esc(AI.model) + '" autocomplete="off">'
+        + '</div>'
+        + '<div class="wb-row" style="margin-top:12px">'
+        + '<button class="wb-btn pri" id="wbAiSave">保存</button>'
+        + (AI.key ? '<button class="wb-btn" id="wbAiBack">返回对话</button>' : '')
+        + '</div>'
+        + '<div class="wb-help"><b>怎么拿 Key</b><br>'
+        + '到 <code>platform.deepseek.com/api_keys</code> 注册后新建一个，复制 <code>sk-…</code> 填到上面。'
+        + 'Key 只存在这台设备的浏览器里，不进同步数据。<br>'
+        + '也支持任何 <b>OpenAI 兼容</b>的接口：把地址和模型名换成对应服务商的即可。</div>';
+    } else {
+      h += '<div class="wb-ailog" id="wbAiLog"></div>'
+        + '<div class="wb-aichips" id="wbAiChips"></div>'
+        + '<div class="wb-row" style="margin-top:12px;flex-wrap:nowrap">'
+        + '<input type="text" id="wbAiInput" placeholder="问点什么，比如「今天先做哪件」" autocomplete="off" style="flex:1">'
+        + '<button class="wb-btn pri" id="wbAiSend">发送</button>'
+        + '</div>'
+        + '<div class="wb-row" style="margin-top:10px">'
+        + '<button class="wb-btn" id="wbAiGear">⚙ 接口设置</button>'
+        + '<button class="wb-btn" id="wbAiClear"' + (AI.log.length ? '' : ' disabled') + '>清空对话</button>'
+        + '</div>';
+    }
+    box.innerHTML = h;
+
+    var g;
+    if (settings) {
+      g = document.getElementById('wbAiSave');
+      if (g) g.onclick = function () {
+        var k = document.getElementById('wbAiKey'), u = document.getElementById('wbAiUrl'),
+            m = document.getElementById('wbAiModel');
+        AI.key = ((k && k.value) || '').trim();
+        AI.url = ((u && u.value) || '').trim() || AI_DEF_URL;
+        AI.model = ((m && m.value) || '').trim() || AI_DEF_MODEL;
+        saveAI();
+        AI.settings = false;
+        toast(AI.key ? '已保存' : '已清空');
+        paintAIPanel();
+      };
+      g = document.getElementById('wbAiBack');
+      if (g) g.onclick = function () { AI.settings = false; paintAIPanel(); };
+    } else {
+      renderAILog();
+      g = document.getElementById('wbAiSend');
+      if (g) g.onclick = sendAIInput;
+      g = document.getElementById('wbAiGear');
+      if (g) g.onclick = function () { AI.settings = true; paintAIPanel(); };
+      g = document.getElementById('wbAiClear');
+      if (g) g.onclick = function () { AI.log.length = 0; paintAIPanel(); };
+      var inp = document.getElementById('wbAiInput');
+      if (inp) inp.onkeydown = function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAIInput(); }
+      };
+    }
+    setAIBusy(AI.busy);
+  }
+
+  function sendAIInput() {
+    var e = document.getElementById('wbAiInput');
+    var v = ((e && e.value) || '').trim();
+    if (!v) return;
+    if (e) e.value = '';
+    aiAsk(v);
+  }
+
+  function openAI() {
+    var m = document.getElementById('wbAiModal');
+    if (!m) return;
+    m.classList.add('on');
+    paintAIPanel();
+    setTimeout(function () {
+      var i = document.getElementById('wbAiInput');
+      if (i && i.focus) i.focus();
+    }, 120);
+  }
+  function closeAI() {
+    var m = document.getElementById('wbAiModal');
+    if (m) m.classList.remove('on');
+  }
+  function buildAI() {
+    if (document.getElementById('wbAiModal')) return;
+    var m = document.createElement('div');
+    m.id = 'wbAiModal';
+    m.className = 'wb-modal';
+    m.innerHTML =
+      '<div class="wb-box" role="dialog" aria-modal="true">' +
+        '<div class="wb-head"><h2>AI 助手</h2>' +
+        '<button class="wb-x" id="wbAiClose" aria-label="关闭">✕</button></div>' +
+        '<div class="wb-body" id="wbAiBody"></div>' +
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', function (e) { if (e.target === m) closeAI(); });
+    var x = document.getElementById('wbAiClose');
+    if (x) x.onclick = closeAI;
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAI();
+    });
+  }
+
+  /* ==========================================================================
      5. 启动
      ========================================================================== */
   loadLocal();
   loadSyncCfg();
+  loadAI();
 
   /* 图片仓库：先把旧的搬过来，再开始盯着 DOM 补图片地址。
      顺序不能反 —— 先搬完，后面的 hydrate 才取得到图。 */
   imgObserve();
   imgMigrate = migrateImgs().catch(function () { return 0; });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', buildUI);
-  } else {
+  function bootUI() {
     buildUI();
+    buildAI();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootUI);
+  } else {
+    bootUI();
   }
 
   /* 页面加载完后做一次同步；本机数据先给页面用 */
