@@ -1078,39 +1078,67 @@ button.ai-sub{
 }
 button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd6) }
 
-/* ---------------- 模型 / 思考强度 快捷切换面板 ----------------
-   放在快捷按钮那一行下面（**不是**贴着输入框）：
-   贴着输入框会把输入区往下挤，手指够的时候还会挡住对话。 */
+/* ---------------- 模型 / 思考强度 的独立切换页 ----------------
+   **从面板顶部铺下来的一整页**，不是就地展开的一条：
+   点头部的模型名进去 → 选模型 + 选思考强度 → 点【保存】才生效。
+   用 absolute + inset:0 盖住整个 .ai-panel，所以在手机上（底部弹层）
+   和电脑上（居中对话框）表现一致，不会被挤到看不见的地方。 */
+.ai-panel{ position:relative }          /* 给上面那层做定位基准 */
 .ai-modelpick{
-  display:none; flex-direction:column; gap:5px;
-  padding:10px 18px 4px; flex:none;
-  max-height:44vh; overflow-y:auto;
-  border-bottom:1px solid var(--line,#e5e7ec);
-  background:var(--surface-2,#f7f8fb);
+  display:none; position:absolute; inset:0; z-index:6;
+  flex-direction:column;
+  background:var(--surface,#fff);
+  border-radius:inherit;
 }
 .ai-modelpick.on{ display:flex }
+.ai-pick-head{
+  display:flex; align-items:center; gap:10px; flex:none;
+  padding:16px 18px 12px; border-bottom:1px solid var(--line,#e5e7ec);
+}
+.ai-pick-head b{ font-size:15px; font-weight:700; margin-right:auto }
+.ai-pick-x{
+  border:0; background:transparent; color:var(--muted,#6b7280);
+  font-size:16px; padding:6px 9px; border-radius:8px; cursor:pointer; line-height:1;
+}
+.ai-pick-x:hover{ background:rgba(128,128,128,.14) }
+.ai-pick-body{ flex:1; overflow-y:auto; padding:6px 18px 10px }
 .ai-pick-g{
   font-size:11px; font-weight:700; color:var(--muted,#6b7280);
-  letter-spacing:.04em; margin:4px 0 1px;
+  letter-spacing:.04em; margin:12px 0 6px;
 }
 .ai-pick-i{
   display:flex; align-items:center; gap:10px; width:100%;
-  padding:9px 12px; border-radius:9px; cursor:pointer; text-align:left;
+  padding:11px 13px; margin-bottom:6px; border-radius:10px; cursor:pointer; text-align:left;
   border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
-  color:inherit; font:inherit; font-size:13px; font-weight:600;
+  color:inherit; font:inherit; font-size:13.5px; font-weight:600;
   transition:.16s;
 }
 .ai-pick-i:hover{ border-color:var(--accent,#5b5bd6); color:var(--accent,#5b5bd6) }
 .ai-pick-i.on{ border-color:var(--accent,#5b5bd6); background:rgba(91,91,214,.08) }
 .ai-pick-n{ flex:1; min-width:0 }
-.ai-pick-c{ color:var(--accent,#5b5bd6); font-weight:800 }
+.ai-pick-c{ color:var(--accent,#5b5bd6); font-weight:800; min-width:14px; text-align:center }
+.ai-pick-foot{
+  flex:none; display:flex; gap:9px; justify-content:flex-end;
+  padding:12px 18px 16px; border-top:1px solid var(--line,#e5e7ec);
+}
+.ai-pick-b{
+  min-height:42px; padding:0 20px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
+  color:inherit; font:inherit; font-size:13.5px; font-weight:650; transition:.16s;
+}
+.ai-pick-b:hover{ background:var(--surface-2,#f4f5f9) }
+.ai-pick-b.pri{ background:var(--accent,#5b5bd6); border-color:var(--accent,#5b5bd6); color:#fff }
+.ai-pick-b.pri:hover{ filter:brightness(1.08) }
 
-/* 页面原本在这个宽度下把 .ai-sub 整个藏了（.ai-head .ai-sub{display:none}）——
-   那是给"纯显示的一行小字"设计的。现在它是**换模型的入口**，
-   藏掉就等于手机上没法换模型了，所以这里必须把它放回来。 */
+/* 页面原本在窄屏下把 .ai-sub 整个藏了（.ai-head .ai-sub{display:none}）——
+   那是给"纯显示的一行小字"设计的。现在它是**进切换页的入口**，
+   藏掉就等于手机上没法换模型了，所以这里必须把它放回来，而且要做成看得出来的按钮。 */
 @media (max-width:640px){
-  .ai-head button.ai-sub{ display:inline-flex; align-items:center; max-width:52% }
-  .ai-modelpick{ max-height:40vh }
+  .ai-head button.ai-sub{
+    display:inline-flex; align-items:center; max-width:56%;
+    border:1px solid var(--line,#e5e7ec); padding:5px 10px;
+    background:var(--surface-2,#f4f5f9);
+  }
 }
 .wb-btn{
   min-height:40px; padding:0 16px; font:inherit; font-size:13px; font-weight:650;
@@ -4713,16 +4741,53 @@ AI 助手
     aiRepaintHead();
     aiPaintPicker();
   }
+  /* 快捷切换面板 = 一个**独立的页面**，从面板顶部铺下来：
+       选中是"暂存"的，点【保存】才生效 —— 所以要先记一份 pending 值。
+     点【取消】或右上角 ✕ 直接丢弃。 */
+  var PICK = { model: null, effort: null };
+
+  function aiOpenPicker() {
+    PICK.model = aiModelName();
+    PICK.effort = aiEffort();
+    aiPaintPicker();
+    var box = document.getElementById('aiModelPick');
+    if (box) box.className = 'ai-modelpick on';
+  }
+  function aiClosePicker() {
+    var box = document.getElementById('aiModelPick');
+    if (box) box.className = 'ai-modelpick';
+  }
+  function aiCommitPicker() {
+    /* 保存：两个值一起落盘，然后更新头部那行小字 */
+    if (PICK.model) lsSet(AI_MODEL_LS, PICK.model);
+    if (PICK.effort) lsSet(AI_EFF_LS, PICK.effort);
+    else { try { localStorage.removeItem(AI_EFF_LS); } catch (e) {} }
+    aiRepaintHead();
+    aiClosePicker();
+    /* 设置弹窗里的那两个下拉如果开着，也同步过去 */
+    try { aiSyncSelects(); } catch (e) {}
+  }
+  function aiSyncSelects() {
+    var msel = document.getElementById('aiModelSel');
+    var esel = document.getElementById('aiEffortSel');
+    if (msel) {
+      var cur = aiModelName();
+      var has = false;
+      for (var i = 0; i < msel.options.length; i++) if (msel.options[i].value === cur) has = true;
+      msel.value = has ? cur : CUSTOM_MODEL;
+    }
+    if (esel) esel.value = aiEffort();
+  }
   function shortModelName(id) {
     var hit = null;
     AI_MODELS.forEach(function (m) { if (m.id === id) hit = m; });
     if (hit) return hit.id;
     return id;                                  /* 自定义的，原样显示 */
   }
-  /* 快捷切换面板里只列这两个模型；当前用的是自定义的，额外补一条显示出来，
-     免得用户以为被改掉了。思考强度则列全部（含 none）。 */
+  /* 快捷页里只列这两个模型；当前用的是自定义的，额外补一条显示出来，
+     免得用户以为被改掉了。思考强度列全部（含 none）。 */
   function aiPickerList() {
-    var cur = aiModelName();
+    var cur = PICK.model || aiModelName();
     var list = AI_MODELS.slice();
     if (!list.some(function (m) { return m.id === cur; })) {
       list.push({ id: cur, name: cur + '（自定义）' });
@@ -4732,13 +4797,17 @@ AI 助手
   function aiPaintPicker() {
     var box = document.getElementById('aiModelPick');
     if (!box) return;
-    var curM = aiModelName(), curE = aiEffort();
-    var h = '<div class="ai-pick-g">模型</div>';
+    var curM = PICK.model || aiModelName();
+    var curE = PICK.effort == null ? aiEffort() : PICK.effort;
+    var h = '<div class="ai-pick-head"><b>模型与思考强度</b>'
+      + '<button type="button" class="ai-pick-x" data-x="1" aria-label="关闭">✕</button></div>'
+      + '<div class="ai-pick-body">';
+    h += '<div class="ai-pick-g">模型</div>';
     aiPickerList().forEach(function (m) {
       h += '<button type="button" class="ai-pick-i' + (m.id === curM ? ' on' : '') + '"'
         + ' data-m="' + esc(m.id) + '">'
         + '<span class="ai-pick-n">' + esc(m.name) + '</span>'
-        + (m.id === curM ? '<span class="ai-pick-c">✓</span>' : '')
+        + '<span class="ai-pick-c">' + (m.id === curM ? '✓' : '') + '</span>'
         + '</button>';
     });
     h += '<div class="ai-pick-g">思考强度</div>';
@@ -4746,41 +4815,47 @@ AI 助手
       h += '<button type="button" class="ai-pick-i' + (o.v === curE ? ' on' : '') + '"'
         + ' data-e="' + esc(o.v) + '">'
         + '<span class="ai-pick-n">' + esc(o.name) + '</span>'
-        + (o.v === curE ? '<span class="ai-pick-c">✓</span>' : '')
+        + '<span class="ai-pick-c">' + (o.v === curE ? '✓' : '') + '</span>'
         + '</button>';
     });
+    h += '</div>'
+      + '<div class="ai-pick-foot">'
+      + '<button type="button" class="ai-pick-b" data-x="1">取消</button>'
+      + '<button type="button" class="ai-pick-b pri" data-save="1">保存</button>'
+      + '</div>';
     box.innerHTML = h;
   }
-  /* 点头部的模型名 → 在**快捷按钮下面**展开/收起切换面板。
-     注意：不放在输入框上方（用户明确说不要"置于底部"）。 */
+  /* 点头部的模型名 → 打开那个独立页面（从顶部铺下来，不在底部） */
   function aiWireSwitcher() {
     var btn = document.getElementById('aiModelBtn');
     var box = document.getElementById('aiModelPick');
     if (!btn || !box || btn.__wbWired) return;
     btn.__wbWired = true;
     btn.textContent = aiHeadLabel();
-    function toggle() {
-      aiPaintPicker();
-      var on = box.className.indexOf(' on') < 0;
-      box.className = 'ai-modelpick' + (on ? ' on' : '');
-    }
     btn.onclick = function (e) {
       if (e && e.stopPropagation) e.stopPropagation();
-      toggle();
+      aiOpenPicker();
     };
     box.onclick = function (e) {
       if (e && e.stopPropagation) e.stopPropagation();
       var t = e.target;
-      while (t && t !== box && !(t.getAttribute && (t.getAttribute('data-m') !== null || t.getAttribute('data-e') !== null))) {
+      var hit = null;
+      while (t && t !== box) {
+        if (t.getAttribute && (t.getAttribute('data-m') !== null
+            || t.getAttribute('data-e') !== null
+            || t.getAttribute('data-save') !== null
+            || t.getAttribute('data-x') !== null)) { hit = t; break; }
         t = t.parentNode;
       }
-      if (!t || t === box) return;
-      var mm = t.getAttribute('data-m'), ee = t.getAttribute('data-e');
-      if (mm !== null) aiSetModel(mm);
-      else aiSetEffort(ee);
-      box.className = 'ai-modelpick';           /* 选完就收起来 */
+      if (!hit) return;
+      if (hit.getAttribute('data-save') !== null) { aiCommitPicker(); return; }
+      if (hit.getAttribute('data-x') !== null) { aiClosePicker(); return; }
+      var mm = hit.getAttribute('data-m'), ee = hit.getAttribute('data-e');
+      /* 这里**只改暂存值**，不落盘 —— 要点保存才算 */
+      if (mm !== null) PICK.model = mm;
+      if (ee !== null) PICK.effort = ee;
+      aiPaintPicker();
     };
-    aiPaintPicker();
   }
 
   function aiBaseUrl() {
