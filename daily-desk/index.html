@@ -3984,8 +3984,12 @@ AI 助手
         }
       }
       /* AI 面板是每次打开都重建 innerHTML 的，所以每次新节点进来都要重新接一次线。
-         aiWireSwitcher 自己是幂等的（认 __wbWired），重复调用没关系。 */
-      if (touchedAI) { try { aiWireSwitcher(); } catch (e) {} }
+         aiWireSwitcher 自己是幂等的（认 __wbWired），重复调用没关系。
+         aiChatSync 同样幂等：补历史、补气泡、插清空按钮、落盘，都认自己的标记。 */
+      if (touchedAI) {
+        try { aiWireSwitcher(); } catch (e) {}
+        try { aiChatSync(); } catch (e) {}
+      }
     });
     mo.observe(document.documentElement, {
       childList: true, subtree: true, attributes: true,
@@ -4979,6 +4983,146 @@ AI 助手
     return v;
   }
 
+  /* ==========================================================================
+     6b. AI 对话记忆
+     ==========================================================================
+     页面的 aiHistory 只活在内存里（API 上下文用它），可见的气泡也只在
+     #aiBody 这个 DOM 里。于是：关掉面板、刷新、手机上切走再切回来 ——
+     对话全没了。用户说的"没办法保存对话记忆"就是这个。
+
+     两件事要分开做，少一件都不算"记住了"：
+       · 把 aiHistory 放回去 → 模型才记得之前聊过什么（它是 API 上下文）
+       · 把气泡画回 #aiBody  → 人才能看见之前聊过什么
+     而且顺序有讲究：aiHistory 必须**赶在面板建出来之前**填好。
+     页面的 aiOpen() 是靠 `if(!aiHistory.length)` 决定要不要打那句问候语的，
+     填晚了就变成「问候语 + 历史记录」叠在一起，很怪。
+
+     顺带修掉一个同源的小毛病：页面关掉面板再打开时，aiHistory 还在、
+     #aiBody 却是空的 —— 也就是说**同一个会话里**再打开也是白板。
+     ②那步是照着 aiHistory 重画，所以这个也一并好了。
+     ========================================================================== */
+  var AI_CHAT_LS = 'wb_offline_ai_chat_v1';
+  var AI_CHAT_MAX = 40;        /* 跟「我的记录表」那边同一个量级 */
+  var AI_CHAT_CHARS = 4000;    /* 单条上限：一条超长回复就能把配额吃光 */
+  var aiChatSeeded = false;    /* aiHistory 放回去了吗（只需一次） */
+  var aiChatSig = '';          /* 便宜的指纹，挡掉流式输出时的重复序列化 */
+  var aiChatLast = '';
+
+  /* 存进来的东西不可信：旧版本写的、被手改过的，一律先过形状检查 */
+  function aiChatClean(list) {
+    if (!Array.isArray(list)) return [];
+    var out = [];
+    for (var i = 0; i < list.length; i++) {
+      var m = list[i];
+      if (!m || typeof m !== 'object') continue;
+      if (m.role !== 'user' && m.role !== 'assistant') continue;
+      if (typeof m.content !== 'string' || !m.content) continue;
+      out.push({
+        role: m.role,
+        content: m.content.length > AI_CHAT_CHARS
+          ? m.content.slice(0, AI_CHAT_CHARS) + '…' : m.content
+      });
+    }
+    return out.slice(-AI_CHAT_MAX);
+  }
+  function aiChatLoad() {
+    var raw = lsGet(AI_CHAT_LS);
+    if (!raw) return [];
+    try { return aiChatClean(JSON.parse(raw)); } catch (e) { return []; }
+  }
+  function aiChatSave(list) {
+    var s = JSON.stringify(aiChatClean(list));
+    if (s === aiChatLast) return true;          /* 没变就别写 */
+    if (lsSet(AI_CHAT_LS, s)) { aiChatLast = s; return true; }
+    return false;
+  }
+  /* 桥是补丁加在页面主脚本里的，注入层跑在它前面 —— 所以要等 */
+  function aiChatBridge() {
+    var b = window.__WB_AI__;
+    if (!b) return null;
+    if (typeof b.get !== 'function' || typeof b.set !== 'function'
+        || typeof b.push !== 'function') return null;
+    return b;
+  }
+
+  var aiChatSaved = aiChatLoad();
+
+  /* 面板每次打开都重建，所以这个会被反复调用 —— 必须幂等 */
+  function aiChatSync() {
+    var b = aiChatBridge();
+    if (!b) return false;
+
+    /* ① 把 API 上下文放回去。只做一次，而且要在面板建出来之前 */
+    if (!aiChatSeeded) {
+      aiChatSeeded = true;
+      if (aiChatSaved.length) {
+        b.set(aiChatSaved);
+        aiChatLast = JSON.stringify(aiChatSaved);
+      }
+    }
+
+    /* ② 面板出来了：把可见的气泡补回去（每个面板只补一次） */
+    var body = document.getElementById('aiBody');
+    if (body && !body.__wbChatDrawn) {
+      body.__wbChatDrawn = true;
+      var cur = b.get() || [];
+      /* 只在面板是空的时候画 —— 有内容说明页面自己已经填过了（比如问候语） */
+      if (cur.length && !body.firstChild) {
+        cur.forEach(function (m) {
+          b.push(m.role === 'user' ? 'me' : 'bot', m.content);
+        });
+      }
+    }
+
+    /* ③ 顺手把「清空对话」的入口插进面板头部 */
+    var cfg = document.getElementById('aiCfg');
+    if (cfg && cfg.parentNode && !document.getElementById('aiChatClear')) {
+      var clr = document.createElement('button');
+      clr.className = 'ai-x';
+      clr.type = 'button';
+      clr.id = 'aiChatClear';
+      clr.title = '清空对话记录';
+      clr.setAttribute('aria-label', '清空对话记录');
+      clr.textContent = '🗑';
+      clr.onclick = function (e) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        aiChatClear();
+      };
+      cfg.parentNode.insertBefore(clr, cfg);
+    }
+
+    /* ④ 有变化就落盘 */
+    var now = b.get() || [];
+    if (!now.length) return true;
+    /* 流式输出时页面会反复改写 textContent，观察器被触发得很密 ——
+       先用一个便宜的指纹挡掉绝大多数没必要的 JSON.stringify */
+    var lastM = now[now.length - 1];
+    var sig = now.length + ':' + (lastM && lastM.content ? lastM.content.length : 0);
+    if (sig === aiChatSig) return true;
+    aiChatSig = sig;
+    aiChatSave(now);
+    return true;
+  }
+
+  /* 手动清空：对话现在跨会话留存，必须给一个"从头开始"的出口 */
+  function aiChatClear() {
+    var b = aiChatBridge();
+    if (b) b.set([]);
+    aiChatSaved = [];
+    aiChatLast = JSON.stringify([]);
+    aiChatSig = '';
+    lsSet(AI_CHAT_LS, '[]');
+    var body = document.getElementById('aiBody');
+    if (body) {
+      body.__wbChatDrawn = true;
+      body.innerHTML = '';
+      /* 给一句话，否则清完是一片空白，看着像坏了。
+         只画不进 aiHistory —— 它不是对话的一部分（push 只负责显示）。 */
+      if (b) b.push('bot', '对话记录已清空。之前聊过的内容不再作为上下文。');
+    }
+    return true;
+  }
+
   window.__SMART_PAGE__ = window.__SMART_PAGE__ || {};
   window.__SMART_PAGE__.ai = {
     MODELS: AI_MODELS,
@@ -4993,7 +5137,14 @@ AI 助手
     wireSwitcher: aiWireSwitcher,
     paintPicker: aiPaintPicker,
     baseUrl: aiBaseUrl,
-    extraParams: aiExtraParams
+    extraParams: aiExtraParams,
+    chatLoad: aiChatLoad,
+    chatSave: aiChatSave,
+    chatSync: aiChatSync,
+    chatClear: aiChatClear,
+    chatKey: AI_CHAT_LS,
+    chatMax: AI_CHAT_MAX,
+    chatChars: AI_CHAT_CHARS
   };
 
   /* ==========================================================================
@@ -5006,6 +5157,12 @@ AI 助手
      顺序不能反 —— 先搬完，后面的 hydrate 才取得到图。 */
   imgObserve();
   imgMigrate = migrateImgs().catch(function () { return 0; });
+
+  /* AI 对话记忆：桥是**页面主脚本**建的，而注入层跑在它前面，
+     所以第一次调用通常还拿不到；观察器会在页面初始化时再触发。
+     这里补两次兜底，免得"页面这次没产生 DOM 变动"就永远没接上。 */
+  aiChatSync();
+  setTimeout(function () { try { aiChatSync(); } catch (e) {} }, 900);
 
   function bootUI() {
     buildUI();
@@ -5067,6 +5224,7 @@ function aiToast(msg){
 }
 var AI_DEF_URL="https://api.deepseek.com/chat/completions",AI_DEF_MODEL="deepseek-flash";
 var aiBusy=false,aiHistory=[],aiWrap=null;
+window.__WB_AI__={get:function(){return aiHistory},set:function(v){aiHistory=v||[]},push:function(c,t){return aiPush(c,t)}};
 
 function aiKey(){try{return localStorage.getItem(AI_KEY_LS)||""}catch(e){return ""}}
 function aiUrl(){try{return localStorage.getItem(AI_URL_LS)||AI_DEF_URL}catch(e){return AI_DEF_URL}}
