@@ -1294,6 +1294,7 @@ details.adv > div{ margin-top:14px; animation:viewIn .3s var(--ease) both }
     <div class="modal-head">
       <span class="ph-ico" style="--mc:var(--m-note);width:34px;height:34px;font-size:16px;border-radius:11px">🤖</span>
       <h2>AI 助手</h2>
+      <button class="guide-x" data-act="ai-clear" aria-label="清空对话" title="清空对话记录">🗑️</button>
       <button class="guide-x" data-act="ai-settings" aria-label="设置">⚙️</button>
       <button class="guide-x" data-act="ai-close" aria-label="关闭">✕</button>
     </div>
@@ -1640,8 +1641,20 @@ function aiOpenOrSettings(){
   else { ui.aiSettings = true; go('data'); }
 }
 function aiPreset(q){
+  /* 快捷入口 = 开一段新对话，所以先把旧的清掉（清完也要落盘，
+     否则刷新一下旧对话又回来了）。 */
   AI.log.length = 0;
+  saveAI();
   aiAsk(q);
+}
+/* 手动清空对话：对话现在是**跨会话留存**的，得给一个"从头开始"的出口，
+   否则用户没法让它忘掉之前聊过的东西。 */
+function aiClear(){
+  if(!AI.log.length){ toast('还没有对话记录'); return; }
+  AI.log.length = 0;
+  saveAI();
+  renderAILog();
+  toast('对话记录已清空','ok');
 }
 function aiSendFromInput(){
   var e = $('#aiInput');
@@ -4976,6 +4989,30 @@ var AI_DEF_URL = 'https://api.deepseek.com/chat/completions';
 var AI_DEF_MODEL = 'deepseek-chat';
 var AI = { key:'', url:AI_DEF_URL, model:AI_DEF_MODEL, log:[], busy:false };
 
+/* 对话最多留多少条、单条最多多少字。
+   localStorage 是有配额的，而 AI 回复动辄一两千字 ——
+   不封顶的话，聊得越久越可能把整个配置（连 Key 一起）写失败。
+   40 这个数跟 renderAILog 的显示上限**保持一致**：
+   存的比看得见的多，就会出现"我明明聊过、怎么不见了"。 */
+var AI_LOG_MAX = 40;
+var AI_LOG_CHARS = 4000;
+
+/* 存进来的东西是**不可信的**：可能是旧版本写的、也可能被手改过。
+   一律先过一遍形状检查，坏的丢掉而不是让整页崩掉。 */
+function aiLogClean(log){
+  if(!Array.isArray(log)) return [];
+  return log.filter(function(m){
+    return m && typeof m === 'object' &&
+           (m.role === 'me' || m.role === 'ai' || m.role === 'err') &&
+           typeof m.text === 'string';
+  }).map(function(m){
+    return {
+      role: m.role,
+      text: m.text.length > AI_LOG_CHARS ? m.text.slice(0, AI_LOG_CHARS) + '…' : m.text
+    };
+  }).slice(-AI_LOG_MAX);
+}
+
 function loadAI(){
   try{
     var raw = localStorage.getItem(AI_LS);
@@ -4985,11 +5022,33 @@ function loadAI(){
       if(o.key) AI.key = o.key;
       if(o.url) AI.url = o.url;
       if(o.model) AI.model = o.model;
+      /* ★ 对话记录。以前这里只恢复 key/url/model，
+         log 从头到尾既没存过也没读过 —— 聊完一关页面就全没了。 */
+      if(o.log) AI.log = aiLogClean(o.log);
     }
   }catch(e){}
 }
+/* 写失败必须说出来。原来这里是 try{...}catch(e){} 空吞：
+   配额满了、或者浏览器禁了存储，用户看到的是一切照常，实际一条都没存下。 */
+var aiSaveWarned = false;
 function saveAI(){
-  try{ localStorage.setItem(AI_LS, JSON.stringify({key:AI.key, url:AI.url, model:AI.model})); }catch(e){}
+  try{
+    /* 顺手把内存里那份也收到上限 —— 否则聊久了内存有 200 条、
+       存储只有 40 条，刷新一次"凭空少了一截"。两处用同一个上限就不会。 */
+    AI.log = aiLogClean(AI.log);
+    localStorage.setItem(AI_LS, JSON.stringify({
+      key:AI.key, url:AI.url, model:AI.model, log:AI.log
+    }));
+    aiSaveWarned = false;
+    return true;
+  }catch(e){
+    storageOK = false;
+    if(!aiSaveWarned){
+      aiSaveWarned = true;      /* 只吼一次，不然每问一句弹一次 */
+      toast('对话记录存不下了（浏览器存储满或被禁用），这一轮聊完可能会丢','err');
+    }
+    return false;
+  }
 }
 
 /* 把最近的数据压成一段上下文。
@@ -5040,7 +5099,7 @@ function renderAILog(){
       + '数据只发给你自己填的那个接口，不经过任何第三方。</div>';
   }else{
     var h = '';
-    AI.log.slice(-20).forEach(function(m){
+    AI.log.slice(-AI_LOG_MAX).forEach(function(m){
       var cls = m.role==='me' ? 'me' : (m.role==='err' ? 'err' : 'ai');
       h += '<div class="ai-msg '+cls+'">'+esc(m.text)+'</div>';
     });
@@ -5099,6 +5158,9 @@ async function aiAsk(text){
     AI.log.push({role:'err', text:'调用失败：'+((e && e.message) || e)});
   }finally{
     AI.busy = false; setAIBusy(false); renderAILog();
+    /* ★ 每轮问答都落盘。以前只在"保存设置"时写一次，
+       而且写的内容里根本没有 log —— 关掉页面这段对话就没了。 */
+    saveAI();
   }
 }
 
@@ -6627,6 +6689,7 @@ document.addEventListener('click', function(e){
   if(act==='ai-cancel'){ ui.aiSettings = false; render(); return; }
   if(act==='ai-save'){ saveAISettings(); return; }
   if(act==='ai-send'){ aiSendFromInput(); return; }
+  if(act==='ai-clear'){ aiClear(); return; }
   if(act==='ai-preset'){ aiPreset(el.getAttribute('data-q')); return; }
 
   /* --- 图片附件 --- */
