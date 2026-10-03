@@ -1277,23 +1277,23 @@ img[data-wbmissing]{
 .wb-ai-act:disabled{ opacity:.45; cursor:default }
 
 /* ==========================================================================
-   图片备份条：说清"JSON 备份里没有图"，并给出单独导出/导入
+   图片备份条：说清"导出备份里没有图"，并给出单独导出/导入
+   ★ 放在主内容区，**不要放顶栏** —— .topbar 是固定高度，塞进去会被挤扁。
    ========================================================================== */
 .wb-imgbar{
-  display:inline-flex; align-items:center; gap:7px;
-  margin-left:10px; flex-wrap:wrap;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin:12px 0 6px; padding:10px 14px;
+  border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--surface-2);
 }
-.wb-imgbar-note{ font-size:11.5px; color:var(--warn); font-weight:600 }
+.wb-imgbar-note{ flex:1; min-width:0; font-size:12.5px; font-weight:600; color:var(--muted); line-height:1.6 }
 .wb-imgbar-b{
   border:1px solid var(--line); border-radius:7px; cursor:pointer;
   background:var(--surface); color:var(--muted);
-  font:inherit; font-size:11.5px; font-weight:600;
-  padding:3px 9px; min-height:26px;
+  font:inherit; font-size:12px; font-weight:650;
+  padding:5px 12px; min-height:30px; flex:none;
 }
 .wb-imgbar-b:hover{ border-color:var(--accent); color:var(--accent) }
-@media (max-width:640px){
-  .wb-imgbar{ margin-left:0; width:100%; margin-top:8px }
-}
 
 /* ==========================================================================
    示例数据提示条（首跑询问 / 存量清理）
@@ -1302,7 +1302,7 @@ img[data-wbmissing]{
   display:flex; align-items:center; gap:10px; flex-wrap:wrap;
   margin:12px 0 6px; padding:11px 14px;
   border:1px solid var(--accent-line,var(--line)); border-radius:var(--r-m);
-  background:var(--accent-soft); color:var(--accent-ink,var(--text));
+  background:var(--accent-soft); color:var(--accent-ink,var(--ink));
   font-size:12.5px; font-weight:600;
 }
 .wb-samplebar-t{ flex:1; min-width:0; line-height:1.6 }
@@ -4359,8 +4359,22 @@ AI 助手
     });
   }
 
-  /* 给每条 AI 回复挂两个按钮。幂等（认 __wbActs）。
-     观察器触发得很密，而且面板每次打开都重建，所以必须能反复调。 */
+  /* 给每条 AI 回复挂两个按钮。
+   *
+   * ★ 这里有两个坑，都是实测踩出来的：
+   *
+   * 1) 页面的回答是**流式**的：第一个分片就把 class 改成 "ai-msg bot"，
+   *    之后每来一个分片就 `box.textContent = acc` —— 而 textContent 会**清空子节点**，
+   *    也就是把我们挂上去的按钮冲掉。
+   *    所以**不能用"做过了"的布尔标记**：一标记，按钮被冲掉后就永远补不回来了，
+   *    结果是**每一条流式回答都没有按钮**。
+   *
+   * 2) 也不能简单地"看按钮还在不在就补" —— 这样每个分片都会挂一次，
+   *    而且重新读 textContent 时会把按钮文字("存成灵感拆成任务")也算进去。
+   *
+   * 做法：等这一条**不再变化**了再挂（相邻两次读到的文字一样，才算说完了）。
+   *    这样流式过程中一次都不挂，说完才挂一次；
+   *    万一中途真挂上了又被冲掉，等文字稳定下来它会自己补回去（自愈）。 */
   function aiDecorateReplies() {
     var body = document.getElementById('aiBody');
     if (!body || !body.querySelectorAll) return;
@@ -4368,16 +4382,19 @@ AI 助手
     try { list = body.querySelectorAll('.ai-msg.bot'); } catch (e) { return; }
     for (var i = 0; i < list.length; i++) {
       var el = list[i];
-      if (el.__wbActs) continue;
-      var txt = String(el.textContent || '').trim();
+      var bar = el.__wbBar;
+      if (bar && bar.parentNode === el) continue;      /* 已经挂好了，别重复 */
+      var raw = String(el.textContent || '');
+      if (el.__wbSeen !== raw) { el.__wbSeen = raw; continue; }   /* 还在变，等它说完 */
+
+      var txt = raw.trim();
       /* 开场白和"思考中"不给按钮 —— 它们不是回答 */
       if (txt.length < 40) continue;
       if (txt.indexOf('你好。我知道你工作台') === 0) continue;
       if (txt === '对话记录已清空。之前聊过的内容不再作为上下文。') continue;
-      el.__wbActs = true;
 
-      var bar = document.createElement('div');
-      bar.className = 'wb-ai-acts';
+      var box = document.createElement('div');
+      box.className = 'wb-ai-acts';
 
       var bi = document.createElement('button');
       bi.type = 'button'; bi.className = 'wb-ai-act'; bi.textContent = '存成灵感';
@@ -4397,8 +4414,8 @@ AI 助手
         wbAddTasks(this.__wbTxt, this);
       };
 
-      bar.appendChild(bi); bar.appendChild(bt);
-      try { el.appendChild(bar); } catch (e2) {}
+      box.appendChild(bi); box.appendChild(bt);
+      try { el.appendChild(box); el.__wbBar = box; } catch (e2) {}
     }
   }
 
@@ -4436,20 +4453,59 @@ AI 助手
       return true;
     } catch (e) { return false; }
   }
+  /* 单卷的字节预算。
+     ★ 图片是**不压缩**的（用户的要求），一条最多 9 张，整个库攒到几百 MB 完全可能。
+     一开始的实现是"把所有图取出来 → 一个 JSON.stringify → 下载"：
+     那会在内存里先堆一份几百 MB 的 dataURL，再复制出一份同样大的字符串，
+     手机上必崩。所以改成**边取边切卷、取满一卷就下载一卷**，
+     峰值内存只有一卷（30MB 左右）而不是整库。
+     导入侧按 key 存，所以分几个文件、按什么顺序导都无所谓。 */
+  var WB_VOL_BYTES = 30 * 1024 * 1024;
+
   function wbExportImgs(btn) {
     if (btn && btn.disabled) return Promise.resolve(false);
     if (btn) btn.disabled = true;
     toast('正在打包图片…');
-    return wbImgList().then(function (list) {
-      if (!list.length) { toast('这台设备上没有图片'); return false; }
-      var payload = { v: 1, exportedAt: new Date().toISOString(), images: {} };
-      var bytes = 0;
-      list.forEach(function (x) { payload.images[x.key] = x.data; bytes += x.data.length; });
-      var ok = wbDownload('每日工作台图片_' + wbDay() + '.json', JSON.stringify(payload));
-      toast(ok
-        ? ('图片已导出：' + list.length + ' 张，约 ' + (Math.round(bytes / 1048576 * 10) / 10) + ' MB')
-        : '导出图片失败');
-      return ok;
+    var day = wbDay();
+    var total = 0, vols = 0, cur = null, curBytes = 0;
+
+    function flush() {
+      if (!curBytes) return;
+      vols++;
+      var payload = {
+        v: 1, exportedAt: new Date().toISOString(),
+        volume: vols, images: cur
+      };
+      /* 卷号一律带上 —— 切卷是边取边切的，下笔时并不知道一共几卷，
+         带上序号至少不会互相覆盖；导入侧按 key 存，顺序无所谓。 */
+      wbDownload('每日工作台图片_' + day + '_' + vols + '.json', JSON.stringify(payload));
+      cur = null; curBytes = 0;
+    }
+
+    return imgAllKeys().then(function (keys) {
+      keys = keys || [];
+      if (!keys.length) { toast('这台设备上没有图片'); return false; }
+      /* 一张一张来 —— 上一张进了卷里就不再留引用，让 GC 能收掉 */
+      var chain = Promise.resolve();
+      keys.forEach(function (k) {
+        chain = chain.then(function () {
+          return imgGet(k).then(function (u) {
+            if (!u) return;
+            total++;
+            if (curBytes && curBytes + u.length > WB_VOL_BYTES) flush();
+            if (!cur) cur = {};
+            cur[k] = u;
+            curBytes += u.length;
+          });
+        });
+      });
+      return chain.then(function () {
+        flush();
+        if (!total) { toast('这台设备上没有能读出来的图片'); return false; }
+        toast('图片已导出：' + total + ' 张' +
+              (vols > 1 ? '，分成 ' + vols + ' 个文件（分批下载，可能要允许"下载多个文件"）' : ''));
+        return true;
+      });
     }).catch(function () { toast('导出图片失败'); return false; })
       .then(function (r) { if (btn) btn.disabled = false; return r; });
   }
@@ -4479,43 +4535,78 @@ AI 助手
     });
   }
 
+  /* 往主区插一条提示。
+   *
+   * ★ 为什么不插顶栏：`.topbar` 是**固定高度**（--topbar-h，56px），
+   *   里面的 .topbar-in 又是 height:100% —— 往那儿塞一条带文字和两个按钮的东西，
+   *   只会被挤扁或者溢出压住下面的内容。顶栏里已经挤了同步胶囊 + 导出 + 导入 + 刷新 + AI。
+   *   所以统一插到 main.wrap 里，锚在页面自己的提醒条（#alertBar）后面，视觉上归成一类。
+   *
+   * 拿不到 main.wrap 就**什么都不做**（等下一轮），绝不退回 document.body ——
+   * 退回 body 会在页面还没解析完时插错位置，而且"已存在"的判断会让它永远不再纠正。 */
+  function wbInsertNotice(el) {
+    var host = document.querySelector('main.wrap') || document.querySelector('main');
+    if (!host) return false;
+    var anchor = document.getElementById('alertBar');
+    if (anchor && anchor.parentNode === host) host.insertBefore(el, anchor.nextSibling);
+    else host.insertBefore(el, host.firstChild);
+    return true;
+  }
+
   function buildImgBar() {
-    var host = document.getElementById('btnExport');
-    if (!host || !host.parentNode) return;
-    if (document.getElementById('wbImgBar')) { paintImgBar(); return; }
-    var bar = document.createElement('span');
+    if (document.getElementById('wbImgBar')) return;
+    /* 页面离线和入口按钮得先在 */
+    if (!document.getElementById('btnExport')) return;
+    var bar = document.createElement('div');
     bar.id = 'wbImgBar';
     bar.className = 'wb-imgbar';
 
     var note = document.createElement('span');
     note.className = 'wb-imgbar-note';
     note.id = 'wbImgNote';
+    note.textContent = '图片只在当前设备，不随「导出备份」走';
 
     var ex = document.createElement('button');
     ex.type = 'button'; ex.className = 'wb-imgbar-b'; ex.id = 'wbImgExport';
     ex.textContent = '导出图片';
+    ex.title = '把这些图片单独打包下载（分卷，可以再导回来）';
     ex.onclick = function (e) { if (e && e.stopPropagation) e.stopPropagation(); wbExportImgs(ex); };
 
     var im = document.createElement('button');
     im.type = 'button'; im.className = 'wb-imgbar-b'; im.id = 'wbImgImport';
     im.textContent = '导入图片';
+    im.title = '从之前导出的图片备份里恢复（可以一次选多个分卷）';
     im.onclick = function (e) {
       if (e && e.stopPropagation) e.stopPropagation();
       var f = document.createElement('input');
-      f.type = 'file'; f.accept = '.json,application/json';
+      f.type = 'file';
+      f.accept = '.json,application/json';
+      /* 允许多选：导出可能被切成好几卷，让用户一次把几卷都选上 */
+      f.multiple = true;
       f.onchange = function () {
-        var file = f.files && f.files[0];
-        if (!file) return;
-        toast('正在导入图片…');
-        wbImportImgs(file).then(function (n) {
-          toast(n >= 0 ? ('已导入 ' + n + ' 张图片') : '这不是图片备份文件');
+        var files = Array.prototype.slice.call(f.files || []);
+        if (!files.length) return;
+        toast('正在导入 ' + files.length + ' 个文件…');
+        var chain = Promise.resolve(), ok = 0, bad = 0;
+        files.forEach(function (file) {
+          chain = chain.then(function () {
+            return wbImportImgs(file).then(function (n) {
+              if (n >= 0) ok += n; else bad++;
+            });
+          });
+        });
+        chain.then(function () {
+          toast(bad
+            ? ('导入了 ' + ok + ' 张，有 ' + bad + ' 个文件认不出来')
+            : ('已导入 ' + ok + ' 张图片'));
+          paintImgBar();            /* 导完立刻刷新那句"图片 N 张" */
         });
       };
       f.click();
     };
 
     bar.appendChild(note); bar.appendChild(ex); bar.appendChild(im);
-    host.parentNode.insertBefore(bar, host.nextSibling);
+    if (!wbInsertNotice(bar)) return;   /* 插不进去就当没建过，下一轮再来 */
     paintImgBar();
   }
   var wbImgN = -1;
@@ -4526,10 +4617,10 @@ AI 助手
       var n = (keys || []).length;
       if (n !== wbImgN) {
         wbImgN = n;
-        /* 这句话必须说清楚，否则用户以为点了"导出数据"就安全了 */
+        /* 这句话必须说清楚，否则用户以为点了"导出备份"就安全了 */
         note.textContent = n
-          ? '图片 ' + n + ' 张只在当前设备，不在 JSON 备份里'
-          : '当前设备没有图片';
+          ? '图片 ' + n + ' 张只在当前设备，不在「导出备份」里'
+          : '图片只在当前设备，不在「导出备份」里';
       }
     });
   }
@@ -4556,9 +4647,21 @@ AI 助手
 
   function paintSampleBar() {
     if (document.getElementById('wbSampleBar')) return;
+
+    /* ★ DOM 得先就绪，而且页面的按钮得先在。
+       原来这里的兜底是 `|| document.body` —— 问题很大：这个函数在启动时
+       （setTimeout 1.2 秒）就会被调一次，那一刻如果页面还没解析完，
+       提示条会被插到 body 上，而"已经存在"的判断又让它**永远不再纠正**。
+       宁可这一轮什么都不做，等下一次。 */
+    var host = document.querySelector('main.wrap') || document.querySelector('main');
+    if (!host) return;
+
     var n = wbSampleCount();
-    var first = (countAll() === 0 && !wbSeedFlag());
+    var seedBtn = document.getElementById('btnSeedSample');
+    var cleanBtn = document.getElementById('btnCleanSample');
+    var first = (countAll() === 0 && !wbSeedFlag() && !!seedBtn);
     if (!n && !first) return;
+    if (n && !cleanBtn) return;          /* 存量分支要用到"清空示例"按钮 */
 
     var bar = document.createElement('div');
     bar.id = 'wbSampleBar';
@@ -4578,8 +4681,7 @@ AI 助手
       txt.textContent = '还有 ' + n + ' 条示例数据（统计里也算着它们）';
       bar.appendChild(txt);
       bar.appendChild(mkBtn('清空示例', 'pri', function () {
-        var b = document.getElementById('btnCleanSample');
-        if (b) b.click();
+        cleanBtn.click();
         var self = document.getElementById('wbSampleBar');
         if (self) self.remove();
         setTimeout(function () { try { paintSampleBar(); } catch (e) {} }, 1200);
@@ -4588,8 +4690,7 @@ AI 助手
       txt.textContent = '这是个空工作台。要不要先放几条示例看看它能干什么？';
       bar.appendChild(txt);
       bar.appendChild(mkBtn('看看示例', 'pri', function () {
-        var b = document.getElementById('btnSeedSample');
-        if (b) b.click();
+        seedBtn.click();
         bar.remove();
         setTimeout(function () { try { paintSampleBar(); } catch (e) {} }, 1400);
       }));
@@ -4599,8 +4700,8 @@ AI 助手
       }));
     }
 
-    var host = document.querySelector('.wrap') || document.body;
-    host.insertBefore(bar, host.firstChild);
+    /* 锚点和图片条一样，走 wbInsertNotice（它自己会判断 DOM 就绪没有） */
+    if (!wbInsertNotice(bar)) return;
   }
   /* 页面首跑时通过补丁把控制权交过来 */
   window.__WB_SEED_OFFER__ = function () { try { paintSampleBar(); } catch (e) {} };
@@ -4636,12 +4737,19 @@ AI 助手
 
   /* 上面这些都要跟着"界面变了"跑。观察器只盯 childList 和 src，
      切面板改的是 className，它收不到 —— 所以用一个轻量轮询兜底。
-     每个函数都自己认标记、幂等，反复调没有副作用。 */
+     每个函数都自己认标记、幂等，反复调没有副作用。
+     分两档：便宜的每 1.5 秒一次；要读整库 / 读 IndexedDB 的每 8 次才做一遍
+     （每 1.5 秒扫一次全库、读一次 IndexedDB 是没必要的开销）。 */
+  var wbTick = 0;
   function wbAfterRender() {
+    wbTick++;
     try { aiDecorateReplies(); } catch (e) {}
     try { buildImgBar(); } catch (e) {}
-    try { paintSampleBar(); } catch (e) {}
     try { wbReviewDraft(); } catch (e) {}
+    if (wbTick % 8 === 1) {
+      try { paintImgBar(); } catch (e) {}
+      try { paintSampleBar(); } catch (e) {}
+    }
   }
 
   window.__SMART_PAGE__ = window.__SMART_PAGE__ || {};
@@ -5637,6 +5745,8 @@ AI 助手
     imgExport: wbExportImgs,
     imgImport: wbImportImgs,
     sampleCount: wbSampleCount,
+    sampleBar: paintSampleBar,
+    imgBar: buildImgBar,
     reviewDraft: wbReviewDraft,
     afterRender: wbAfterRender
   };
