@@ -1180,7 +1180,9 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
    这条不能做成 toast：数据存不下来是个持续状态，
    一闪而过的提示会被当成"刚才那个小提示"忽略掉。 */
 .wb-warn{
-  position:fixed; left:50%; top:14px; z-index:300;
+  /* top 要加上刘海/状态栏的安全区 —— 固定在顶部的东西不加会被挖孔屏压住。
+     env() 在不支持的设备上是 0，桌面端没有任何影响。 */
+  position:fixed; left:50%; top:calc(14px + env(safe-area-inset-top)); z-index:300;
   transform:translate(-50%,-24px); opacity:0; pointer-events:none;
   width:min(92vw,520px);
   display:flex; flex-direction:column; gap:4px;
@@ -1295,6 +1297,19 @@ img[data-wbmissing]{
 }
 .wb-imgbar-b:hover{ border-color:var(--accent); color:var(--accent) }
 
+/* 「云端同步」面板里的图片备份区（常驻入口，和上面的 wb-imgbar 是同一件事） */
+.wb-imgsec{
+  padding:0 20px 20px; margin-top:2px;
+  border-top:1px solid var(--line);
+}
+.wb-imgsec-h{
+  font-size:12px; font-weight:700; color:var(--muted);
+  letter-spacing:.04em; padding:16px 0 6px;
+}
+.wb-imgsec-row{ display:flex; gap:9px; margin-top:12px; flex-wrap:wrap }
+.wb-imgsec-row .wb-imgbar-b{ flex:1 1 auto; min-height:40px; justify-content:center;
+  display:inline-flex; align-items:center }
+
 /* ==========================================================================
    示例数据提示条（首跑询问 / 存量清理）
    ========================================================================== */
@@ -1314,6 +1329,89 @@ img[data-wbmissing]{
 }
 .wb-samplebar-b.pri{ background:var(--accent); border-color:var(--accent); color:#fff }
 .wb-samplebar-b:hover{ filter:brightness(.97) }
+
+/* ==========================================================================
+   移动端修正（≤900px，和页面自己的断点对齐）
+   ----------------------------------------------------------------------------
+   页面给触控定的基线是 **44px**：它自己的 .chip / .btn.sm 原来只有 32–36px，
+   后来用 ::after 假元素把热区撑到 44px 而不改变视觉密度。
+   注入层后来加的那些按钮**没有跟上这条规矩** —— 最小的只有 28px
+   （AI 回复下面那两个按钮），手机上基本点不中。这里统一补齐。
+   ========================================================================== */
+@media (max-width:900px){
+
+  /* ---- 1. 热区：文本按钮视觉不动，热区撑到 44px（沿用页面自己的做法）---- */
+  .wb-ai-act, .wb-imgbar-b, .wb-samplebar-b, .wb-btn{ position:relative }
+  .wb-ai-act::after, .wb-imgbar-b::after, .wb-samplebar-b::after, .wb-btn::after{
+    content:''; position:absolute; left:0; right:0; top:50%;
+    transform:translateY(-50%); height:44px; min-height:100%;
+  }
+
+  /* ---- 2. 热区：图标按钮直接给足 44×44（里面本来就是空的，撑大不影响观感）---- */
+  .wb-x, .ai-pick-x{
+    min-width:44px; min-height:44px; padding:0;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .wb-warn-x{ min-height:44px; display:inline-flex; align-items:center }
+
+  /* ---- 3. 热区：列表行和主按钮 ---- */
+  .ai-pick-i{ min-height:46px }
+  .ai-pick-b{ min-height:46px; flex:1 1 0 }      /* 取消 / 保存 各占一半，拇指好按 */
+  .wb-grid input, .wb-grid select{ min-height:44px }
+  .wb-topbtn{ min-height:44px }
+
+  /* ---- 4. 底部安全区 ----
+     AI 面板在手机上是贴在屏幕**底边**的（.ai-wrap 是 fixed inset:0，
+     面板 94vh 贴底），所以底部的输入框和「保存」正好落在 home indicator 上。 */
+  .ai-foot{ padding-bottom:calc(16px + env(safe-area-inset-bottom)) }
+  .ai-pick-foot{ padding-bottom:calc(16px + env(safe-area-inset-bottom)) }
+
+  /* ---- 5. AI 面板头部在手机上挤了 5 个东西（标题 + 模型 + 🗑 + ⚙ + ×）---- */
+  .ai-head{ gap:8px; padding-left:14px; padding-right:14px }
+  .ai-head .ai-x{ margin-left:0 }        /* gap 和 margin-left 各来一次，白占 16px */
+  .ai-head button.ai-sub{ max-width:42% }
+
+  /* ---- 5b. 页面自己的 44px 白名单漏掉的两个 ----
+     它的名单只覆盖了 .btn-ghost / .btn-main / .chip 那些，
+     AI 面板里的图标按钮和预设胶囊没进去，分别只有 32px 和 34px。
+     齿轮/关闭在手机上是很容易点错的地方，一起补上。 */
+  .ai-head .ai-x{ min-width:44px; min-height:44px }
+  .ai-chip button{ min-height:44px; display:inline-flex; align-items:center }
+
+  /* ---- 6. 软键盘弹出时 vh 不会缩，底部输入框会被键盘盖住 ----
+     dvh 会跟着可视视口变，所以键盘一弹面板就缩短、输入框始终可见。
+     先写 vh 是为了老浏览器还有得用（不认 dvh 就忽略后一条）。 */
+  .ai-panel{ height:94vh; max-height:94vh }
+  .ai-panel{ height:94dvh; max-height:94dvh }
+
+  /* ---- 7. 极窄屏：提示条里的按钮平分一行，别一个词一行 ---- */
+  .wb-samplebar-b, .wb-imgbar-b{ flex:1 1 auto; text-align:center; justify-content:center }
+}
+
+/* ---- 8. 触屏上没有"悬停"，但 :hover 会**粘住**（点完一直亮着）----
+   页面自己是用 @media(hover:hover) and (pointer:fine) 把悬停圈起来的，
+   注入层这几条也得跟上；同时补上按下反馈，否则手指按下去没有任何回应。 */
+@media (hover:none){
+  button.ai-sub:hover{ background:transparent; color:inherit }
+  .ai-pick-x:hover, .wb-x:hover{ background:transparent }
+  .ai-pick-i:hover{ border-color:var(--line); color:inherit }
+  .ai-pick-b:hover{ background:var(--surface) }
+  .ai-pick-b.pri:hover{ filter:none }
+  .wb-ai-act:hover{ border-color:var(--line); color:var(--muted) }
+  .wb-imgbar-b:hover{ border-color:var(--line); color:var(--muted) }
+  .wb-samplebar-b:hover{ filter:none }
+  .wb-btn:hover{ background:var(--surface) }
+  .wb-btn.pri:hover{ filter:none }
+  .wb-topbtn:hover{ color:var(--muted); border-color:var(--line) }
+}
+.wb-ai-act:active, .wb-imgbar-b:active, .wb-samplebar-b:active{
+  border-color:var(--accent); color:var(--accent); background:var(--surface-2);
+}
+.wb-btn:active{ background:var(--surface-2) }
+.ai-pick-i:active{ background:var(--accent-soft) }
+.ai-pick-b:active{ filter:brightness(.94) }
+.ai-pick-x:active, .wb-x:active{ background:rgba(128,128,128,.18) }
+
 
 
 </style>
@@ -4553,76 +4651,123 @@ AI 助手
     return true;
   }
 
-  function buildImgBar() {
-    if (document.getElementById('wbImgBar')) return;
-    /* 页面离线和入口按钮得先在 */
-    if (!document.getElementById('btnExport')) return;
-    var bar = document.createElement('div');
-    bar.id = 'wbImgBar';
-    bar.className = 'wb-imgbar';
-
-    var note = document.createElement('span');
-    note.className = 'wb-imgbar-note';
-    note.id = 'wbImgNote';
-    note.textContent = '图片只在当前设备，不随「导出备份」走';
-
-    var ex = document.createElement('button');
-    ex.type = 'button'; ex.className = 'wb-imgbar-b'; ex.id = 'wbImgExport';
-    ex.textContent = '导出图片';
-    ex.title = '把这些图片单独打包下载（分卷，可以再导回来）';
-    ex.onclick = function (e) { if (e && e.stopPropagation) e.stopPropagation(); wbExportImgs(ex); };
-
-    var im = document.createElement('button');
-    im.type = 'button'; im.className = 'wb-imgbar-b'; im.id = 'wbImgImport';
-    im.textContent = '导入图片';
-    im.title = '从之前导出的图片备份里恢复（可以一次选多个分卷）';
-    im.onclick = function (e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      var f = document.createElement('input');
-      f.type = 'file';
-      f.accept = '.json,application/json';
-      /* 允许多选：导出可能被切成好几卷，让用户一次把几卷都选上 */
-      f.multiple = true;
-      f.onchange = function () {
-        var files = Array.prototype.slice.call(f.files || []);
-        if (!files.length) return;
-        toast('正在导入 ' + files.length + ' 个文件…');
-        var chain = Promise.resolve(), ok = 0, bad = 0;
-        files.forEach(function (file) {
-          chain = chain.then(function () {
-            return wbImportImgs(file).then(function (n) {
-              if (n >= 0) ok += n; else bad++;
-            });
+  /* 选文件 → 导入。导出可能切成好几卷，所以允许多选。 */
+  function wbPickImgs() {
+    var f = document.createElement('input');
+    f.type = 'file';
+    f.accept = '.json,application/json';
+    f.multiple = true;
+    f.onchange = function () {
+      var files = Array.prototype.slice.call(f.files || []);
+      if (!files.length) return;
+      toast('正在导入 ' + files.length + ' 个文件…');
+      var chain = Promise.resolve(), ok = 0, bad = 0;
+      files.forEach(function (file) {
+        chain = chain.then(function () {
+          return wbImportImgs(file).then(function (n) {
+            if (n >= 0) ok += n; else bad++;
           });
         });
-        chain.then(function () {
-          toast(bad
-            ? ('导入了 ' + ok + ' 张，有 ' + bad + ' 个文件认不出来')
-            : ('已导入 ' + ok + ' 张图片'));
-          paintImgBar();            /* 导完立刻刷新那句"图片 N 张" */
-        });
-      };
-      f.click();
+      });
+      chain.then(function () {
+        toast(bad
+          ? ('导入了 ' + ok + ' 张，有 ' + bad + ' 个文件认不出来')
+          : ('已导入 ' + ok + ' 张图片'));
+        paintImgBar();            /* 导完立刻刷新那句"图片 N 张" */
+      });
     };
+    f.click();
+  }
+  function wbImgBtn(id, label, title, fn) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'wb-imgbar-b'; b.id = id;
+    b.textContent = label; b.title = title;
+    b.onclick = function (e) { if (e && e.stopPropagation) e.stopPropagation(); fn(b); };
+    return b;
+  }
 
-    bar.appendChild(note); bar.appendChild(ex); bar.appendChild(im);
-    if (!wbInsertNotice(bar)) return;   /* 插不进去就当没建过，下一轮再来 */
+  /* 图片备份的**常驻**入口：放在「云端同步」面板里。
+     那里本来就是"数据进出"的地方；而且它必须常驻 ——
+     ★ 换新手机时本机一张图都没有，恰恰最需要「导入图片」，
+       如果这个按钮跟着"有图才显示"的提示条一起消失，那就没救了。 */
+  function buildImgSec() {
+    if (document.getElementById('wbImgSec')) return;
+    var box = document.querySelector('#wbSyncModal .wb-box');
+    if (!box) return;
+    var sec = document.createElement('div');
+    sec.className = 'wb-imgsec';
+    sec.id = 'wbImgSec';
+
+    var h = document.createElement('div');
+    h.className = 'wb-imgsec-h';
+    h.textContent = '图片备份';
+
+    var note = document.createElement('div');
+    note.className = 'wb-mut';
+    note.id = 'wbImgSecNote';
+    note.textContent = '图片只在当前设备，不随上面的「导出数据」走。';
+
+    var row = document.createElement('div');
+    row.className = 'wb-imgsec-row';
+    row.appendChild(wbImgBtn('wbImgExport', '导出图片',
+      '把这些图片单独打包下载（分卷，可以再导回来）', function (b) { wbExportImgs(b); }));
+    row.appendChild(wbImgBtn('wbImgImport', '导入图片',
+      '从之前导出的图片备份里恢复（可以一次选多个分卷）', function () { wbPickImgs(); }));
+
+    sec.appendChild(h); sec.appendChild(note); sec.appendChild(row);
+    box.appendChild(sec);
     paintImgBar();
   }
+
+  /* 页面上的提示条：★ 只在**真的有图片**时才出现。
+     没有图就没什么可提醒的，而手机上的首屏每一行都很贵 ——
+     两条提示条叠在「随手记一条」上面会把正事挤下去。
+     入口另有常驻的那份（上面那个），所以这里消失不影响可操作性。 */
+  function buildImgBar() {
+    if (document.getElementById('wbImgBar')) return;
+    if (!document.getElementById('btnExport')) return;
+    imgAllKeys().then(function (keys) {
+      if (!(keys || []).length) return;
+      if (document.getElementById('wbImgBar')) return;
+      var bar = document.createElement('div');
+      bar.id = 'wbImgBar';
+      bar.className = 'wb-imgbar';
+
+      var note = document.createElement('span');
+      note.className = 'wb-imgbar-note';
+      note.id = 'wbImgNote';
+
+      bar.appendChild(note);
+      bar.appendChild(wbImgBtn('wbImgExportTop', '导出图片',
+        '把这些图片单独打包下载（分卷，可以再导回来）', function (b) { wbExportImgs(b); }));
+      bar.appendChild(wbImgBtn('wbImgImportTop', '导入图片',
+        '从之前导出的图片备份里恢复（可以一次选多个分卷）', function () { wbPickImgs(); }));
+      if (!wbInsertNotice(bar)) return;   /* 插不进去就当没建过，下一轮再来 */
+      paintImgBar();
+    }).catch(function () {});
+  }
+
   var wbImgN = -1;
   function paintImgBar() {
-    var note = document.getElementById('wbImgNote');
-    if (!note) return;
     imgAllKeys().then(function (keys) {
       var n = (keys || []).length;
-      if (n !== wbImgN) {
-        wbImgN = n;
-        /* 这句话必须说清楚，否则用户以为点了"导出备份"就安全了 */
-        note.textContent = n
-          ? '图片 ' + n + ' 张只在当前设备，不在「导出备份」里'
-          : '图片只在当前设备，不在「导出备份」里';
+      if (n === wbImgN) return;
+      wbImgN = n;
+      /* 这句话必须说清楚，否则用户以为点了"导出数据"就安全了 */
+      var t = n ? ('图片 ' + n + ' 张只在当前设备，不在「导出数据」里')
+                : '图片只在当前设备，不随上面的「导出数据」走。';
+      var a = document.getElementById('wbImgNote');
+      if (a) a.textContent = t;
+      var sec = document.getElementById('wbImgSecNote');
+      if (sec) sec.textContent = n
+        ? ('本机有 ' + n + ' 张图片，它们不在上面的「导出数据」里，也不会随云同步走。')
+        : '图片只在当前设备，不随上面的「导出数据」走。';
+      /* 图片被删光之后，页面上那条提示也没必要留着了 */
+      if (!n) {
+        var bar = document.getElementById('wbImgBar');
+        if (bar) bar.remove();
       }
-    });
+    }).catch(function () {});
   }
 
   /* ==========================================================================
@@ -4744,6 +4889,7 @@ AI 助手
   function wbAfterRender() {
     wbTick++;
     try { aiDecorateReplies(); } catch (e) {}
+    try { buildImgSec(); } catch (e) {}
     try { buildImgBar(); } catch (e) {}
     try { wbReviewDraft(); } catch (e) {}
     if (wbTick % 8 === 1) {
@@ -5747,6 +5893,8 @@ AI 助手
     sampleCount: wbSampleCount,
     sampleBar: paintSampleBar,
     imgBar: buildImgBar,
+    imgSec: buildImgSec,
+    pickImgs: wbPickImgs,
     reviewDraft: wbReviewDraft,
     afterRender: wbAfterRender
   };
