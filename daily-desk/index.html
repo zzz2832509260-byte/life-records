@@ -974,6 +974,29 @@ body{background:var(--ds3-bg)}
 
 <!-- ▼ 离线版：移动端修正 + 同步面板样式（注入，原页面样式未改动） -->
 <style id="wb-offline-style">
+
+/* ============================================================================
+   次级文字的对比度修正
+   ----------------------------------------------------------------------------
+   页面（ds3 层）的两档次级色在亮色下只有 3.81:1 和 **2.36:1**，
+   而 --muted-2 被用在 46 处 11.5–12.5px 的小字上：提示、元信息、计数、占位符。
+   2.36:1 不是"弱化"，是看不清（WCAG AA 正文要求 4.5:1）。
+   这里只调这两档、不动 --ink-2，三档仍然拉得开：
+     --ink-2 8.2:1   → 次级正文
+     --muted  5.4:1   → 说明文字
+     --muted-2 4.1:1   → 最小的元信息
+   ============================================================================ */
+:root{
+  --muted: #5d636b;
+  --muted-2: #71777f;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --muted: #91979f;
+    --muted-2: #7b8189;
+  }
+}
+
 /* ============================================================================
    注入样式 —— 「每日工作台」离线版
    1) 云同步面板的界面
@@ -993,19 +1016,19 @@ body{background:var(--ds3-bg)}
 .wb-topbtn{
   display:inline-flex; align-items:center; gap:7px;
   min-height:38px; padding:0 13px;
-  border:1px solid var(--line, #e5e7ec); border-radius:999px;
-  background:var(--surface,#fff); color:var(--muted,#6b7280);
-  font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  border:1px solid var(--line); border-radius:999px;
+  background:var(--surface); color:var(--muted);
+  font:inherit; font-size:var(--fs-md); font-weight:600; cursor:pointer;
   transition:.18s;
 }
-.wb-topbtn:hover{ color:var(--accent,#5b5bd6); border-color:var(--accent,#5b5bd6) }
+.wb-topbtn:hover{ color:var(--accent); border-color:var(--accent) }
 .wb-dot{
   width:7px; height:7px; border-radius:50%; flex:none;
-  background:var(--line,#d8dde9); transition:.25s;
+  background:var(--line); transition:.25s;
 }
-.wb-dot.ok{ background:#0d9f6e; box-shadow:0 0 0 3px rgba(13,159,110,.2) }
-.wb-dot.err{ background:#dc4c4c }
-.wb-dot.busy{ background:#5b5bd6; animation:wb-blink .9s infinite }
+.wb-dot.ok{ background:var(--ok); box-shadow:0 0 0 3px var(--ok-soft) }
+.wb-dot.err{ background:var(--danger) }
+.wb-dot.busy{ background:var(--accent); animation:wb-blink .9s infinite }
 @keyframes wb-blink{ 0%,100%{opacity:1} 50%{opacity:.25} }
 
 /* ---------------- 同步面板 ---------------- */
@@ -1018,52 +1041,52 @@ body{background:var(--ds3-bg)}
 .wb-modal.on{ display:flex }
 .wb-box{
   width:100%; max-width:520px; max-height:88vh; overflow:auto;
-  background:var(--surface,#fff); color:var(--text,#10131c);
-  border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.3);
+  background:var(--surface); color:var(--ink);
+  border-radius:var(--r-xl); box-shadow:0 20px 60px rgba(0,0,0,.3);
 }
 .wb-head{
   display:flex; align-items:center; gap:10px;
-  padding:18px 20px 14px; border-bottom:1px solid var(--line,#e5e7ec);
+  padding:18px 20px 14px; border-bottom:1px solid var(--line);
 }
-.wb-head h2{ margin:0; font-size:16px; font-weight:700 }
+.wb-head h2{ margin:0; font-size:var(--fs-ctl); font-weight:700 }
 .wb-x{
-  margin-left:auto; border:0; background:transparent; color:var(--muted,#6b7280);
-  font-size:16px; padding:6px 9px; border-radius:8px; cursor:pointer;
+  margin-left:auto; border:0; background:transparent; color:var(--muted);
+  font-size:var(--fs-ctl); padding:6px 9px; border-radius:var(--r-s); cursor:pointer;
 }
-.wb-x:hover{ background:var(--line,#eef0f5) }
+.wb-x:hover{ background:var(--line) }
 .wb-body{ padding:18px 20px 20px }
 .wb-row{ display:flex; align-items:center; gap:9px; flex-wrap:wrap }
-.wb-mut{ font-size:12px; color:var(--muted,#6b7280); line-height:1.7 }
-.wb-mut b{ color:var(--text,#10131c) }
+.wb-mut{ font-size:var(--fs-sm); color:var(--muted); line-height:1.7 }
+.wb-mut b{ color:var(--ink) }
 .wb-err{
-  margin-top:10px; padding:10px 12px; border-radius:9px; font-size:12.5px; line-height:1.7;
-  background:rgba(220,76,76,.1); color:#c0392b;
+  margin-top:10px; padding:10px 12px; border-radius:var(--r-m); font-size:var(--fs-sm); line-height:1.7;
+  background:var(--danger-soft); color:var(--danger-ink);
 }
 .wb-grid{
   display:grid; grid-template-columns:64px 1fr; gap:10px 12px; align-items:center;
   margin-top:14px;
 }
-.wb-grid label{ font-size:12.5px; color:var(--muted,#6b7280); font-weight:600 }
+.wb-grid label{ font-size:var(--fs-sm); color:var(--muted); font-weight:600 }
 .wb-grid input, .wb-grid select{
-  width:100%; min-height:40px; padding:8px 11px; font:inherit; font-size:13px;
-  border:1px solid var(--line,#e5e7ec); border-radius:9px;
-  background:var(--bg,#fafbfd); color:inherit;
+  width:100%; min-height:40px; padding:8px 11px; font:inherit; font-size:var(--fs-md);
+  border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--bg); color:inherit;
 }
 .wb-grid input:focus, .wb-grid select:focus{
-  outline:none; border-color:var(--accent,#5b5bd6);
-  box-shadow:0 0 0 3px rgba(91,91,214,.14);
+  outline:none; border-color:var(--accent);
+  box-shadow:var(--ring);
 }
 
 /* AI 设置里的模型 / 思考强度下拉
    （这两个 <select> 是补丁加进页面自己的设置弹窗里的，所以用页面自己的类名） */
 .ai-set select{
-  width:100%; min-height:42px; padding:9px 11px; font:inherit; font-size:13.5px;
-  border:1px solid var(--line,#e5e7ec); border-radius:9px;
-  background:var(--surface,#fff); color:inherit; cursor:pointer;
+  width:100%; min-height:42px; padding:9px 11px; font:inherit; font-size:var(--fs-md);
+  border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--surface); color:inherit; cursor:pointer;
 }
 .ai-set select:focus{
-  outline:none; border-color:var(--accent,#5b5bd6);
-  box-shadow:0 0 0 3px rgba(91,91,214,.14);
+  outline:none; border-color:var(--accent);
+  box-shadow:var(--ring);
 }
 .ai-set input[type="text"]{ margin-top:8px }
 
@@ -1074,11 +1097,11 @@ body{background:var(--ds3-bg)}
 button.ai-sub{
   border:0; background:transparent; padding:2px 6px; margin-right:4px;
   font:inherit; font-size:inherit; color:inherit; line-height:inherit;
-  border-radius:7px; cursor:pointer; transition:background .16s, color .16s;
+  border-radius:var(--r-s); cursor:pointer; transition:background .16s, color .16s;
   /* 名字可能很长（deepseek-v4-pro · high），不许它把右边的关闭键挤出去 */
   min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd6) }
+button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent) }
 
 /* ---------------- 模型 / 思考强度 的独立切换页 ----------------
    **从面板顶部铺下来的一整页**，不是就地展开的一条：
@@ -1089,47 +1112,47 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
 .ai-modelpick{
   display:none; position:absolute; inset:0; z-index:6;
   flex-direction:column;
-  background:var(--surface,#fff);
+  background:var(--surface);
   border-radius:inherit;
 }
 .ai-modelpick.on{ display:flex }
 .ai-pick-head{
   display:flex; align-items:center; gap:10px; flex:none;
-  padding:16px 18px 12px; border-bottom:1px solid var(--line,#e5e7ec);
+  padding:16px 18px 12px; border-bottom:1px solid var(--line);
 }
-.ai-pick-head b{ font-size:15px; font-weight:700; margin-right:auto }
+.ai-pick-head b{ font-size:var(--fs-base); font-weight:700; margin-right:auto }
 .ai-pick-x{
-  border:0; background:transparent; color:var(--muted,#6b7280);
-  font-size:16px; padding:6px 9px; border-radius:8px; cursor:pointer; line-height:1;
+  border:0; background:transparent; color:var(--muted);
+  font-size:var(--fs-ctl); padding:6px 9px; border-radius:var(--r-s); cursor:pointer; line-height:1;
 }
 .ai-pick-x:hover{ background:rgba(128,128,128,.14) }
 .ai-pick-body{ flex:1; overflow-y:auto; padding:6px 18px 10px }
 .ai-pick-g{
-  font-size:11px; font-weight:700; color:var(--muted,#6b7280);
+  font-size:var(--fs-xs); font-weight:700; color:var(--muted);
   letter-spacing:.04em; margin:12px 0 6px;
 }
 .ai-pick-i{
   display:flex; align-items:center; gap:10px; width:100%;
-  padding:11px 13px; margin-bottom:6px; border-radius:10px; cursor:pointer; text-align:left;
-  border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
-  color:inherit; font:inherit; font-size:13.5px; font-weight:600;
+  padding:11px 13px; margin-bottom:6px; border-radius:var(--r-m); cursor:pointer; text-align:left;
+  border:1px solid var(--line); background:var(--surface);
+  color:inherit; font:inherit; font-size:var(--fs-md); font-weight:600;
   transition:.16s;
 }
-.ai-pick-i:hover{ border-color:var(--accent,#5b5bd6); color:var(--accent,#5b5bd6) }
-.ai-pick-i.on{ border-color:var(--accent,#5b5bd6); background:rgba(91,91,214,.08) }
+.ai-pick-i:hover{ border-color:var(--accent); color:var(--accent) }
+.ai-pick-i.on{ border-color:var(--accent); background:var(--accent-soft) }
 .ai-pick-n{ flex:1; min-width:0 }
-.ai-pick-c{ color:var(--accent,#5b5bd6); font-weight:800; min-width:14px; text-align:center }
+.ai-pick-c{ color:var(--accent); font-weight:800; min-width:14px; text-align:center }
 .ai-pick-foot{
   flex:none; display:flex; gap:9px; justify-content:flex-end;
-  padding:12px 18px 16px; border-top:1px solid var(--line,#e5e7ec);
+  padding:12px 18px 16px; border-top:1px solid var(--line);
 }
 .ai-pick-b{
-  min-height:42px; padding:0 20px; border-radius:10px; cursor:pointer;
-  border:1px solid var(--line,#e5e7ec); background:var(--surface,#fff);
-  color:inherit; font:inherit; font-size:13.5px; font-weight:650; transition:.16s;
+  min-height:42px; padding:0 20px; border-radius:var(--r-m); cursor:pointer;
+  border:1px solid var(--line); background:var(--surface);
+  color:inherit; font:inherit; font-size:var(--fs-md); font-weight:650; transition:.16s;
 }
-.ai-pick-b:hover{ background:var(--surface-2,#f4f5f9) }
-.ai-pick-b.pri{ background:var(--accent,#5b5bd6); border-color:var(--accent,#5b5bd6); color:#fff }
+.ai-pick-b:hover{ background:var(--surface-2) }
+.ai-pick-b.pri{ background:var(--accent); border-color:var(--accent); color:var(--hc1) }
 .ai-pick-b.pri:hover{ filter:brightness(1.08) }
 
 /* 页面原本在窄屏下把 .ai-sub 整个藏了（.ai-head .ai-sub{display:none}）——
@@ -1138,30 +1161,30 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
 @media (max-width:640px){
   .ai-head button.ai-sub{
     display:inline-flex; align-items:center; max-width:52%;
-    border:1px solid var(--line,#e5e7ec); padding:5px 10px;
-    background:var(--surface-2,#f4f5f9);
+    border:1px solid var(--line); padding:5px 10px;
+    background:var(--surface-2);
     /* 手机上头部更窄，长名字一律省略号收尾，保证关闭键始终看得见、点得到 */
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 }
 .wb-btn{
-  min-height:40px; padding:0 16px; font:inherit; font-size:13px; font-weight:650;
-  border:1px solid var(--line,#e5e7ec); border-radius:9px;
-  background:var(--surface,#fff); color:inherit; cursor:pointer; transition:.18s;
+  min-height:40px; padding:0 16px; font:inherit; font-size:var(--fs-md); font-weight:650;
+  border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--surface); color:inherit; cursor:pointer; transition:.18s;
 }
-.wb-btn:hover{ background:var(--line,#eef0f5) }
-.wb-btn.pri{ background:#5b5bd6; border-color:#5b5bd6; color:#fff }
+.wb-btn:hover{ background:var(--line) }
+.wb-btn.pri{ background:var(--accent); border-color:var(--accent); color:var(--hc1) }
 .wb-btn.pri:hover{ filter:brightness(1.08) }
-.wb-btn.danger{ color:#dc4c4c }
+.wb-btn.danger{ color:var(--danger) }
 .wb-btn:disabled{ opacity:.45; cursor:not-allowed }
 .wb-help{
-  margin-top:14px; padding:12px 14px; border-radius:10px; font-size:12.5px; line-height:1.85;
-  background:rgba(91,91,214,.07); color:var(--muted,#6b7280);
+  margin-top:14px; padding:12px 14px; border-radius:var(--r-m); font-size:var(--fs-sm); line-height:1.85;
+  background:var(--accent-soft); color:var(--muted);
 }
-.wb-help b{ color:var(--text,#10131c) }
+.wb-help b{ color:var(--ink) }
 .wb-help code{
-  background:rgba(128,128,128,.15); border-radius:5px; padding:1px 6px;
-  font-family:ui-monospace,Consolas,monospace; font-size:12px;
+  background:rgba(128,128,128,.15); border-radius:var(--r-s); padding:1px 6px;
+  font-family:ui-monospace,Consolas,monospace; font-size:var(--fs-sm);
 }
 
 /* ---------------- 轻提示 ---------------- */
@@ -1169,8 +1192,8 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
   position:fixed; left:50%; bottom:28px; z-index:210;
   transform:translate(-50%,20px); opacity:0; pointer-events:none;
   max-width:min(90vw,460px); padding:12px 20px; border-radius:999px;
-  background:var(--text,#10131c); color:var(--surface,#fff);
-  font-size:13.5px; font-weight:600; line-height:1.6; text-align:center;
+  background:var(--ink); color:var(--surface);
+  font-size:var(--fs-md); font-weight:600; line-height:1.6; text-align:center;
   box-shadow:0 10px 30px rgba(0,0,0,.28);
   transition:opacity .25s, transform .32s cubic-bezier(.22,1,.36,1);
 }
@@ -1186,25 +1209,25 @@ button.ai-sub:hover{ background:rgba(128,128,128,.14); color:var(--accent,#5b5bd
   transform:translate(-50%,-24px); opacity:0; pointer-events:none;
   width:min(92vw,520px);
   display:flex; flex-direction:column; gap:4px;
-  padding:13px 16px; border-radius:14px;
-  background:#fff4f4; color:#8a1f1f;
-  border:1px solid #f3c2c2;
+  padding:13px 16px; border-radius:var(--r-l);
+  background:var(--danger-soft); color:var(--danger-ink);
+  border:1px solid var(--danger);
   box-shadow:0 12px 34px rgba(0,0,0,.18);
-  font-size:13px; line-height:1.7;
+  font-size:var(--fs-md); line-height:1.7;
   transition:opacity .25s, transform .3s cubic-bezier(.22,1,.36,1);
 }
 .wb-warn.on{ opacity:1; transform:translate(-50%,0); pointer-events:auto }
-.wb-warn b{ font-size:13.5px; color:#7a1414 }
-.wb-warn span{ color:#8a1f1f; opacity:.9 }
+.wb-warn b{ font-size:var(--fs-md); color:var(--danger-ink) }
+.wb-warn span{ color:var(--danger-ink); opacity:.9 }
 .wb-warn-x{
-  align-self:flex-end; margin-top:2px; padding:5px 12px; border-radius:8px;
-  background:rgba(138,31,31,.1); font-weight:650; cursor:pointer;
+  align-self:flex-end; margin-top:2px; padding:5px 12px; border-radius:var(--r-s);
+  background:rgba(128,128,128,.14); font-weight:650; cursor:pointer;
 }
 
 /* 图在这台设备上没有（记录从云端同步来了、图没跟过来） */
 img[data-wbmissing]{
-  background:repeating-linear-gradient(45deg,#eef0f5,#eef0f5 6px,#f7f8fb 6px,#f7f8fb 12px);
-  border:1px dashed var(--line,#d8dde9); border-radius:8px;
+  background:repeating-linear-gradient(45deg,var(--line-2),var(--line-2) 6px,var(--surface-2) 6px,var(--surface-2) 12px);
+  border:1px dashed var(--line); border-radius:var(--r-s);
   min-width:44px; min-height:44px;
 }
 
@@ -1250,7 +1273,7 @@ img[data-wbmissing]{
 
   /* 同步面板在小屏上铺满底部，像原生弹层 */
   .wb-modal{ padding:0; align-items:flex-end }
-  .wb-box{ max-width:none; border-radius:18px 18px 0 0; max-height:92vh }
+  .wb-box{ max-width:none; border-radius:var(--r-xl) var(--r-xl) 0 0; max-height:92vh }
   .wb-grid{ grid-template-columns:1fr; gap:6px }
   .wb-grid label{ margin-top:6px }
 }
@@ -1269,9 +1292,9 @@ img[data-wbmissing]{
   border-top:1px dashed var(--line); flex-wrap:wrap;
 }
 .wb-ai-act{
-  border:1px solid var(--line); border-radius:7px; cursor:pointer;
+  border:1px solid var(--line); border-radius:var(--r-s); cursor:pointer;
   background:var(--surface); color:var(--muted);
-  font:inherit; font-size:12px; font-weight:600;
+  font:inherit; font-size:var(--fs-sm); font-weight:600;
   padding:4px 10px; min-height:28px; line-height:1.4;
   transition:.14s;
 }
@@ -1288,11 +1311,11 @@ img[data-wbmissing]{
   border:1px solid var(--line); border-radius:var(--r-m);
   background:var(--surface-2);
 }
-.wb-imgbar-note{ flex:1; min-width:0; font-size:12.5px; font-weight:600; color:var(--muted); line-height:1.6 }
+.wb-imgbar-note{ flex:1; min-width:0; font-size:var(--fs-sm); font-weight:600; color:var(--muted); line-height:1.6 }
 .wb-imgbar-b{
-  border:1px solid var(--line); border-radius:7px; cursor:pointer;
+  border:1px solid var(--line); border-radius:var(--r-s); cursor:pointer;
   background:var(--surface); color:var(--muted);
-  font:inherit; font-size:12px; font-weight:650;
+  font:inherit; font-size:var(--fs-sm); font-weight:650;
   padding:5px 12px; min-height:30px; flex:none;
 }
 .wb-imgbar-b:hover{ border-color:var(--accent); color:var(--accent) }
@@ -1303,7 +1326,7 @@ img[data-wbmissing]{
   border-top:1px solid var(--line);
 }
 .wb-imgsec-h{
-  font-size:12px; font-weight:700; color:var(--muted);
+  font-size:var(--fs-sm); font-weight:700; color:var(--muted);
   letter-spacing:.04em; padding:16px 0 6px;
 }
 .wb-imgsec-row{ display:flex; gap:9px; margin-top:12px; flex-wrap:wrap }
@@ -1316,18 +1339,18 @@ img[data-wbmissing]{
 .wb-samplebar{
   display:flex; align-items:center; gap:10px; flex-wrap:wrap;
   margin:12px 0 6px; padding:11px 14px;
-  border:1px solid var(--accent-line,var(--line)); border-radius:var(--r-m);
-  background:var(--accent-soft); color:var(--accent-ink,var(--ink));
-  font-size:12.5px; font-weight:600;
+  border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--accent-soft); color:var(--accent-ink);
+  font-size:var(--fs-sm); font-weight:600;
 }
 .wb-samplebar-t{ flex:1; min-width:0; line-height:1.6 }
 .wb-samplebar-b{
-  border:1px solid var(--line); border-radius:7px; cursor:pointer;
+  border:1px solid var(--line); border-radius:var(--r-s); cursor:pointer;
   background:var(--surface); color:var(--muted);
-  font:inherit; font-size:12px; font-weight:650;
+  font:inherit; font-size:var(--fs-sm); font-weight:650;
   padding:5px 12px; min-height:30px; flex:none;
 }
-.wb-samplebar-b.pri{ background:var(--accent); border-color:var(--accent); color:#fff }
+.wb-samplebar-b.pri{ background:var(--accent); border-color:var(--accent); color:var(--hc1) }
 .wb-samplebar-b:hover{ filter:brightness(.97) }
 
 /* ==========================================================================
@@ -1413,6 +1436,21 @@ img[data-wbmissing]{
 .ai-pick-x:active, .wb-x:active{ background:rgba(128,128,128,.18) }
 
 
+
+/* ============================================================================
+   焦点可见性
+   ----------------------------------------------------------------------------
+   页面有全局的 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}，
+   注入层的按钮能吃到。但**放在可滚动容器里的列表项**不行 ——
+   outline-offset:2px 往外画，会被 overflow 裁掉一圈，键盘用户就看不见焦点在哪。
+   这里把注入层滚动区里的焦点轮廓改成向内偏移（页面自己的 ds3 层也是这么做的）。
+   ============================================================================ */
+.ai-pick-body :focus-visible,
+.ai-body :focus-visible,
+.wb-body :focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:-2px;
+}
 
 </style>
 </head>
