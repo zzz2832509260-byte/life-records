@@ -1,8 +1,8 @@
 {
   "format": 1,
   "version": "v82",
-  "buildId": "v82-c9f790da8688",
-  "inputHash": "c9f790da8688a385f54cf334354971ec307e1efa372f6045acb972f7d5eaa279",
+  "buildId": "v82-b86fde5b84f0",
+  "inputHash": "b86fde5b84f0659961861abaeacf66b6af78f514d235f4c2c2fade0e150bbe1e",
   "inputs": [
     {
       "path": ".nvmrc",
@@ -206,13 +206,13 @@
     },
     {
       "path": "每日工作台/构建/_注入-样式.css",
-      "sha256": "45abb7fe74321071a8c0abe5128d84aa089892f29cac2fdb9bb8fb2d34b713af",
-      "bytes": 58084
+      "sha256": "fe654fb5efcff0026c01fd30bbcadf9e0ea2d442b881a1c74c865602e5c48649",
+      "bytes": 60080
     },
     {
       "path": "每日工作台/构建/_注入-离线数据层.js",
-      "sha256": "9e54d1bde95a7fa07c4879e61a22a26ed8528d4dfb58cb945a87520ad67cc751",
-      "bytes": 183093
+      "sha256": "bca17f91b0879d076a09a78fa154d2c9d10a270545f94584fa4e2f2bd6a760ea",
+      "bytes": 185872
     },
     {
       "path": "每日工作台/构建/aurora-dawn.webp",
@@ -261,8 +261,8 @@
     },
     {
       "path": "每日工作台/构建/离线版-补丁.js",
-      "sha256": "ccd2102dcab26271ff5b650c183b50ad02bca2f5459f19f6d7957d7e9f162f8a",
-      "bytes": 57536
+      "sha256": "6e667f20ddbd8087e172e8b1304946f9b1f322ed518e471de82ea8830688b28a",
+      "bytes": 69823
     },
     {
       "path": "每日工作台/每日工作台-离线版.html",
@@ -323,8 +323,8 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "475c8924c6a8ac8aa04170e851310a5411f305c7117c1a25250d0d2d283ae79f",
-      "bytes": 783431
+      "sha256": "314ec594476516bb55a18f0d0fe464b42da4edcd080a686678c1f557a1639acd",
+      "bytes": 790335
     },
     {
       "path": "manifest.json",
@@ -333,7 +333,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "4892cdc6db2cf21a572619fd4b9c4e8288e99a1b535141576ac869bc47c9d20c",
+      "sha256": "e3e3758fe6ab1fa116c96e49db876ac0431c5843da54e12a2feb88bc3987df34",
       "bytes": 5132
     },
     {
@@ -365,7 +365,7 @@
   "validated": true,
   "validation": {
     "node": "v24.19.0",
-    "at": "2026-10-11T05:56:11.517Z",
+    "at": "2026-10-11T07:43:22.572Z",
     "checks": [
       {
         "name": "验证离线版.js",
