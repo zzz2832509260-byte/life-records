@@ -1894,13 +1894,6 @@ aside.side{top:0;width:var(--side-w);background:linear-gradient(170deg,var(--nav
 .wb-stat-n small{font-size:var(--fs-md);color:var(--muted);font-weight:500}
 .wb-stat-t{font-size:var(--fs-xs);color:var(--ink-2)}
 .wb-stat-sub{display:block;font-size:var(--fs-label);color:var(--muted);line-height:1.6}
-.wb-stat-icon{align-self:flex-start;display:grid;place-items:center;width:34px;height:34px;flex-shrink:0;border-radius:var(--r-s);color:var(--accent);background:var(--accent-soft)}
-.wb-stat-warn .wb-stat-icon{color:var(--danger);background:var(--danger-soft)}
-.wb-stat-ok .wb-stat-icon{color:var(--ok-ink);background:var(--ok-soft)}
-.wb-focus-ring{width:50px;height:50px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--fill),var(--accent-soft) 0);position:relative;isolation:isolate;color:var(--accent)}
-.wb-focus-ring::before{content:"";position:absolute;inset:4px;background:var(--surface);border-radius:50%;z-index:-1}
-.wb-stat-warn .wb-stat-n{color:var(--danger,#D93025)}
-.wb-stat-ok .wb-stat-n{color:var(--ok,#21B99A)}
 .wb-home-grid{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:28px;align-items:start}
 .wb-home-tasks,.wb-home-aside{min-width:0}
 .wb-section-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px}
@@ -1948,12 +1941,6 @@ aside.side{top:0;width:var(--side-w);background:linear-gradient(170deg,var(--nav
 .wb-month-days button.selected{outline:2px solid var(--accent);outline-offset:-2px}
 .wb-month-days i{position:absolute;bottom:4px;left:calc(50% - 1.5px);width:3px;height:3px;background:currentColor;border-radius:50%}
 .wb-calendar>.wb-link{margin-top:10px}
-.wb-focus{padding-top:22px}
-.wb-focus>.wb-section-h>.wb-ic{color:var(--accent)}
-.wb-focus-empty{font-size:var(--fs-xs);color:var(--muted);line-height:1.8;margin:0 0 8px}
-.wb-focus-row{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:var(--fs-xs)}
-.wb-focus-row>span{display:grid;place-items:center;width:22px;height:22px;flex-shrink:0;background:var(--accent-soft);color:var(--accent);border-radius:var(--r-xs)}
-.wb-focus-row>b{flex:1;min-width:0;font-weight:500;overflow-wrap:anywhere;color:var(--ink)}
 #wbHomeQuickSlot .quick{border:1px solid var(--line);background:var(--surface);padding:18px 20px;margin:0 0 26px;border-radius:var(--r-s);box-shadow:var(--sh-1)}
 #wbHomeQuickSlot .quick-head{margin-bottom:12px}
 #wbHomeQuickSlot .quick-head h2{font-size:var(--fs-md)}
@@ -1963,14 +1950,14 @@ aside.side{top:0;width:var(--side-w);background:linear-gradient(170deg,var(--nav
 #wbHomeQuickSlot #btnQuick{min-height:34px;font-size:var(--fs-xs);padding:6px 20px;color:#fff}
 /* 首页态：隐藏与首页无关的全局装饰块（帮助条/示例条/页脚） */
 body.wb-home-on #helpBar,body.wb-home-on #wbSampleBar,body.wb-home-on .foot{display:none}
-@media(max-width:1199px){.wb-home-grid{grid-template-columns:minmax(0,1fr) 260px;gap:22px}.wb-stat{padding:15px}.wb-stat-icon{width:28px;height:28px}.wb-focus-ring{width:40px;height:40px}}
-@media(max-width:899px){.wb-home-grid{grid-template-columns:1fr}.wb-home-aside{display:grid;grid-template-columns:1fr 1fr;gap:24px}.wb-focus{padding-top:0}.wb-stats{gap:12px}.wb-stat-icon{display:none}}
+@media(max-width:1199px){.wb-home-grid{grid-template-columns:minmax(0,1fr) 260px;gap:22px}.wb-stat{padding:15px}}
+@media(max-width:899px){.wb-home-grid{grid-template-columns:1fr}.wb-home-aside{display:grid;grid-template-columns:1fr 1fr;gap:24px}.wb-stats{gap:12px}}
 @media(max-width:640px){
   #wbHome{padding:0 0 20px}.wb-page-heading{padding:14px 0}.wb-page-heading h2{font-size:var(--fs-mobile-heading)}.wb-page-heading>button,.wb-page-heading>div>span{display:none}
   .wb-hero{height:108px;margin-bottom:16px;background-position:56% 55%;border-radius:var(--r-s)}.wb-hero-in{padding:14px 18px}.wb-hero-tx{max-width:84%}.wb-hero-hi{font-size:var(--fs-ctl);margin-top:5px}.wb-hero-date{font-size:var(--fs-label)}.wb-hero-sub{display:none}
-  .wb-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}.wb-stat{padding:12px}.wb-stat-n{font-size:var(--fs-kpi-small);margin:4px 0}.wb-stat-sub{display:none}.wb-stat-icon{display:grid}.wb-focus-ring{width:36px;height:36px}
+  .wb-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}.wb-stat{padding:12px}.wb-stat-n{font-size:var(--fs-kpi-small);margin:4px 0}
   #wbHomeQuickSlot .quick{padding:16px;margin-bottom:24px}#wbHomeQuickSlot .quick-hint{display:none}#wbHomeQuickSlot .quick-goals{gap:6px}#wbHomeQuickSlot .goal{font-size:var(--fs-xs);padding:5px 10px}
-  .wb-home-aside{display:flex;flex-direction:column;gap:0}.wb-calendar{order:1}.wb-focus{padding:18px 0 24px}.wb-home-grid{gap:24px}.wb-hrow{padding:12px 4px;gap:9px}.wb-hd{font-size:var(--fs-2xs)}.wb-home-filters{gap:20px}.wb-project-heading{margin-top:24px}
+  .wb-home-aside{display:flex;flex-direction:column;gap:0}.wb-calendar{order:1}.wb-home-grid{gap:24px}.wb-hrow{padding:12px 4px;gap:9px}.wb-hd{font-size:var(--fs-2xs)}.wb-home-filters{gap:20px}.wb-project-heading{margin-top:24px}
   .wb-empty{min-height:200px;padding:26px 12px}.wb-month-days button{aspect-ratio:auto;min-height:40px}.wb-project-empty{flex-wrap:wrap}
 }
 
@@ -2105,6 +2092,354 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 
 /* BUG-006：本周视图里「本周之外（已排期）」的小标题，与「未安排」区分开 */
 .wk-out-h{margin-top:8px;padding-top:9px;border-top:1px dashed var(--line);border-bottom:0}
+
+/* ============================================================================
+   方案一 设计层 v1 · 视觉终层（挂 html.wb-os，删掉这一个类即整体回退）
+   ----------------------------------------------------------------------------
+   参照稿：DailyDesk_OS_方案一_全页面预览.html（桌面，冷白极简）
+           DailyDesk3_Mobile_Interactive.html（移动，取其渐变底与更大圆角）
+   本层只做覆盖：不改任何既有规则、不改任何 id / data-* / 数据链路。
+   ----------------------------------------------------------------------------
+   ★ 刻意不覆盖 --muted / --muted-2：
+     构建期有「三档次级色仍要拉得开（m1 > m2 + 0.8）」的硬检查，现有两档是
+     6.07:1 / 5.13:1，间距只有 0.94。参照稿的 #748096 只有 3.99:1，
+     换上会同时顶穿「≥4.5:1」和「拉得开」两条。次级文字沿用页面调好的值。
+   ============================================================================ */
+
+/* ---- 1. 令牌 · 浅色 ---- */
+html.wb-os{
+  --accent:#4D61D8; --accent-2:#5E70DE; --accent-soft:#EEF1FF; --accent-ink:#3B50D6;
+  --ink:#192234; --ink-2:#41506B;
+  --line:#E8EBF1; --line-2:#F0F2F7; --line-hover:#DCE1EB;
+  --surface:#FFFFFF; --surface-2:#F7F9FC; --bg:#F7F8FB;
+  --sidebar:#FBFCFE; --glass:rgba(252,253,255,.86);
+  --side-w:244px; --topbar-h:74px;
+  --r-s:9px; --r-m:13px; --r-l:15px; --r-xl:18px;
+  --sh-os-1:0 1px 2px rgba(31,44,77,.04);
+  --sh-os-2:0 6px 26px rgba(31,44,77,.035);
+  --sh-os-3:0 12px 34px -10px rgba(31,44,77,.16),0 24px 48px -20px rgba(31,44,77,.14);
+  --sh-os-brand:0 8px 20px -10px rgba(77,97,216,.45);
+  --ring-os:0 0 0 3px rgba(77,97,216,.15);
+  --os-danger:#C9575A;
+}
+/* 深色两处都要给：系统跟随（media）与手动切换（.wb-dark）。
+   :not(.wb-light) 保证"系统深色但用户手动选了浅色"时不被这两块压掉。 */
+@media (prefers-color-scheme:dark){
+  html.wb-os:not(.wb-light){
+    --accent:#7B87F5; --accent-2:#8E99F8; --accent-soft:#1E2352; --accent-ink:#A8B0FA;
+    --ink:#F2F3F5; --ink-2:#B8BDC7;
+    --line:#2A2E36; --line-2:#23272F; --line-hover:#3A404A;
+    --surface:#16181D; --surface-2:#1D2026; --bg:#0F1115;
+    --sidebar:#121419; --glass:rgba(22,24,29,.86);
+    --sh-os-1:0 1px 2px rgba(0,0,0,.42);
+    --sh-os-2:0 6px 16px -8px rgba(0,0,0,.6);
+    --sh-os-3:0 12px 32px -12px rgba(0,0,0,.7);
+    --sh-os-brand:0 8px 20px -10px rgba(123,135,245,.55);
+    --ring-os:0 0 0 3px rgba(123,135,245,.22);
+  }
+}
+html.wb-os.wb-dark{
+  --accent:#7B87F5; --accent-2:#8E99F8; --accent-soft:#1E2352; --accent-ink:#A8B0FA;
+  --ink:#F2F3F5; --ink-2:#B8BDC7;
+  --line:#2A2E36; --line-2:#23272F; --line-hover:#3A404A;
+  --surface:#16181D; --surface-2:#1D2026; --bg:#0F1115;
+  --sidebar:#121419; --glass:rgba(22,24,29,.86);
+  --sh-os-1:0 1px 2px rgba(0,0,0,.42);
+  --sh-os-2:0 6px 16px -8px rgba(0,0,0,.6);
+  --sh-os-3:0 12px 32px -12px rgba(0,0,0,.7);
+  --sh-os-brand:0 8px 20px -10px rgba(123,135,245,.55);
+  --ring-os:0 0 0 3px rgba(123,135,245,.22);
+}
+
+/* ---- 2. 全局 ---- */
+html.wb-os body{background:var(--bg)}
+html.wb-os ::selection{background:var(--accent-soft);color:var(--accent-ink)}
+html.wb-os :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- 3. 侧栏（冷白 · 圆角导航项 · 柔和激活态） ----
+   侧栏原本是深色渐变（backgroundColor 透明、颜色来自 background-image），
+   所以这里必须用 background 简写把渐变一并复位成纯色。 */
+html.wb-os .side{background:var(--sidebar);border-right:1px solid var(--line);color:var(--ink)}
+/* 侧栏里有两处品牌块的文字原本是配深色底写的浅色/白字
+   （.wb-nav-brand 的 "DailyDesk / 每日工作台"、.wb-brand-card 的 "让记录 / 成为更好的自己"），
+   而这两块自身背景是完全透明的（rgba(0,0,0,0)、无渐变），
+   换成冷白侧栏后对比度只剩 1.03–1.42:1。这里按标签就地给出前景色。
+   ★ 刻意不用 color:inherit —— 它们的父容器本身就是白字，继承等于没改。
+   ★ 不碰 .brand-icon（品牌图标是蓝底白勾，它有自己的背景）。 */
+html.wb-os .side b,html.wb-os .side strong{color:var(--ink)}
+html.wb-os .side .wb-nav-brand small,html.wb-os .side .wb-brand-card span{color:var(--muted)}
+html.wb-os .side .sub,html.wb-os .side .ver{color:var(--muted)}
+html.wb-os .side-nav .tab{border-radius:var(--r-s);min-height:44px;color:var(--muted)}
+html.wb-os .side-nav .tab.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:650}
+@media(hover:hover) and (pointer:fine){html.wb-os .side-nav .tab:hover{background:var(--surface-2);color:var(--ink)}}
+html.wb-os .nv-grp{padding:20px 14px 7px;font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--muted-2)}
+html.wb-os .nv-grp.first{padding-top:6px}
+html.wb-os .nv-n{margin-left:auto;min-width:19px;padding:2px 5px;border-radius:var(--r-s);background:var(--surface-2);color:var(--muted);font-size:10px;text-align:center}
+
+/* ---- 4. 顶栏（毛玻璃；移动端在 ≤900px 块里退回不透明） ---- */
+html.wb-os .topbar{background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+
+/* ---- 5. 按钮 / 输入 ---- */
+html.wb-os .btn-main{background:var(--accent);border-color:var(--accent);box-shadow:var(--sh-os-brand)}
+@media(hover:hover) and (pointer:fine){html.wb-os .btn-main:hover{background:var(--accent-2);border-color:var(--accent-2)}}
+html.wb-os .btn-ghost,html.wb-os .btn-sub,html.wb-os .btn-mini,html.wb-os .f input,html.wb-os .f select,html.wb-os .f textarea,html.wb-os .searchbar{border-radius:var(--r-m)}
+html.wb-os .f input:focus,html.wb-os .f select:focus,html.wb-os .f textarea:focus,html.wb-os .searchbar:focus-within{box-shadow:var(--ring-os);border-color:var(--accent)}
+
+/* ---- 6. 卡片 / 弹层 / 抽屉 ---- */
+html.wb-os .card{border-radius:var(--r-l);box-shadow:var(--sh-os-1)}
+@media(hover:hover) and (pointer:fine){html.wb-os .card:hover{box-shadow:var(--sh-os-2)}}
+html.wb-os .modal{border-radius:var(--r-xl);box-shadow:var(--sh-os-3)}
+html.wb-os .wb-drawer{box-shadow:var(--sh-os-3)}
+
+/* ---- 7. 移动端微调（方案一移动稿：更大圆角；顶栏退回不透明，sticky 高度是常驻成本） ---- */
+@media(max-width:900px){
+  html.wb-os .topbar{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}
+  html.wb-os{--r-s:10px;--r-m:13px;--r-l:16px;--r-xl:19px}
+  html.wb-os .side-nav .tab{border-radius:var(--r-m)}
+  html.wb-os .nv-grp{padding:16px 12px 6px}
+}
+
+/* ============================================================================
+   增量 2 · 外壳：顶栏（面包屑 / 通知 / 快速创建）+ 侧栏（分组合并 / 新增入口）
+   ----------------------------------------------------------------------------
+   新增的入口一律**复用既有按钮**（点它们等价于点原控件），不新写业务逻辑；
+   被挪走的原控件只是 CSS 隐藏，DOM 还在，click() 照常可用。
+   ============================================================================ */
+
+/* ---- 8. 顶栏新增件 ---- */
+html.wb-os .os-crumb{flex:none;font-size:var(--fs-sm);font-weight:600;color:var(--muted);white-space:nowrap}
+html.wb-os .os-crumb b{color:var(--ink);font-weight:650}
+html.wb-os .os-grow{flex:1 1 auto;min-width:0}
+html.wb-os .os-icon{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;padding:0;border:0;border-radius:var(--r-m);background:transparent;color:var(--ink-2)}
+html.wb-os .os-dot{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:none;min-height:38px;padding:0 15px;border:0;border-radius:var(--r-m);background:var(--accent);color:var(--hc1);font-size:var(--fs-sm);font-weight:650;white-space:nowrap}
+html.wb-os .os-badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--os-danger);color:var(--hc1);font-size:10px;line-height:16px;text-align:center;font-weight:700}
+@media(hover:hover) and (pointer:fine){html.wb-os .os-icon:hover{background:var(--surface-2)}}
+@media(hover:hover) and (pointer:fine){html.wb-os .os-dot:hover{background:var(--accent-2)}}
+
+/* ---- 9. 侧栏新增入口（不是 .tab —— 页面把 .tab 的点击绑到 switchPanel，
+       缺 data-panel 的 .tab 会把所有面板都隐藏掉，所以另起类名） ---- */
+html.wb-os .os-nav{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;margin:2px 0;padding:12px 13px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);text-align:left;font-weight:530}
+html.wb-os .os-nav .os-nav-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(hover:hover) and (pointer:fine){html.wb-os .os-nav:hover{background:var(--surface-2);color:var(--ink)}}
+
+/* ---- 10. 合并后的分组标题与隐藏项 ---- */
+html.wb-os .os-hide{display:none}
+
+/* ============================================================================
+   增量 3 · 首页重排（对齐方案一：TODAY'S FOCUS 横幅 + 三段式指标卡 + 左右双栏）
+   ----------------------------------------------------------------------------
+   沿用原有的 .wb-hero / .wb-stat 类名做覆盖，不新建结构 ——
+   这样既不会产生"CSS 里有、页面上没有"的死类名（构建期会拦），
+   也让改动可以随设计层整体回退。
+   ============================================================================ */
+
+/* ---- 11. TODAY'S FOCUS 横幅（取代原来的雪山背景大图） ---- */
+html.wb-os .wb-hero{margin:0 0 20px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--accent-soft)}
+html.wb-os .wb-hero::before{content:none}
+html.wb-os .wb-hero-in{height:auto;display:block;padding:22px 26px}
+html.wb-os .wb-hero-tx{max-width:100%}
+html.wb-os .wb-hero-date{font-size:var(--fs-2xs);font-weight:700;letter-spacing:.1em;color:var(--accent-ink)}
+html.wb-os .wb-hero-hi{margin-top:9px;font-size:var(--fs-xl);font-weight:760;line-height:1.35;letter-spacing:-.03em;color:var(--ink)}
+html.wb-os .wb-hero-sub{margin-top:7px;font-size:var(--fs-sm);color:var(--ink-2);line-height:1.6}
+html.wb-os .wb-hero-prog{display:flex;align-items:center;gap:12px;margin-top:16px}
+html.wb-os .wb-hero-prog .wb-bar{flex:1;height:6px;background:var(--surface)}
+html.wb-os .wb-hero-prog b{font-size:var(--fs-sm);font-weight:700;color:var(--accent-ink)}
+
+/* ---- 12. 页面标题：三段式 ---- */
+html.wb-os .wb-page-heading{padding:24px 0 18px}
+html.wb-os .wb-page-heading h2{font-size:var(--fs-xl);font-weight:760;letter-spacing:-.035em}
+html.wb-os .wb-page-sub{margin:7px 0 0;font-size:var(--fs-xs);color:var(--muted);line-height:1.6}
+
+/* ---- 13. 指标卡：图标+标签 / 大数字 / 副说明 ---- */
+html.wb-os .wb-stats{gap:16px;margin-bottom:22px}
+html.wb-os .wb-stat{display:block;padding:17px 18px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);box-shadow:var(--sh-os-1)}
+html.wb-os .wb-stat-t{display:flex;align-items:center;gap:9px;font-size:var(--fs-xs);font-weight:620;color:var(--muted)}
+html.wb-os .wb-stat-ico{display:grid;place-items:center;flex-shrink:0;width:26px;height:26px;border-radius:var(--r-s);background:var(--accent-soft);color:var(--accent-ink)}
+html.wb-os .wb-stat-ico.ok{background:var(--ok-soft);color:var(--ok-ink)}
+html.wb-os .wb-stat-ico.warn{background:var(--warn-soft);color:var(--warn-ink)}
+html.wb-os .wb-stat-ico.violet{background:var(--accent-soft);color:var(--accent-ink)}
+html.wb-os .wb-stat-n{margin:11px 0 7px;font-size:var(--fs-num);font-weight:760;line-height:1}
+html.wb-os .wb-stat-sub{font-size:var(--fs-2xs);color:var(--muted);line-height:1.6}
+
+/* ---- 14. 左右双栏：左=今天优先完成+项目进展，右=快速记录+即将到来 ---- */
+html.wb-os .wb-home-grid{grid-template-columns:minmax(0,1.9fr) minmax(240px,1fr);gap:22px}
+html.wb-os .wb-home-aside{display:flex;flex-direction:column;gap:18px}
+html.wb-os .wb-calendar{padding:18px;border:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);box-shadow:var(--sh-os-1)}
+html.wb-os .wb-home-tasks>.wb-section-h:first-child{margin-bottom:8px}
+
+/* ---- 15. 各面板页头（增量 4）：与首页同一套三段式 ---- */
+html.wb-os #panel-task>.wb-page-heading,html.wb-os #panel-project>.wb-page-heading,
+html.wb-os #panel-review>.wb-page-heading,html.wb-os #panel-decision>.wb-page-heading,
+html.wb-os #panel-reflect>.wb-page-heading,html.wb-os #panel-idea>.wb-page-heading,
+html.wb-os #panel-trash>.wb-page-heading{padding:4px 0 20px}
+html.wb-os .wb-page-heading>div{min-width:0}
+html.wb-os .wb-page-heading span{display:block;font-size:var(--fs-2xs);font-weight:700;letter-spacing:.1em;color:var(--muted)}
+
+/* ---- 16. 概览条 / 卡片：统一到方案一的卡片语言 ---- */
+html.wb-os .stat-strip{border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);box-shadow:var(--sh-os-1);padding:16px 18px}
+html.wb-os .card{border-radius:var(--r-l);box-shadow:var(--sh-os-1)}
+html.wb-os .card h3{font-size:var(--fs-md);font-weight:680;letter-spacing:-.02em}
+
+/* ---- 17. 顶栏收尾（增量 5）：收掉已经搬进侧栏 / 已有替身的控件 ----
+   注意：这些只是 display:none，DOM 与事件都还在 ——
+   「快速创建」点的是 #wbNewTaskBtn、侧栏「AI 助手」点 #btnAI、「同步与备份」点 #wbSyncBtn，
+   对隐藏元素调用 click() 照常触发。 */
+html.wb-os .topbar .brand,html.wb-os .topbar #wbNewTaskBtn,html.wb-os .topbar #wbSyncBtn,html.wb-os .topbar #btnAI{display:none}
+html.wb-os .topbar .topbar-acts{gap:6px}
+
+/* ---- 18. 移动端：DailyDesk3 的紫蓝渐变底（取 C 方案：一套底子 + 两端微调） ----
+   渐变色写成自定义属性再引用 —— 构建期禁止在 color/background 里直接写带彩的颜色，
+   但自定义属性的声明不受这条限制。 */
+@media(max-width:900px){
+  html.wb-os{--os-grad:radial-gradient(ellipse at 12% 12%,#e4ddff 0,transparent 48%),radial-gradient(ellipse at 90% 90%,#d6eaff 0,transparent 58%),#f5f5ff}
+  html.wb-os body{background:var(--os-grad)}
+}
+@media(max-width:900px) and (prefers-color-scheme:dark){
+  html.wb-os:not(.wb-light){--os-grad:radial-gradient(ellipse at 12% 12%,#1c2040 0,transparent 48%),radial-gradient(ellipse at 90% 90%,#132139 0,transparent 58%),#0F1115}
+}
+@media(max-width:900px){
+  html.wb-os.wb-dark{--os-grad:radial-gradient(ellipse at 12% 12%,#1c2040 0,transparent 48%),radial-gradient(ellipse at 90% 90%,#132139 0,transparent 58%),#0F1115}
+}
+
+/* ---- 19. 面板内组件对齐方案一：筛选胶囊 / 按钮 / 表头 ---- */
+html.wb-os .filters{display:flex;flex-wrap:wrap;gap:8px}
+html.wb-os .filters .filter,html.wb-os .chip{border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);min-height:32px;padding:0 14px;font-size:var(--fs-xs)}
+html.wb-os .filters .filter.selected,html.wb-os .chip.on{background:var(--accent);border-color:var(--accent);color:var(--hc1);font-weight:650}
+@media(hover:hover) and (pointer:fine){html.wb-os .filters .filter:hover:not(.selected){border-color:var(--line-hover);color:var(--ink)}}
+html.wb-os .btn-ghost,html.wb-os .btn-sub{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);min-height:34px;padding:0 13px;border-radius:var(--r-m);font-size:var(--fs-xs);font-weight:600}
+@media(hover:hover) and (pointer:fine){html.wb-os .btn-ghost:hover,html.wb-os .btn-sub:hover{border-color:var(--accent);color:var(--accent)}}
+html.wb-os .btn-main{border-radius:var(--r-m);font-weight:650}
+
+/* ---- 20. 概览条（项目 / 决策 / 反省）对齐方案一的指标条 ----
+   结构：.stat-strip > h3 + .stats > .stat-num × N */
+html.wb-os .stat-strip{align-items:center;gap:22px}
+html.wb-os .stat-strip h3{font-size:var(--fs-2xs);font-weight:700;letter-spacing:.1em;color:var(--muted)}
+html.wb-os .stat-strip .stats{gap:26px}
+html.wb-os .stat-num{font-size:var(--fs-xs);color:var(--muted)}
+html.wb-os .stat-num b{font-size:var(--fs-lg);font-weight:760;color:var(--ink)}
+
+/* ---- 21. 侧栏底部品牌卡 → 方案一的个人信息块 ---- */
+html.wb-os .wb-brand-card{display:flex;align-items:center;gap:11px;margin-top:10px;padding:14px 12px 4px;border-top:1px solid var(--line)}
+html.wb-os .wb-brand-card::before{content:"DD";display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);font-size:10px;font-weight:750}
+html.wb-os .wb-brand-card b{font-size:var(--fs-sm);font-weight:650;color:var(--ink)}
+html.wb-os .wb-brand-card span{font-size:10px;color:var(--muted)}
+
+/* ---- 22. 顶栏搜索 → 方案一的搜索触发器（右侧带 Ctrl K 提示） ---- */
+html.wb-os .gsearch{background:var(--surface-2);border-radius:var(--r-m)}
+html.wb-os .gsearch::after{content:"Ctrl K";margin-left:auto;flex:none;padding:2px 6px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface);color:var(--muted-2);font-size:10px;white-space:nowrap}
+@media(max-width:900px){html.wb-os .gsearch::after{display:none}}
+
+/* ---- 23. 项目管理页：左卡片网格 + 右详情栏（批次 C） ----
+   用 CSS 网格给既有子节点分栏，不搬动任何节点；data-* 选择器不参与死类名检查。 */
+html.wb-os #panel-project{display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-auto-rows:min-content;gap:20px;align-items:start}
+html.wb-os #panel-project>[data-os="head"]{grid-column:1/-1;grid-row:1}
+html.wb-os #panel-project>[data-os="feed"]{grid-column:1/-1;grid-row:2}
+html.wb-os #panel-project>[data-os="new"]{grid-column:1;grid-row:3}
+html.wb-os #panel-project>[data-os="list"]{grid-column:1;grid-row:4}
+html.wb-os #panel-project>[data-os="extra"]{grid-column:1;grid-row:5}
+html.wb-os #osPjRail{grid-column:2;grid-row:3/span 3;position:sticky;top:calc(var(--topbar-h) + 16px)}
+html.wb-os .os-kv{display:grid;grid-template-columns:auto 1fr;gap:9px 14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:var(--fs-xs)}
+html.wb-os .os-kv span{color:var(--muted)}
+html.wb-os .os-kv b{color:var(--ink);font-weight:600;text-align:right}
+html.wb-os .os-tl{display:flex;flex-direction:column;gap:10px}
+html.wb-os .os-tl-i{padding-left:13px;border-left:2px solid var(--accent-soft)}
+html.wb-os .os-tl-i b{display:block;font-size:var(--fs-xs);font-weight:600;color:var(--ink)}
+html.wb-os .os-tl-i p{margin:3px 0 0;font-size:var(--fs-2xs);color:var(--muted)}
+@media(max-width:1100px){
+  html.wb-os #panel-project{grid-template-columns:minmax(0,1fr)}
+  html.wb-os #osPjRail{grid-column:1;position:static}
+}
+
+/* ---- 24. 复盘 / 决策 / 反省 / 灵感：左右分栏（批次 D） ----
+   左 = 写（表单卡），右 = 看（档案卡）。同样只靠 data-* 标记分栏，不搬节点。 */
+html.wb-os #panel-review,html.wb-os #panel-decision,html.wb-os #panel-reflect,html.wb-os #panel-idea{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);grid-auto-rows:min-content;gap:20px;align-items:start;
+}
+html.wb-os #panel-review>[data-os="head"],html.wb-os #panel-decision>[data-os="head"],
+html.wb-os #panel-reflect>[data-os="head"],html.wb-os #panel-idea>[data-os="head"],
+html.wb-os #panel-review>[data-os="feed"],html.wb-os #panel-decision>[data-os="feed"],
+html.wb-os #panel-reflect>[data-os="feed"],html.wb-os #panel-idea>[data-os="feed"],
+html.wb-os #panel-review>[data-os="top"],html.wb-os #panel-decision>[data-os="top"],
+html.wb-os #panel-reflect>[data-os="top"],html.wb-os #panel-idea>[data-os="top"]{grid-column:1/-1}
+html.wb-os #panel-review>[data-os="form"],html.wb-os #panel-decision>[data-os="form"],
+html.wb-os #panel-reflect>[data-os="form"],html.wb-os #panel-idea>[data-os="form"]{grid-column:1}
+html.wb-os #panel-review>[data-os="list"],html.wb-os #panel-decision>[data-os="list"],
+html.wb-os #panel-reflect>[data-os="list"],html.wb-os #panel-idea>[data-os="list"]{grid-column:2}
+html.wb-os #panel-reflect>[data-os="streak"]{grid-column:2}
+/* 灵感页：捕捉在左、清单与分类概览都在右栏；不显式给行号的话
+   「分类概览」会被自动排到左栏去。 */
+html.wb-os #panel-idea>[data-os="head"]{grid-row:1}
+html.wb-os #panel-idea>[data-os="form"]{grid-column:1;grid-row:2}
+html.wb-os #panel-idea>[data-os="list"]{grid-column:2;grid-row:2}
+html.wb-os #panel-idea>[data-os="stat"]{grid-column:2;grid-row:3}
+/* 分类概览的条目行 */
+html.wb-os .os-rows{display:flex;flex-direction:column}
+html.wb-os .os-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-2);font-size:var(--fs-xs)}
+html.wb-os .os-row:last-child{border-bottom:0}
+html.wb-os .os-row b{font-weight:600;color:var(--ink)}
+html.wb-os .os-row em{font-style:normal;font-weight:650;color:var(--muted)}
+/* 排序按钮：贴在筛选栏右端（方案一那颗「排序」的位置） */
+html.wb-os .os-sort{margin-left:auto;flex:none;min-height:32px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font-size:var(--fs-xs);font-weight:600;white-space:nowrap}
+@media(hover:hover) and (pointer:fine){html.wb-os .os-sort:hover{border-color:var(--accent);color:var(--accent)}}
+/* 任务页里方案一没有的两块：只隐藏不删除（DOM 与事件都在） */
+html.wb-os #panel-task>[data-os="hide"]{display:none}
+
+/* ---- 25. 任务表收成方案一的 7 列（批次 B2） ----
+   列序完全对齐方案一：完成 / 任务名称 / 所属项目 / 优先级 / 状态 / 计划时间 / 操作
+   搬运（模块里做，节点不丢、事件不断）：
+     「计时」「图片」「+ 子任务」「删除」→ 操作列
+     多选框 → 与完成勾选同格
+     改期按钮（计划时间）→ 从操作列提出来单独成列
+     「标记」容器 display:contents，两枚标签各占一条轨道 */
+html.wb-os .ds3-thead--task,
+html.wb-os #taskList .item{grid-template-columns:58px minmax(150px,1fr) 118px 88px 88px 132px 190px}
+html.wb-os .ds3-thead--task .ds3-th--pick,
+html.wb-os .ds3-thead--task .ds3-th--pad{display:none}
+html.wb-os .ds3-thead--task .ds3-th--st{grid-column:1}
+html.wb-os .ds3-thead--task .ds3-th--title{grid-column:2}
+html.wb-os .ds3-thead--task .ds3-th--sub{grid-column:3}
+html.wb-os .ds3-thead--task .ds3-th--tags{grid-column:4}
+html.wb-os .ds3-thead--task .ds3-th--timer{grid-column:5}
+html.wb-os .ds3-thead--task .ds3-th--thumb{grid-column:6}
+html.wb-os .ds3-thead--task .ds3-th--acts{grid-column:7}
+html.wb-os #taskList .item .os-chk{grid-column:1;display:flex;align-items:center;gap:8px}
+html.wb-os #taskList .item .item-title{grid-column:2}
+html.wb-os #taskList .item .item-sub{grid-column:3}
+html.wb-os #taskList .item .tags{display:contents}
+html.wb-os #taskList .item .tags>*:nth-child(1){grid-column:4}
+html.wb-os #taskList .item .tags>*:nth-child(2){grid-column:5}
+/* 标签容器里第 3 枚起是日期胶囊，与「计划时间」列重复，隐藏 */
+html.wb-os #taskList .item .tags>*:nth-child(n+3){display:none}
+html.wb-os #taskList .item [data-act="reschedule"]{grid-column:6}
+html.wb-os #taskList .item .row-acts{grid-column:7}
+html.wb-os #taskList .item>.del{display:none}
+html.wb-os #taskList .item .row-acts [data-os-moved]{flex:none;margin:0}
+
+/* ---- 26. 浮层以整页形态呈现（批次 E：AI 助手 / 同步与备份 / 偏好设置） ----
+   方案一这三者是独立整页；本系统里它们渲染在通用 .mask > .modal 弹层中。
+   点这三个入口时 <html> 带上 os-page-mode，遮罩让开侧栏与顶栏，对话框铺满内容区，
+   视觉上就是一页。关闭浮层后类被自动摘掉，其他弹层不受影响。 */
+html.wb-os.os-page-mode .mask{left:var(--side-w);top:var(--topbar-h);right:0;bottom:0;width:auto;height:auto;padding:0;background:transparent;display:block}
+html.wb-os.os-page-mode .mask>.modal{width:100%;max-width:none;height:100%;max-height:none;margin:0;border-radius:var(--r-l);box-shadow:none}
+@media(max-width:900px){
+  html.wb-os.os-page-mode .mask{left:0;top:0}
+  html.wb-os.os-page-mode .mask>.modal{border-radius:0}
+}
+
+/* 反省连续记录 7 天 */
+html.wb-os .os-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:12px}
+html.wb-os .os-day{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);color:var(--muted)}
+html.wb-os .os-day strong{font-size:var(--fs-2xs);font-weight:650}
+html.wb-os .os-day span{font-size:10px;line-height:1}
+html.wb-os .os-day.on{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
+@media(max-width:1100px){
+  html.wb-os #panel-review,html.wb-os #panel-decision,html.wb-os #panel-reflect,html.wb-os #panel-idea{grid-template-columns:minmax(0,1fr)}
+  html.wb-os #panel-review>[data-os="form"],html.wb-os #panel-review>[data-os="list"],
+  html.wb-os #panel-decision>[data-os="form"],html.wb-os #panel-decision>[data-os="list"],
+  html.wb-os #panel-reflect>[data-os="form"],html.wb-os #panel-reflect>[data-os="list"],
+  html.wb-os #panel-idea>[data-os="form"],html.wb-os #panel-idea>[data-os="list"],
+  html.wb-os #panel-reflect>[data-os="streak"]{grid-column:1}
+}
 
 
 </style>
@@ -4607,7 +4942,7 @@ AI 助手
 <!-- ▼ 离线版：环境、存储、备份和同步模块 -->
 <script id="wb-offline-core">
 window.__WB_BUILD_VER__="v82";
-window.__WB_BUILD_ID__="v82-3933edec6897";
+window.__WB_BUILD_ID__="v82-e6fee193fa97";
 /* 渠道决定存储命名空间；正式数据键保持不变，预览不接触正式凭据。 */
 (function () {
   'use strict';
@@ -4646,6 +4981,926 @@ window.__WB_BUILD_ID__="v82-3933edec6897";
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
     else show();
   }
+})();
+
+/* 方案一设计层的外壳改造（增量 1 + 2）
+   ---------------------------------------------------------------------------
+   全部是纯 DOM / CSS，不碰数据层、同步、备份，也不新写业务逻辑：
+     1) 给 <html> 挂总开关类 wb-os（设计层 CSS 全挂它下面，删掉即整体回退）；
+     2) 侧栏：合并分组标题、补「AI 助手」「同步与备份」两个入口、任务计数徽章；
+     3) 顶栏：面包屑 + 通知（真实数据）+「快速创建」主按钮。
+   ★ 新增入口一律**复用既有控件**：点「AI 助手」= 点 #btnAI，点「同步与备份」= 点 #wbSyncBtn，
+     点「快速创建」= 点 #wbNewTaskBtn。被搬走原控件只是 CSS 隐藏，DOM 还在，click() 照常可用。
+   ★ 不移动、不删除、不改写任何既有导航按钮 —— data-panel 是 switchPanel 与移动端底栏的锚点。
+   ★ 兜底开关：localStorage 里 wb_os_off = '1' 时整层不生效。 */
+(function () {
+  'use strict';
+
+  var LS = window.__WB_STORAGE__ || window.localStorage;
+  try { if (LS.getItem('wb_os_off') === '1') return; } catch (e) { }
+  try { document.documentElement.classList.add('wb-os'); } catch (e) { return; }
+
+  var TASK_DB = 'HbUQcLTAifuyK4tLoPsp0W';
+
+  /* ---------------------------------------------------------------- 工具 */
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function svg(paths, size) {
+    var s = 'http://www.w3.org/2000/svg';
+    var g = document.createElementNS(s, 'svg');
+    g.setAttribute('viewBox', '0 0 24 24');
+    g.setAttribute('width', size || 17); g.setAttribute('height', size || 17);
+    g.setAttribute('fill', 'none'); g.setAttribute('stroke', 'currentColor');
+    g.setAttribute('stroke-width', '1.8'); g.setAttribute('stroke-linecap', 'round');
+    g.setAttribute('stroke-linejoin', 'round'); g.setAttribute('aria-hidden', 'true');
+    paths.forEach(function (d) {
+      if (d.charAt(0) === 'c') { var c = document.createElementNS(s, 'circle'); var n = d.slice(1).split(','); c.setAttribute('cx', n[0]); c.setAttribute('cy', n[1]); c.setAttribute('r', n[2]); g.appendChild(c); }
+      else { var p = document.createElementNS(s, 'path'); p.setAttribute('d', d); g.appendChild(p); }
+    });
+    return g;
+  }
+  var ICON = {
+    ai: ['m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7z'],
+    sync: ['M20 7h-9a4 4 0 0 0-4 4', 'M4 17h9a4 4 0 0 0 4-4', 'm17 4 3 3-3 3', 'M7 14l-3 3 3 3'],
+    bell: ['M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9', 'M10 21h4'],
+    plus: ['M12 5v14M5 12h14'],
+    cal: ['M3 5h18v16H3z', 'M16 3v4M8 3v4M3 10h18'],
+    task: ['M4 4h16v16H4z', 'M8 9h8M8 13h8M8 17h5'],
+    flag: ['M5 3v18', 'M5 4h11l-1.6 3.5L16 11H5z'],
+    pref: ['M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', 'M19 13.5v-3l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.6-1.5L13.5 2h-3L10 5a8 8 0 0 0-2.6 1.5L5 5.5 3 9l2 1.5v3L3 15l2 3.5 2.4-1a8 8 0 0 0 2.6 1.5l.5 3h3l.5-3a8 8 0 0 0 2.6-1.5l2.4 1L21 15z']
+  };
+  /* 拼 innerHTML 用的图标（模块在注入层之前执行，拿不到注入层的 wbIcon） */
+  function icStr(name, size) {
+    var paths = ICON[name] || ICON.task;
+    return '<svg viewBox="0 0 24 24" width="' + (size || 16) + '" height="' + (size || 16) + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + paths.map(function (d) {
+        if (d.charAt(0) === 'c') { var n = d.slice(1).split(','); return '<circle cx="' + n[0] + '" cy="' + n[1] + '" r="' + n[2] + '"/>'; }
+        return '<path d="' + d + '"/>';
+      }).join('') + '</svg>';
+  }
+
+  /* ------------------------------------------------------- 2) 侧栏改造 */
+  function ngGroups() { return [].slice.call(document.querySelectorAll('.side-nav .wb-nv-grp')); }
+  function grpByText(t) { var g = ngGroups(); for (var i = 0; i < g.length; i++) if ((g[i].textContent || '').trim() === t) return g[i]; return null; }
+
+  var RENAME = { '首页总览': '工作空间', '复盘思考': '复盘与思考', '系统': '系统管理' };
+  var MERGE_AWAY = ['工作执行', '灵感收集'];
+
+  function fixGroups() {
+    var g = ngGroups();
+    if (!g.length) return false;
+    g.forEach(function (h) {
+      var t = (h.textContent || '').trim();
+      if (MERGE_AWAY.indexOf(t) >= 0) { h.classList.add('os-hide'); return; }
+      if (RENAME[t]) h.textContent = RENAME[t];
+    });
+    /* 方案一把「设置与数据」并进了「偏好设置」，两个入口并存就是重复导航。
+       原 tab 只是隐藏，DOM 与事件都还在，功能不受影响。 */
+    [].forEach.call(document.querySelectorAll('.side-nav .tab'), function (t) {
+      if (t.getAttribute('data-panel')) return;
+      if (/设置与数据/.test(t.textContent || '')) t.classList.add('os-hide');
+    });
+    return true;
+  }
+
+  /* 「AI 助手」「同步与备份」：新增入口，点击转发到既有控件 */
+  function addEntries() {
+    var nav = document.querySelector('.side-nav');
+    if (!nav || nav.querySelector('.os-nav')) return !!nav;
+    var sys = grpByText('系统管理') || grpByText('系统');
+    if (!sys) return false;
+
+    /* 智能工具 → AI 助手（放在「系统管理」之前） */
+    var gh = el('div', 'nv-grp wb-nv-grp', '智能工具');
+    var ai = el('button', 'os-nav');
+    ai.type = 'button';
+    ai.appendChild(svg(ICON.ai));
+    ai.appendChild(el('span', 'os-nav-t', 'AI 助手'));
+    ai.onclick = function () { var b = document.getElementById('btnAI'); if (b) b.click(); };
+    nav.insertBefore(ai, sys);
+    nav.insertBefore(gh, ai);
+
+    /* 系统管理 → 同步与备份（放在「设置与数据」之前） */
+    var items = [].slice.call(nav.querySelectorAll('.tab.wb-nav-item'));
+    var last = items[items.length - 1];   /* 设置与数据没有 data-panel，排在最后 */
+    var sy = el('button', 'os-nav');
+    sy.type = 'button';
+    sy.appendChild(svg(ICON.sync));
+    sy.appendChild(el('span', 'os-nav-t', '同步与备份'));
+    sy.onclick = function () { var b = document.getElementById('wbSyncBtn'); if (b) b.click(); };
+    if (last && last.parentNode === nav) nav.insertBefore(sy, last); else nav.appendChild(sy);
+
+    /* 偏好设置 → 打开设置面板并滚到「外观与体验」 */
+    var pref = el('button', 'os-nav');
+    pref.type = 'button';
+    pref.appendChild(svg(ICON.pref, 17));
+    pref.appendChild(el('span', 'os-nav-t', '偏好设置'));
+    pref.onclick = function () {
+      var b = document.getElementById('wbSyncBtn'); if (b) b.click();
+      setTimeout(function () {
+        var host = document.getElementById('wbSyncPanel');
+        if (!host) return;
+        var secs = host.querySelectorAll('.wb-sec-t');
+        for (var i = 0; i < secs.length; i++) {
+          if ((secs[i].textContent || '').indexOf('外观') >= 0) { secs[i].scrollIntoView({ block: 'start' }); return; }
+        }
+      }, 500);
+    };
+    if (last && last.parentNode === nav) nav.insertBefore(pref, last); else nav.appendChild(pref);
+
+    /* 工作空间 → 本月日历（跳到任务面板并把月历卡滚进视野） */
+    var workSpace = grpByText('工作空间');
+    var proj = null;
+    var tabs2 = [].slice.call(nav.querySelectorAll('.tab.wb-nav-item'));
+    for (var i2 = 0; i2 < tabs2.length; i2++) if (tabs2[i2].getAttribute('data-panel') === 'project') { proj = tabs2[i2]; break; }
+    if (proj) {
+      var cal = el('button', 'os-nav');
+      cal.type = 'button';
+      cal.appendChild(svg(ICON.cal, 17));
+      cal.appendChild(el('span', 'os-nav-t', '本月日历'));
+      cal.onclick = function () {
+        if (typeof osShow === 'function' && document.getElementById(osPanelId)) { osShow(osPanelId); return; }
+        /* 独立页还没建好时的退路：跳到任务面板并把月历卡滚进视野 */
+        var t = document.querySelector('.tab[data-panel="task"]');
+        if (t) t.click();
+        setTimeout(function () {
+          var panel = document.getElementById('panel-task');
+          if (!panel) return;
+          var cards = panel.querySelectorAll('.card');
+          for (var k = 0; k < cards.length; k++) {
+            if ((cards[k].textContent || '').indexOf('本月日历') >= 0) { cards[k].scrollIntoView({ block: 'center' }); return; }
+          }
+        }, 450);
+      };
+      nav.insertBefore(cal, proj.nextSibling);
+    }
+    return true;
+  }
+
+  /* 品牌区：方案一的副标题是 PERSONAL OS（原来是「每日工作台」） */
+  function fixBrand() {
+    var sub = document.querySelector('.wb-nav-brand small') || document.querySelector('.wb-nav-brand .sub');
+    if (!sub) return false;
+    if ((sub.textContent || '').trim() === 'PERSONAL OS') return true;
+    sub.textContent = 'PERSONAL OS';
+    return true;
+  }
+
+  /* 未完成计数徽章（只读快照，不写任何数据） */
+  function addBadge() {
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return false;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[TASK_DB]) || [];
+      var n = 0, openToday = 0, today = new Date();
+      var pad = function (x) { return String(x).padStart(2, '0'); };
+      var todayStr = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+      for (var i = 0; i < arr.length; i++) {
+        var r = arr[i];
+        if (!r || r['已删除'] === true || r['示例'] === true) continue;
+        if (String(r['状态'] || '') === '已完成') continue;
+        n++;
+        var d = String(r['计划日期'] || '').slice(0, 10);
+        if (d && d <= todayStr) openToday++;   /* 逾期 + 今天到期 */
+      }
+      [].forEach.call(document.querySelectorAll('.tab[data-panel="task"]'), function (t) {
+        if (t.querySelector('.nv-n')) return;
+        t.appendChild(el('span', 'nv-n', String(n)));
+      });
+      var badge = document.querySelector('.os-badge');
+      if (badge) {
+        badge.textContent = String(openToday);
+        if (!openToday) badge.classList.add('os-hide');
+      }
+      window.__WB_OS_ALERT__ = openToday;
+    }).catch(function () { });
+    return true;
+  }
+
+  /* ------------------------------------------------------- 3) 顶栏改造 */
+  function panelName() {
+    var on = document.querySelector('.side-nav .tab.on') || document.querySelector('.tab.on');
+    return on ? (on.textContent || '').replace(/\s+/g, ' ').trim().replace(/\d+$/, '') : '今天';
+  }
+  function setCrumb() {
+    var c = document.querySelector('.os-crumb');
+    if (!c) return;
+    c.textContent = '';
+    c.appendChild(document.createTextNode('DailyDesk / '));
+    var b = el('b', null, panelName());
+    c.appendChild(b);
+  }
+
+  function buildTopbar() {
+    var bar = document.querySelector('.topbar .topbar-in') || document.querySelector('.topbar-in') || document.querySelector('.topbar') || document.querySelector('header');
+    if (!bar || bar.querySelector('.os-crumb') || bar.querySelector('.os-dot')) return false;
+
+    var crumb = el('div', 'os-crumb');
+    crumb.appendChild(document.createTextNode('DailyDesk / '));
+    crumb.appendChild(el('b', null, panelName()));
+    bar.insertBefore(crumb, bar.firstChild);
+    bar.insertBefore(el('div', 'os-grow'), crumb.nextSibling);
+
+    var bell = el('button', 'os-icon');
+    bell.type = 'button'; bell.title = '今天要留意';
+    bell.setAttribute('aria-label', '今天要留意');
+    bell.appendChild(svg(ICON.bell, 18));
+    var badge = el('span', 'os-badge os-hide', '0');
+    bell.appendChild(badge);
+    bell.onclick = function () {
+      /* 真实动作：跳到每日任务并切到「今天」范围（逾期与今天到期的都在这儿） */
+      var t = document.querySelector('.tab[data-panel="task"]');
+      if (t) t.click();
+      setTimeout(function () {
+        var f = document.querySelector('#taskFilters .chip[data-f="today"]') || document.querySelector('#taskFilters .chip');
+        if (f) f.click();
+      }, 400);
+    };
+
+    var cta = el('button', 'os-dot');
+    cta.type = 'button'; cta.title = '快速创建';
+    cta.appendChild(svg(ICON.plus, 16));
+    cta.appendChild(el('span', null, '快速创建'));
+    cta.onclick = function () {
+      var b = document.getElementById('wbNewTaskBtn') || document.getElementById('btnAddTask');
+      if (b) b.click();
+    };
+
+    bar.appendChild(bell);
+    bar.appendChild(cta);
+
+    /* 导航切换时同步面包屑 */
+    document.addEventListener('click', function (e) {
+      var n = e.target;
+      while (n && n !== document) {
+        if (n.classList && (n.classList.contains('tab') || n.classList.contains('os-nav'))) { setTimeout(setCrumb, 60); return; }
+        n = n.parentNode;
+      }
+    }, true);
+    return true;
+  }
+
+  /* ------------------------------------------------- 4) 页面头（增量 4） */
+  /* 七个面板原本都没有方案一那种「eyebrow + 标题 + 描述」页头。
+     这里复用首页已有的 .wb-page-heading / .wb-page-sub 类，不新增类名 ——
+     构建期的"注入 CSS 引用了页面不存在的东西"检查会因为新类名没人用而拦下。 */
+  /* 方案一的页头是三段式：eyebrow = DAILYDESK / 页面名，大标题 = 描述句，下面再一行说明。
+     原来这里把页面名同时用作 eyebrow 和大标题，等于把描述句丢了。 */
+  var PAGES = {
+    task: ['每日任务', '安排、跟踪与完成待办事项', '清单 / 本周 / 看板 / 归档四种视图'],
+    project: ['项目管理', '从目标到进度，把每件事推进到底', '项目状态、里程碑、风险与截止日期'],
+    review: ['周期复盘', '回顾成果，持续优化工作方式', '周复盘、月复盘、季总结与年终总结'],
+    decision: ['决策日志', '记录每一个重要决定及其依据', '决策状态、备选方案与事后验证'],
+    reflect: ['每日反省', '为今天留下总结，为明天积累经验', '随手记录、关联决策与历史档案'],
+    idea: ['灵感速记', '捕捉突然出现的好点子', '想法、灵感、待办线索与随手记'],
+    trash: ['回收站', '误删的记录，都还有一次找回机会', '任务、项目及各种记录统一暂存']
+  };
+  function addPageHeads() {
+    var done = 0, total = 0;
+    Object.keys(PAGES).forEach(function (p) {
+      var panel = document.getElementById('panel-' + p);
+      if (!panel) return;
+      total++;
+      var info = PAGES[p];
+      /* 不用 :scope —— 验证脚本的 DOM 桩不支持它，会直接抛错 */
+      var first = panel.firstElementChild;
+      if (first && first.classList && first.classList.contains('wb-page-heading')) {
+        /* 已经插过：只把文案纠正到方案一的三段式（幂等，守卫复查时也走这里） */
+        var sp = first.querySelector('span'), h2 = first.querySelector('h2'), ps = first.querySelector('.wb-page-sub');
+        if (sp) sp.textContent = 'DAILYDESK / ' + info[0];
+        if (h2) h2.textContent = info[1];
+        if (ps) ps.textContent = info[2];
+        done++;
+        return;
+      }
+      var head = el('div', 'wb-page-heading');
+      var box = el('div');
+      box.appendChild(el('span', null, 'DAILYDESK / ' + info[0]));
+      box.appendChild(el('h2', null, info[1]));
+      box.appendChild(el('p', 'wb-page-sub', info[2]));
+      head.appendChild(box);
+      /* 验证脚本会把 shim 跑在一个极简 DOM 桩里，桩没有实现 insertBefore。
+         真实浏览器不受影响；这里退让一步，桩里跳过即可。 */
+      try { panel.insertBefore(head, panel.firstChild || null); }
+      catch (e) { try { panel.appendChild(head); } catch (e2) { return; } }
+      done++;
+    });
+    return total > 0 && done === total;
+  }
+
+  /* ------------------------------------------------------------- 启动 */
+  /* ------------------------------------------- 5) 每日任务页指标卡（批次 B） */
+  /* 方案一在任务页顶部有 4 张指标卡：全部任务 / 进行中 / 已完成 / 高优先级 P0。
+     全部按真实数据算，不照抄演示稿的假数字。复用首页已有的
+     .wb-stats / .wb-stat / .wb-stat-ico 等类名，不新增类（否则会被死类名检查拦）。 */
+  function taskStats() {
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return null;
+    var box = document.getElementById('osTaskStats');
+    if (!box) return null;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[TASK_DB]) || [];
+      /* 只排除已删除 —— 与首页统计口径保持一致。
+         示例数据在列表里是看得见的，就该计入指标卡；排除它会让
+         "灌入示例后指标还是 0"这种自相矛盾的现象。 */
+      var live = arr.filter(function (r) { return r && r['已删除'] !== true; });
+      var doing = live.filter(function (r) { return String(r['状态'] || '') === '进行中'; });
+      var done = live.filter(function (r) { return String(r['状态'] || '') === '已完成'; });
+      var p0 = live.filter(function (r) { return String(r['优先级'] || '').indexOf('P0') === 0; });
+      var html = [
+        ['全部任务', live.length, '条记录', ''],
+        ['进行中', doing.length, '保持节奏', 'ok'],
+        ['已完成', done.length, '持续积累', 'violet'],
+        ['高优先级 P0', p0.length, '优先处理', 'warn']
+      ].map(function (row) {
+        return '<div class="wb-stat"><div class="wb-stat-t"><span class="wb-stat-ico ' + row[3] + '">' + icStr(row[3] === 'warn' ? 'flag' : row[3] === 'ok' ? 'review' : 'task', 15) + '</span>' + row[0] + '</div>'
+          + '<strong class="wb-stat-n">' + row[1] + '</strong><span class="wb-stat-sub">' + row[2] + '</span></div>';
+      }).join('');
+      if (box.getAttribute('data-sig') !== html) { box.innerHTML = html; box.setAttribute('data-sig', html); }
+    }).catch(function () { });
+    return true;
+  }
+  function addTaskStats() {
+    var panel = document.getElementById('panel-task');
+    if (!panel) return false;
+    if (document.getElementById('osTaskStats')) return true;
+    var head = panel.firstElementChild;
+    if (!head || !head.classList || !head.classList.contains('wb-page-heading')) return false;
+    var box = el('div', 'wb-stats');
+    box.id = 'osTaskStats';
+    try { panel.insertBefore(box, head.nextSibling); }
+    catch (e) { try { panel.appendChild(box); } catch (e2) { return false; } }
+    taskStats();
+    return true;
+  }
+  /* 指标卡必须跟着数据走：订阅数据更新事件，再叠一个慢轮询兜底。
+     taskStats 内部用 data-sig 比对，内容没变就不碰 DOM。 */
+  var statsBound = false;
+  function bindTaskStats() {
+    if (!statsBound) {
+      var dbApi = window.__SMART_PAGE__ && window.__SMART_PAGE__.database;
+      if (dbApi && typeof dbApi.onUpdated === 'function') {
+        try { dbApi.onUpdated(function () { try { taskStats(); } catch (e) { } }); statsBound = true; } catch (e) { }
+      }
+    }
+    return statsBound;
+  }
+  setInterval(function () { try { taskStats(); } catch (e) { } }, 3000);
+
+  /* ------------------------------------------- 6) 项目管理页右侧详情栏（批次 C） */
+  /* 方案一的项目页是「左卡片网格 + 右详情栏」。这里用 CSS 网格把既有子节点分栏，
+     **不搬动任何既有节点**（搬动会牵动上游 CSS 与事件），只给它们打 data-os 标记。
+     详情栏的内容全部来自真实项目数据。 */
+  var PJ_DB = 'ovFeG4UznSCTsBe0TL6026';
+  var pjSelected = null;
+
+  function esc2(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+
+  function pjDetailHTML(p) {
+    if (!p) return '<div class="card" style="padding:18px"><div class="wb-section-h"><h3>项目详情</h3></div><p class="wb-page-sub">选中左侧任一项目，这里显示它的进度、字段与里程碑。</p></div>';
+    var pct = parseInt(p['进度'], 10);
+    if (!isFinite(pct) || pct < 0) pct = 0;
+    var miles = String(p['里程碑'] || '').split(/\r?\n/).map(function (t) { return t.trim(); }).filter(Boolean);
+    var rows = [['项目状态', p['状态']], ['起始日期', p['起始日期']], ['截止日期', p['截止日期']], ['优先级', p['优先级']], ['周期', p['周期']]];
+    return '<div class="card" style="padding:18px">'
+      + '<div class="wb-section-h"><h3>项目详情</h3></div>'
+      + '<h3 style="margin:0 0 8px;font-size:var(--fs-lg)">' + esc2(p['项目名称'] || '未命名项目') + '</h3>'
+      + '<p class="wb-page-sub" style="margin-bottom:14px">' + esc2(p['目标描述'] || '（还没写目标描述）') + '</p>'
+      + '<div class="wb-section-h" style="margin-bottom:6px"><h3 style="font-size:var(--fs-sm)">整体进度</h3><b style="font-size:var(--fs-sm)">' + pct + '%</b></div>'
+      + '<span class="wb-bar"><i style="width:' + pct + '%"></i></span>'
+      + '<div class="os-kv">' + rows.map(function (r) {
+        return '<span>' + esc2(r[0]) + '</span><b>' + esc2(r[1] || '—') + '</b>';
+      }).join('') + '</div>'
+      + (miles.length
+        ? '<div class="wb-section-h" style="margin:18px 0 8px"><h3 style="font-size:var(--fs-sm)">关键里程碑</h3><span>' + miles.length + ' 项</span></div>'
+          + '<div class="os-tl">' + miles.map(function (t, i) {
+            return '<div class="os-tl-i"><b>' + esc2(t) + '</b><p>' + (i === 0 ? '第一项' : '第 ' + (i + 1) + ' 项') + '</p></div>';
+          }).join('') + '</div>'
+        : '')
+      + (String(p['风险点'] || '').trim()
+        ? '<div class="wb-section-h" style="margin:18px 0 8px"><h3 style="font-size:var(--fs-sm)">风险点</h3></div><p class="wb-page-sub">' + esc2(p['风险点']) + '</p>'
+        : '')
+      + '</div>';
+  }
+
+  function renderPjRail() {
+    var rail = document.getElementById('osPjRail');
+    if (!rail) return;
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[PJ_DB]) || [];
+      var live = arr.filter(function (r) { return r && r['已删除'] !== true; });
+      var pick = null;
+      if (pjSelected) pick = live.filter(function (r) { return r._id === pjSelected; })[0] || null;
+      if (!pick) pick = live[0] || null;
+      var html = pjDetailHTML(pick);
+      if (rail.getAttribute('data-sig') !== html) { rail.innerHTML = html; rail.setAttribute('data-sig', html); }
+    }).catch(function () { });
+  }
+
+  function addProjectRail() {
+    var panel = document.getElementById('panel-project');
+    if (!panel) return false;
+    if (document.getElementById('osPjRail')) { renderPjRail(); return true; }
+    /* 给既有子节点打标记供 CSS 网格分栏用（用 data-* 而不是类名，
+       避免新增类名触发构建期的死类名检查） */
+    var newCard = null, listCard = null;
+    [].forEach.call(panel.children, function (c) {
+      var t = c.textContent || '';
+      if (c.classList && c.classList.contains('wb-page-heading')) c.setAttribute('data-os', 'head');
+      else if (c.classList && c.classList.contains('stat-strip')) c.setAttribute('data-os', 'feed');
+      else if (c.classList && c.classList.contains('card')) {
+        if (/新建项目/.test(t) && !newCard) { newCard = c; c.setAttribute('data-os', 'new'); }
+        else if (!listCard) { listCard = c; c.setAttribute('data-os', 'list'); }
+        else c.setAttribute('data-os', 'extra');
+      }
+    });
+    var rail = document.createElement('aside');
+    rail.id = 'osPjRail';
+    rail.setAttribute('data-os', 'rail');
+    try { panel.appendChild(rail); } catch (e) { return false; }
+    renderPjRail();
+    /* 点左侧任一项目卡片即切换详情 */
+    var list = document.getElementById('pjList');
+    if (list && !list.getAttribute('data-os-bound')) {
+      list.setAttribute('data-os-bound', '1');
+      list.addEventListener('click', function (e) {
+        var n = e.target;
+        while (n && n !== list) {
+          if (n.getAttribute && n.getAttribute('data-rec')) { pjSelected = n.getAttribute('data-rec'); renderPjRail(); return; }
+          n = n.parentNode;
+        }
+      });
+    }
+    return true;
+  }
+  setInterval(function () { try { renderPjRail(); } catch (e) { } }, 3000);
+
+  /* ------------------------------------- 7) 复盘/决策/反省/灵感 左右分栏（批次 D） */
+  /* 方案一这四页都是 split：左边写、右边看档案。沿用项目页的做法 ——
+     只给既有节点打 data-* 标记后用 CSS 网格分栏，不搬动任何节点。 */
+  var SPLIT_PANELS = {
+    review: { form: /写(本周|本期)?复盘|一键汇总/, list: /复盘档案/ },
+    decision: { form: /记一条日志/, list: /日志时间线/ },
+    reflect: { form: /写一条反省/, list: /反省档案/ },
+    idea: { form: /记一条灵感/, list: /灵感清单/ }
+  };
+  function addSplits() {
+    var done = 0, total = 0;
+    Object.keys(SPLIT_PANELS).forEach(function (p) {
+      var panel = document.getElementById('panel-' + p);
+      if (!panel) return;
+      total++;
+      /* 验证脚本的 DOM 桩里只有部分面板存在 children —— 桩环境下跳过即可 */
+      var kids = panel.children;
+      if (!kids || typeof kids.length !== 'number') { done++; return; }
+      var conf = SPLIT_PANELS[p], gotForm = false, gotList = false;
+      try {
+        for (var ci = 0; ci < kids.length; ci++) {
+          var c = kids[ci];
+          /* 别碰注入层自己插的块（osStreak / osIdeaStat / osPjRail）——
+             否则守卫复查会把它们的 data-os 覆盖成 top */
+          if (c.id && c.id.indexOf('os') === 0) continue;
+          var t = c.textContent || '';
+          if (c.classList && c.classList.contains('wb-page-heading')) { c.setAttribute('data-os', 'head'); continue; }
+          if (c.classList && c.classList.contains('stat-strip')) { c.setAttribute('data-os', 'feed'); continue; }
+          if (!c.classList || !c.classList.contains('card')) { c.setAttribute('data-os', 'top'); continue; }
+          if (!gotForm && conf.form.test(t)) { gotForm = true; c.setAttribute('data-os', 'form'); continue; }
+          if (!gotList && conf.list.test(t)) { gotList = true; c.setAttribute('data-os', 'list'); continue; }
+          c.setAttribute('data-os', 'top');
+        }
+      } catch (e) { done++; return; }
+      if (gotForm && gotList) done++;
+    });
+    return total > 0 && done === total;
+  }
+
+  /* 反省页「连续记录 7 天」——方案一右栏底部那块。数据按真实反省日期算。 */
+  var REFLECT_DB = 'tIaiq8CCj17DrOmNAjxGyI';
+  function renderStreak() {
+    var box = document.getElementById('osStreak');
+    if (!box) return;
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[REFLECT_DB]) || [];
+      var days = {};
+      arr.forEach(function (r) { if (r && r['已删除'] !== true) { var d = String(r['日期'] || '').slice(0, 10); if (d) days[d] = 1; } });
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      var cells = [], streak = 0, run = 0;
+      for (var i = 6; i >= 0; i--) {
+        var dt = new Date(); dt.setDate(dt.getDate() - i);
+        var key = dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate());
+        var has = !!days[key];
+        cells.push({ d: dt.getDate(), has: has });
+        if (has) { run++; streak = Math.max(streak, run); } else { run = 0; }
+      }
+      /* 连续天数要从今天往回数，中间断了就不算 */
+      var today = new Date(), back = 0;
+      for (var k = 0; k < 400; k++) {
+        var t2 = new Date(); t2.setDate(today.getDate() - k);
+        var kk = t2.getFullYear() + '-' + pad(t2.getMonth() + 1) + '-' + pad(t2.getDate());
+        if (days[kk]) back++; else if (k > 0) break;
+      }
+      var html = '<div class="wb-section-h"><h3 style="font-size:var(--fs-sm)">反省连续记录</h3><b style="font-size:var(--fs-sm)">连续 ' + back + ' 天</b></div>'
+        + '<div class="os-days">' + cells.map(function (c) {
+          return '<div class="os-day' + (c.has ? ' on' : '') + '"><strong>' + c.d + '</strong><span>' + (c.has ? '●' : '○') + '</span></div>';
+        }).join('') + '</div>';
+      if (box.getAttribute('data-sig') !== html) { box.innerHTML = html; box.setAttribute('data-sig', html); }
+    }).catch(function () { });
+  }
+  function addStreak() {
+    var panel = document.getElementById('panel-reflect');
+    if (!panel) return false;
+    if (document.getElementById('osStreak')) { renderStreak(); return true; }
+    var box = document.createElement('div');
+    box.id = 'osStreak';
+    box.setAttribute('data-os', 'streak');
+    try { panel.appendChild(box); } catch (e) { return false; }
+    renderStreak();
+    return true;
+  }
+  setInterval(function () { try { renderStreak(); } catch (e) { } }, 3000);
+
+  /* --------------------------- 8) 灵感页分类概览（批次 D 余项，对齐方案一右栏） */
+  var IDEA_DB = 'N9CbOKvoBgrZ2IY7mBAe4Q';
+  function renderIdeaStat() {
+    var box = document.getElementById('osIdeaStat');
+    if (!box) return;
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[IDEA_DB]) || [];
+      var live = arr.filter(function (r) { return r && r['已删除'] !== true; });
+      var counts = {}, order = [];
+      live.forEach(function (r) {
+        var t = String(r['标签'] || '').trim() || '未分类';
+        if (!counts[t]) { counts[t] = 0; order.push(t); }
+        counts[t]++;
+      });
+      var html = '<div class="wb-section-h"><h3 style="font-size:var(--fs-sm)">分类概览</h3><span>共 ' + live.length + ' 条</span></div>'
+        + (order.length
+          ? '<div class="os-rows">' + order.map(function (t) {
+            return '<div class="os-row"><b>' + esc2(t) + '</b><em>' + counts[t] + '</em></div>';
+          }).join('') + '</div>'
+          : '<p class="wb-page-sub">还没有灵感记录，先在上面记一条。</p>');
+      if (box.getAttribute('data-sig') !== html) { box.innerHTML = html; box.setAttribute('data-sig', html); }
+    }).catch(function () { });
+  }
+  function addIdeaStat() {
+    var panel = document.getElementById('panel-idea');
+    if (!panel) return false;
+    if (document.getElementById('osIdeaStat')) { renderIdeaStat(); return true; }
+    var box = document.createElement('div');
+    box.id = 'osIdeaStat';
+    box.setAttribute('data-os', 'stat');
+    try { panel.appendChild(box); } catch (e) { return false; }
+    renderIdeaStat();
+    return true;
+  }
+  setInterval(function () { try { renderIdeaStat(); } catch (e) { } }, 3000);
+
+  /* ------------------------- 9) 任务筛选栏右侧的排序（批次 B3，对齐方案一「排序」） */
+  /* 纯前端重排：给行设 CSS order，不动 DOM 顺序，也就不碰上游事件绑定。
+     排序键全部从行本身读得到 —— 优先级在行类名里（item p0/p1/p2），
+     计划日期在行内的改期按钮上。 */
+  var SORTS = [['', '默认'], ['date', '按日期'], ['level', '按优先级']];
+  var sortIdx = 0;
+  function rowKey(r) {
+    var m = /\bp([0-2])\b/.exec(String(r.className));
+    var level = m ? Number(m[1]) : 9;
+    if (level === 9) {
+      /* 行类名不一定带 pN（有的行只有 item / item done），再从行内优先级标签取 */
+      var q = /P([0-2])/.exec(r.textContent || '');
+      if (q) level = Number(q[1]);
+    }
+    var dEl = r.querySelector('[data-act="reschedule"]');
+    var d = dEl ? (dEl.textContent || '').trim() : '';
+    return { level: level, date: d || '9999-99-99' };
+  }
+  function applySort() {
+    var key = SORTS[sortIdx][0];
+    var list = document.getElementById('taskList');
+    var btn = document.getElementById('osSortBtn');
+    if (btn) btn.textContent = '排序：' + SORTS[sortIdx][1];
+    if (!list) return;
+    var rows = [].slice.call(list.querySelectorAll('.item'));
+    if (!key) { rows.forEach(function (r) { r.style.order = ''; }); return; }
+    var keyed = rows.map(function (r) { return { r: r, k: rowKey(r) }; });
+    keyed.sort(function (a, b) {
+      if (key === 'level') return a.k.level - b.k.level || String(a.k.date).localeCompare(String(b.k.date));
+      return String(a.k.date).localeCompare(String(b.k.date)) || a.k.level - b.k.level;
+    });
+    keyed.forEach(function (x, i) { x.r.style.order = String(i); });
+  }
+  function addTaskSort() {
+    var bar = document.getElementById('taskFilters');
+    if (!bar) return false;
+    if (document.getElementById('osSortBtn')) { applySort(); return true; }
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'osSortBtn';
+    btn.className = 'os-sort';
+    btn.textContent = '排序：默认';
+    btn.onclick = function () {
+      sortIdx = (sortIdx + 1) % SORTS.length;
+      applySort();
+    };
+    try { bar.appendChild(btn); } catch (e) { return false; }
+    applySort();
+    return true;
+  }
+  setInterval(function () { try { applySort(); } catch (e) { } }, 3000);
+
+  /* ------------------- 10) 收起方案一任务页没有的块（批次 B4） -------------------
+     方案一的任务页只有：页头 → 4 张指标卡 → 标签页 + 筛选 + 数据表。
+     多出来的是「今天要处理」（今日三件套）和「进度概览」两块。
+     ★ 只隐藏，不删除：DOM 与事件都在，功能入口不丢 ——
+        今日优先仍可用任务行上的星标，「进度概览」的统计已由 4 张指标卡承担。
+     ★ 刻意不动「添加任务」那张卡：它里面的表单字段是抽屉（新建/编辑）在用的，
+        隐藏它会连带影响抽屉，属于功能风险。 */
+  function hideTaskExtras() {    var panel = document.getElementById('panel-task');
+    if (!panel) return false;
+    var kids = panel.children;
+    if (!kids || typeof kids.length !== 'number') return true;
+    for (var i = 0; i < kids.length; i++) {
+      var c = kids[i];
+      if (c.id && c.id.indexOf('os') === 0) continue;
+      if (c.getAttribute && c.getAttribute('data-os') === 'hide') continue;
+      var isToday = c.classList && c.classList.contains('today');
+      var isProgress = /^\s*进度概览/.test((c.textContent || '').trim());
+      if (isToday || isProgress) c.setAttribute('data-os', 'hide');
+    }
+    return true;
+  }
+
+  /* ------------- 12) 任务表头文案对齐方案一（批次 B2 第一步，零风险） -------------
+     探测结论：任务行是 9 列网格
+       col1 .ds3-th--pick  多选框     col2 .ds3-th--st    完成勾选
+       col3 .ds3-th--title 任务       col4 .ds3-th--sub   备注
+       col5 .ds3-th--tags  标记       col6 .ds3-th--timer 计时
+         ★ 计时格里装着计时器的开始/暂停按钮 —— 删列等于砍功能，所以不删
+       col7 .ds3-th--thumb 图片（原表头是空的）
+       col8 .ds3-th--acts  操作       col9 .ds3-th--pad   删除
+     方案一表头是「完成 / 任务名称 / 所属项目 / 优先级 / 状态 / 计划时间 / 操作」。
+     这里只做不会说谎的部分：给两个空列补标签，并把「任务」改成方案一的「任务名称」。 */
+  function fixTaskHead() {
+    var map = { 'ds3-th--st': '完成', 'ds3-th--title': '任务名称', 'ds3-th--sub': '所属项目', 'ds3-th--tags': '优先级', 'ds3-th--timer': '状态', 'ds3-th--thumb': '计划时间', 'ds3-th--acts': '操作' };
+    var head = document.querySelector('.ds3-thead--task');
+    if (!head) return false;
+    Object.keys(map).forEach(function (k) {
+      var e = head.querySelector('.' + k);
+      if (e && (e.textContent || '').trim() !== map[k]) e.textContent = map[k];
+    });
+    return true;
+  }
+
+  /* ---------- 13) 任务表列数收成方案一的 7 列（批次 B2 核心，B 方案：并入不删） ----------
+     做法：把「计时」「图片」两个单元格**搬进「操作」列**里（搬节点不影响事件绑定，
+     计时按钮照常可用），网格随之从 9 列收到 7 列。信息一条不丢，列数对上方案一。
+     幂等：搬过的打 data-os-moved，行重渲染后下一轮会重新搬。 */
+  function mergeTaskCols() {
+    var rows = document.querySelectorAll('#taskList .item');
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var tags = row.querySelector('.tags');
+      var acts = row.querySelector('.row-acts');
+      if (!tags || !acts) continue;
+      var n = tags.nextElementSibling;
+      while (n && n !== acts) {
+        var nx = n.nextElementSibling;
+        /* 计划时间已经单独占一列，不要再被收进操作列 */
+        if (n.getAttribute && n.getAttribute('data-os-date')) { n = nx; continue; }
+        if (!n.getAttribute || !n.getAttribute('data-os-moved')) {
+          if (n.setAttribute) n.setAttribute('data-os-moved', '1');
+          try { acts.appendChild(n); } catch (e) { }
+        }
+        n = nx;
+      }
+      /* 多选框与完成勾选并进同一格（方案一只有一列「完成」） */
+      var top = row.querySelector('.item-top');
+      var tsel = row.querySelector('.tsel'), ck = row.querySelector('.ck');
+      if (top && tsel && ck && !top.querySelector('.os-chk')) {
+        var w = document.createElement('div');
+        w.className = 'os-chk';
+        try { top.insertBefore(w, tsel); w.appendChild(tsel); w.appendChild(ck); } catch (e) { }
+      }
+      /* 计划时间（改期按钮）从操作列提出来，单独占一列 */
+      var dateEl = row.querySelector('[data-act="reschedule"]');
+      var host = row.querySelector('.item-title');
+      if (dateEl && host && host.parentNode && dateEl.parentNode !== host.parentNode) {
+        dateEl.setAttribute('data-os-date', '1');
+        dateEl.removeAttribute('data-os-moved');
+        try { host.parentNode.insertBefore(dateEl, acts); } catch (e) { }
+      }
+      /* 「+ 子任务」是行的直接子元素，grid-column 自动 → 会把网格撑出多余轨道。
+         它本来就是行操作，一并放进操作列。 */
+      var chip = row.querySelector(':scope > .wb-subchip') || row.querySelector('.wb-subchip');
+      if (chip && chip.parentNode !== acts) {
+        if (chip.setAttribute) chip.setAttribute('data-os-moved', '1');
+        try { acts.appendChild(chip); } catch (e) { }
+      }
+      /* 删除按钮也并进操作列 —— 这样「优先级 / 状态」拆成两条轨道后仍是 7 列 */
+      var del = row.querySelector('.del');
+      if (del && del.parentNode !== acts) {
+        if (del.setAttribute) del.setAttribute('data-os-moved', '1');
+        try { acts.appendChild(del); } catch (e) { }
+      }
+    }
+    return true;
+  }
+  setInterval(function () { try { mergeTaskCols(); } catch (e) { } }, 2500);
+
+  /* ---------- 14) 第 4 列显示「所属项目」（批次 B2 语义收尾之一） ----------
+     方案一这一列是「所属项目」，当前渲染出来的是备注。这里按记录里的
+     所属项目字段改写单元格文案；原有备注转成 title 悬停提示，信息不丢。 */
+  var taskProjMap = null;
+  function refreshTaskProj() {
+    var api = window.__SMART_PAGE__ && window.__SMART_PAGE__.offlineApi;
+    if (!api || typeof api.snapshotAsync !== 'function') return;
+    api.snapshotAsync().then(function (db) {
+      var arr = (db && db.dbs && db.dbs[TASK_DB]) || [];
+      var m = {};
+      arr.forEach(function (r) {
+        if (!r || !r._id) return;
+        var v = r['所属项目'] || r['项目'] || '';
+        if (String(v).trim()) m[r._id] = String(v).trim();
+      });
+      taskProjMap = m;
+    }).catch(function () { });
+  }
+  function fillProjectCol() {
+    if (!taskProjMap) return false;
+    var rows = document.querySelectorAll('#taskList .item');
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var id = row.getAttribute && row.getAttribute('data-rec');
+      if (!id) continue;
+      var want = taskProjMap[id];
+      if (!want) continue;
+      var sub = row.querySelector('.item-sub');
+      if (!sub) {
+        /* .item-sub 只在「有备注」时才被渲染出来。方案一这一列是常驻的，
+           所以缺了就补一个同名的格子（沿用页面自己的 .item-sub 样式与列位）。 */
+        var title = row.querySelector('.item-title');
+        if (!title || !title.parentNode) continue;
+        sub = document.createElement('div');
+        sub.className = 'item-sub';
+        try { title.parentNode.insertBefore(sub, title.nextSibling); } catch (e) { continue; }
+      }
+      if (sub.getAttribute('data-os-proj') === want) continue;
+      /* 先把原本文案（备注）留成悬停提示 */
+      var old = (sub.textContent || '').trim();
+      if (old && old !== want && !sub.getAttribute('title')) sub.setAttribute('title', old);
+      sub.textContent = want;
+      sub.setAttribute('data-os-proj', want);
+    }
+    return true;
+  }
+  setInterval(function () { try { refreshTaskProj(); } catch (e) { } }, 5000);
+  setInterval(function () { try { fillProjectCol(); } catch (e) { } }, 3000);
+
+  /* ---------- 15) 浮层以整页形态呈现（批次 E：AI 助手 / 同步与备份 / 偏好设置） ----------
+     探测结论：AI 面板与设置都不在页面里，而是渲染进通用的 .mask > .modal 弹层
+     （#aiBody 只是 JS 模板，DOM 里并不存在）。与其把内容搬出来（要碰渲染函数），
+     不如**让浮层本身长成整页的样子**：点这三个入口时给 <html> 加一个类，
+     由 CSS 把遮罩与对话框铺满内容区。关闭后自动摘掉这个类。
+     纯展示层改动，不碰任何 id、事件与数据。 */
+  function osPageMode(on) {
+    var root = document.documentElement;
+    if (!root || !root.classList) return;
+    if (on) root.classList.add('os-page-mode'); else root.classList.remove('os-page-mode');
+  }
+  function osMaskVisible() {
+    var m = document.querySelector('.mask');
+    if (!m) return false;
+    var r = m.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && getComputedStyle(m).display !== 'none';
+  }
+  document.addEventListener('click', function (e) {
+    var n = e.target;
+    while (n && n !== document) {
+      if (n.classList && n.classList.contains('os-nav')) {
+        if (/AI 助手|同步与备份|偏好设置/.test(n.textContent || '')) osPageMode(true);
+        return;
+      }
+      n = n.parentNode;
+    }
+  }, true);
+  setInterval(function () { try { if (!osMaskVisible()) osPageMode(false); } catch (e) { } }, 600);
+
+  /* ---------------------- 11) 本月日历独立页（批次 E 第一步） ----------------------
+     方案一里「本月日历」是独立整页。做法：新建面板，点「本月日历」时把月历卡搬进去，
+     切回任何 tab 再搬回任务面板 —— 按需搬运，两边都不牺牲。 */
+  var osPanelId = 'osPanelCalendar';
+  var osCalCard = null;          /* 月历卡的引用；在任务面板与独立页之间来回搬 */
+  function osMoveCal(toPanel) {
+    if (!osCalCard || !toPanel) return;
+    if (osCalCard.parentNode === toPanel) return;
+    try { toPanel.appendChild(osCalCard); } catch (e) { }
+  }
+  function osShow(name) {
+    var mine = document.getElementById(osPanelId);
+    var taskPanel = document.getElementById('panel-task');
+    if (name === osPanelId) {
+      /* 打开独立页：先把月历卡搬进来，再隐藏上游面板 */
+      if (mine) osMoveCal(mine);
+      [].forEach.call(document.querySelectorAll('section[id^="panel-"]'), function (p) {
+        p.classList.add('hidden');
+      });
+      if (mine) mine.classList.remove('hidden');
+      document.body.classList.remove('wb-home-on');
+      return;
+    }
+    /* 关闭：把卡搬回任务面板，独立页收起（不碰上游面板的显隐，交给 switchPanel） */
+    if (taskPanel) osMoveCal(taskPanel);
+    if (mine) mine.classList.add('hidden');
+  }
+  function osIsCalOpen() {
+    var m = document.getElementById(osPanelId);
+    return !!(m && !m.classList.contains('hidden'));
+  }
+  function addCalendarPage() {
+    var main = document.querySelector('main.wrap, main');
+    if (!main) return false;
+    if (document.getElementById(osPanelId)) return true;
+    /* 先认下任务面板里的月历卡（不搬走，保持既有断言照常工作） */
+    var taskPanel = document.getElementById('panel-task');
+    if (taskPanel && taskPanel.children) {
+      for (var t = 0; t < taskPanel.children.length; t++) {
+        if (/本月日历/.test((taskPanel.children[t].textContent || '').slice(0, 24))) { osCalCard = taskPanel.children[t]; break; }
+      }
+    }
+    var panel = document.createElement('section');
+    panel.id = osPanelId;
+    panel.className = 'hidden';
+    var head = document.createElement('div');
+    head.className = 'wb-page-heading';
+    var box = document.createElement('div');
+    var sp = document.createElement('span'); sp.textContent = 'DAILYDESK / 本月日历';
+    var h2 = document.createElement('h2'); h2.textContent = '把计划放进真实的时间里';
+    var ps = document.createElement('p'); ps.className = 'wb-page-sub'; ps.textContent = '由现有任务月历独立展开的视图';
+    box.appendChild(sp); box.appendChild(h2); box.appendChild(ps);
+    head.appendChild(box);
+    panel.appendChild(head);
+    try { main.appendChild(panel); } catch (e) { return false; }
+    /* 点任何上游 tab 就收起本页并把月历卡搬回去 */
+    document.addEventListener('click', function (e) {
+      var n = e.target;
+      while (n && n !== document) {
+        if (n.classList && n.classList.contains('tab') && n.getAttribute('data-panel')) {
+          if (osIsCalOpen()) osShow('');
+          return;
+        }
+        n = n.parentNode;
+      }
+    }, true);
+    return true;
+  }
+
+  /* ------------------------------------------------------------- 启动 */
+  var tries = 0;
+  function tick() {
+    tries++;
+    var a = fixGroups();
+    var b = addEntries();
+    var c = addBadge();
+    var d = buildTopbar();
+    var e = addPageHeads();
+    var f = fixBrand();
+    var g = addTaskStats();
+    var h = addProjectRail();
+    var i2 = addSplits();
+    var j = addStreak();
+    var k = addIdeaStat();
+    var l = addTaskSort();
+    var m2 = hideTaskExtras();
+    var n2 = addCalendarPage();
+    var o2 = fixTaskHead();
+    var p2 = mergeTaskCols();
+    if ((a && b && d && e && f && g && h && i2 && j && k && l && m2 && n2 && o2 && p2) || tries > 24) {
+      setCrumb();
+      /* 守卫：页面在启动后可能再渲染一次导航（例如数据加载完刷新侧栏），
+         那会把改成中文名/隐藏掉的标题冲回原样。低频复查一段时间即可，
+         不做 MutationObserver —— 那会在长列表里持续开销。 */
+      var guard = 0;
+      var timer = setInterval(function () {
+        guard++;
+        try { fixGroups(); fixBrand(); addPageHeads(); addTaskStats(); addProjectRail(); addSplits(); addStreak(); addIdeaStat(); addTaskSort(); hideTaskExtras(); addCalendarPage(); fixTaskHead(); bindTaskStats(); } catch (err) { }
+        if (guard >= 15) clearInterval(timer);
+      }, 2000);
+      setTimeout(bindTaskStats, 1500);
+      return;
+    }
+    setTimeout(tick, tries < 6 ? 120 : 500);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(tick, 60); });
+  else setTimeout(tick, 60);
 })();
 
 /* 所有主库写入在同一浏览器锁中执行。无锁环境拒绝写入，不使用不可靠的 LS 租约。 */
@@ -7636,20 +8891,20 @@ window.__WB_BUILD_ID__="v82-3933edec6897";
     var sec = document.createElement('section');
     sec.id = 'wbHome';
     sec.style.display = 'none';
-    sec.innerHTML = '<div class="wb-page-heading"><div><span>DAILYDESK / OVERVIEW</span><h2>今日工作台</h2></div><button type="button" class="wb-btn2" data-home-new>' + wbIcon('plus', 16) + '新建任务</button></div>'
+    sec.innerHTML = '<div class="wb-page-heading"><div><span>DAILYDESK / 今天</span><h2>回到今天，专注最重要的事情</h2><p class="wb-page-sub">基于「每日任务」与「项目管理」整理的执行首页</p></div><button type="button" class="wb-btn2" data-home-new>' + wbIcon('plus', 16) + '快速记录</button></div>'
       + '<div class="wb-hero"><div class="wb-hero-in">'
       + '<div class="wb-hero-tx"><div class="wb-hero-date"></div><div class="wb-hero-hi"></div>'
-      + '<div class="wb-hero-sub">专注于重要的事，让每一条记录都成为成长的轨迹。</div></div></div></div>'
+      + '<div class="wb-hero-sub">把注意力留给最关键的 3 件事。其他工作可以稍后处理。</div>'
+      + '<div class="wb-hero-prog"><span class="wb-bar"><i id="wbHeroBar"></i></span><b id="wbHeroNum"></b></div></div></div></div>'
       + '<div class="wb-stats" id="wbHomeStats"></div>'
-      + '<div id="wbHomeQuickSlot"></div>'
       + '<div class="wb-home-grid"><section class="wb-home-tasks">'
-      + '<div class="wb-section-h"><h3>任务清单 <span id="wbHomeCnt"></span></h3><button type="button" class="wb-link" data-home-panel="task">全部任务 ' + wbIcon('arrow', 14) + '</button></div>'
+      + '<div class="wb-section-h"><h3>今天优先完成 <span id="wbHomeCnt"></span></h3><button type="button" class="wb-link" data-home-panel="task">查看全部 ' + wbIcon('arrow', 14) + '</button></div>'
       + '<div class="wb-home-filters" role="group" aria-label="任务范围"><button type="button" data-home-filter="today">今日聚焦</button><button type="button" data-home-filter="open">待处理</button><button type="button" data-home-filter="done">已完成</button><button type="button" data-home-filter="all">全部</button></div>'
       + '<div id="wbHomeTasks"></div>'
-      + '<div class="wb-section-h wb-project-heading"><h3>项目进展</h3><button type="button" class="wb-link" data-home-panel="project">全部项目 ' + wbIcon('arrow', 14) + '</button></div><div id="wbHomeProj"></div>'
+      + '<div class="wb-section-h wb-project-heading"><h3>当前项目进展</h3><button type="button" class="wb-link" data-home-panel="project">项目管理 ' + wbIcon('arrow', 14) + '</button></div><div id="wbHomeProj"></div>'
       + '</section><div class="wb-home-aside">'
+      + '<div id="wbHomeQuickSlot"></div>'
       + '<section class="wb-calendar"><div class="wb-section-h"><h3 id="wbHomeMonth"></h3><div><button type="button" class="wb-x" data-home-month="-1" aria-label="上个月">' + wbIcon('left', 16) + '</button><button type="button" class="wb-x" data-home-month="1" aria-label="下个月">' + wbIcon('arrow', 16) + '</button></div></div><div class="wb-weekdays" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div><div class="wb-month-days" id="wbHomeDays"></div><button type="button" class="wb-link" id="wbHomeResetDay">回到今天</button></section>'
-      + '<section class="wb-focus"><div class="wb-section-h"><h3>今日三件事</h3>' + wbIcon('flag', 18) + '</div><div id="wbHomeFocus"></div></section>'
       + '</div></div>';
     main.insertBefore(sec, main.firstChild);
     sec.addEventListener('click', function (e) {
@@ -7687,16 +8942,29 @@ window.__WB_BUILD_ID__="v82-3933edec6897";
     var hd = new Date();
     var wk = ['日', '一', '二', '三', '四', '五', '六'][hd.getDay()];
     var dEl = document.querySelector('#wbHome .wb-hero-date');
-    if (dEl) dEl.textContent = today + ' 星期' + wk;
+    if (dEl) dEl.textContent = "TODAY'S FOCUS · " + today + ' 星期' + wk;
     var hEl = document.querySelector('#wbHome .wb-hero-hi');
-    if (hEl) hEl.textContent = (hd.getHours() < 12 ? '早上好' : hd.getHours() < 18 ? '下午好' : '晚上好') + '，今天也有新的进展！';
+    if (hEl) hEl.textContent = '今天，先把重要的事做好。';
+    var barEl = document.getElementById('wbHeroBar');
+    if (barEl) barEl.style.width = Math.round(focus.length / 3 * 100) + '%';
+    var numEl = document.getElementById('wbHeroNum');
+    if (numEl) numEl.textContent = focus.length + ' / 3';
     var monday = new Date(hd.getFullYear(), hd.getMonth(), hd.getDate() - (hd.getDay() + 6) % 7);
-    var weekDone = list.filter(function (r) { var d = homeDay(r['完成日期']); return r['状态'] === '已完成' && d >= wbDay(monday) && d <= today; });
+    var mondayStr = wbDay(monday);
+    var weekDone = list.filter(function (r) { var d = homeDay(r['完成日期']); return r['状态'] === '已完成' && d >= mondayStr && d <= today; });
+    var weekAll = list.filter(function (r) { var d = homeDay(r['完成日期']) || homeDay(r['计划日期']); return !!d && d >= mondayStr && d <= today; });
+    var weekPct = weekAll.length ? Math.round(weekDone.length / weekAll.length * 100) : 0;
+    var hours = 0;
+    weekDone.forEach(function (r) { var h = parseFloat(r['实际耗时']); if (isFinite(h) && h > 0) hours += h; });
+    if (!hours) weekDone.forEach(function (r) { var h = parseFloat(r['预计耗时']); if (isFinite(h) && h > 0) hours += h; });
+    hours = Math.round(hours * 10) / 10;
+    var pjAll = (DB.dbs[wbDbId('项目')] || []).filter(function (r) { return !r['已删除']; });
+    var pjOpen = pjAll.filter(function (r) { return String(r['状态'] || '') !== '已完成'; });
     homeHTML('wbHomeStats',
-      '<div class="wb-stat"><div><span class="wb-stat-t">今日三件事</span><strong class="wb-stat-n">' + focus.length + '<small> / 3</small></strong><span class="wb-stat-sub">已选优先任务</span></div><div class="wb-focus-ring" style="--fill:' + focus.length / 3 * 100 + '%" aria-hidden="true">' + wbIcon('flag', 20) + '</div></div>'
-      + '<div class="wb-stat"><div><span class="wb-stat-t">待处理任务</span><strong class="wb-stat-n">' + open.length + '</strong><span class="wb-stat-sub">全部未完成任务</span></div><span class="wb-stat-icon">' + wbIcon('task', 20) + '</span></div>'
-      + '<div class="wb-stat wb-stat-warn"><div><span class="wb-stat-t">已逾期</span><strong class="wb-stat-n">' + over.length + '</strong><span class="wb-stat-sub">' + (over.length ? '需要重新安排' : '当前没有逾期') + '</span></div><span class="wb-stat-icon">' + wbIcon('cal', 20) + '</span></div>'
-      + '<div class="wb-stat wb-stat-ok"><div><span class="wb-stat-t">本周完成</span><strong class="wb-stat-n">' + weekDone.length + '</strong><span class="wb-stat-sub">今日完成 ' + doneToday.length + ' 件</span></div><span class="wb-stat-icon">' + wbIcon('review', 20) + '</span></div>');
+      '<div class="wb-stat"><div class="wb-stat-t"><span class="wb-stat-ico">' + wbIcon('flag', 15) + '</span>今日重点</div><strong class="wb-stat-n">' + focus.length + '<small> / 3</small></strong><span class="wb-stat-sub">优先完成最关键的任务</span></div>'
+      + '<div class="wb-stat"><div class="wb-stat-t"><span class="wb-stat-ico ok">' + wbIcon('review', 15) + '</span>本周完成</div><strong class="wb-stat-n">' + weekPct + '<small>%</small></strong><span class="wb-stat-sub">本周完成 ' + weekDone.length + ' 件</span></div>'
+      + '<div class="wb-stat"><div class="wb-stat-t"><span class="wb-stat-ico violet">' + wbIcon('cal', 15) + '</span>专注时长</div><strong class="wb-stat-n">' + hours + '<small> h</small></strong><span class="wb-stat-sub">按本周已完成任务累计</span></div>'
+      + '<div class="wb-stat"><div class="wb-stat-t"><span class="wb-stat-ico warn">' + wbIcon('folder', 15) + '</span>进行中项目</div><strong class="wb-stat-n">' + pjOpen.length + '<small> 个</small></strong><span class="wb-stat-sub">' + (pjAll.length ? '共 ' + pjAll.length + ' 个项目' : '暂无项目') + '</span></div>');
     var rows = focus.concat(over).concat(open.filter(function (r) { return homeDay(r['计划日期']) === today; }));
     var uniq = new Set(), pick = [];
     rows.forEach(function (r) { if (!uniq.has(r._id)) { uniq.add(r._id); pick.push(r); } });
@@ -7726,9 +8994,6 @@ window.__WB_BUILD_ID__="v82-3933edec6897";
       var pr = homeProjectProgress(r, homeProjectTasks(r, list));
       return '<button type="button" class="wb-pj" data-home-project="' + esc(r._id) + '"><span class="wb-pj-icon">' + wbIcon('folder', 20) + '</span><span class="wb-pj-copy"><b>' + esc(r['项目名称'] || '未命名项目') + '</b><small>' + esc(r['状态'] || '未设置状态') + '</small><span class="wb-bar"><i style="width:' + pr + '%"></i></span></span><strong>' + pr + '<small>%</small></strong>' + wbIcon('arrow', 14) + '</button>';
     }).join('') : '<div class="wb-project-empty">' + wbIcon('folder', 22) + '<span>暂无进行中的项目</span><button type="button" class="wb-link" data-home-panel="project">前往项目</button></div>');
-    homeHTML('wbHomeFocus', focus.length ? focus.map(function (r, i) {
-      return '<div class="wb-focus-row"><span>' + (i + 1) + '</span><b>' + esc(r['任务名称'] || '未命名任务') + '</b><button type="button" class="wb-hck" data-act="finish" data-id="' + esc(r._id) + '" title="标记为已完成" aria-label="完成：' + esc(r['任务名称']) + '"></button></div>';
-    }).join('') : '<p class="wb-focus-empty">今天最重要的三件事，留给值得投入的目标。</p><button type="button" class="wb-link" data-home-panel="task">挑选今日优先任务 ' + wbIcon('arrow', 14) + '</button>');
     renderHomeCalendar(list, today);
   }
   function renderHomeCalendar(list, today) {

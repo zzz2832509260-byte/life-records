@@ -1,8 +1,8 @@
 {
   "format": 1,
   "version": "v82",
-  "buildId": "v82-3933edec6897",
-  "inputHash": "3933edec68975f5dc88dd3df683f54585dc5cfbcd94eb1f33f2b683288cf98ae",
+  "buildId": "v82-e6fee193fa97",
+  "inputHash": "e6fee193fa9722298439132994bc0dcc048bc7dc0e4d3f4336941f1b2cf78989",
   "inputs": [
     {
       "path": ".nvmrc",
@@ -206,18 +206,23 @@
     },
     {
       "path": "每日工作台/构建/_注入-样式.css",
-      "sha256": "fe654fb5efcff0026c01fd30bbcadf9e0ea2d442b881a1c74c865602e5c48649",
-      "bytes": 60080
+      "sha256": "281c3a0a17c02be47a6c74affb25551de3f2010acd5088f4a77ac56037037d1a",
+      "bytes": 84000
     },
     {
       "path": "每日工作台/构建/_注入-离线数据层.js",
-      "sha256": "1a58c71c7b51b4fd1bc2ace39a666d9e84ddd90d6143c99ec824e96d6e8e60f1",
-      "bytes": 186801
+      "sha256": "04dc508ace1093baf947a4520ece0699949fc3bca0d8ec3e0622fd33cfe837ca",
+      "bytes": 187191
     },
     {
       "path": "每日工作台/构建/aurora-dawn.webp",
       "sha256": "8eff1af6175f8af80af8d5f0c3d1468c1f24670815323515afb248ac8f9de516",
       "bytes": 67164
+    },
+    {
+      "path": "每日工作台/构建/模块/OS外壳.js",
+      "sha256": "59d9e954d2ced4559f2c6bcc1bdf279c23c2bf878a4d4657e25ddaf634e83104",
+      "bytes": 47908
     },
     {
       "path": "每日工作台/构建/模块/一致性协议.js",
@@ -316,15 +321,15 @@
     },
     {
       "path": "项目配置.json",
-      "sha256": "a189b3e679456d97270bf20a37808ef358d36db0338dfa0d0ed7f1cd80c4375d",
-      "bytes": 563
+      "sha256": "e55307d289b26e41dc238d9b1955870317751d32d1e9294c68b070a11b69e521",
+      "bytes": 582
     }
   ],
   "files": [
     {
       "path": "index.html",
-      "sha256": "1ce3bbd8df09b16f22f40dd25b5e248f426b09f5fb6eaade0caaf9d913065f75",
-      "bytes": 791494
+      "sha256": "27692341753abb32caafd1b0f35d3b53473d373b4827369846c098621a0b7da6",
+      "bytes": 863713
     },
     {
       "path": "manifest.json",
@@ -333,7 +338,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "8fd921d2f501069c4adeae6c111aacabcf662a71f7cf73be129e021bc2773fea",
+      "sha256": "25a4efb9c7280f2f927811bcca9b1b8257cb7947f5786c39bc46b12f0de3e25d",
       "bytes": 5132
     },
     {
@@ -365,7 +370,7 @@
   "validated": true,
   "validation": {
     "node": "v24.19.0",
-    "at": "2026-10-11T09:35:28.804Z",
+    "at": "2026-10-11T15:56:44.711Z",
     "checks": [
       {
         "name": "验证离线版.js",

@@ -11,7 +11,7 @@
  *
  * VERSION 是构建占位值，由生成器按项目版本与输入哈希自动替换。
  */
-const VERSION = 'desk-v82-3933edec6897';
+const VERSION = 'desk-v82-e6fee193fa97';
 /* 不沿用旧版宽泛前缀，避免历史 SW 的清理逻辑删掉新版缓存。 */
 const PREFIX = 'wb-daily-desk:' + encodeURIComponent(new URL('./', self.location).pathname) + ':';
 const CACHE = PREFIX + VERSION;
