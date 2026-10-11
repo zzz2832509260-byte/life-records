@@ -11,7 +11,7 @@
  *
  * 改了 daily-desk 里的东西要发布时：把 VERSION 加一。
  */
-const VERSION = 'desk-v73';
+const VERSION = 'desk-v81';
 const CACHE = 'daily-desk-' + VERSION;
 
 const ASSETS = [
@@ -50,8 +50,9 @@ function offlinePage() {
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(ASSETS))
-      .catch(() => {})            /* 个别文件缺失不该让整个安装失败 */
+      .then(c => c.addAll(['./index.html']).then(() => Promise.all(
+        ASSETS.filter(a => a !== './index.html').map(a => c.add(a).catch(() => {}))
+      )))                         /* 页面必须成功缓存；可选图标失败不影响离线页 */
       .then(() => self.skipWaiting())
   );
 });
@@ -80,19 +81,20 @@ self.addEventListener('fetch', event => {
   if (!inScope(url)) return;                          /* 越界不管 */
 
   if (req.mode === 'navigate') {
+    const update = fetch(req).then(async res => {
+      if (res && res.ok) {
+        try {
+          const c = await caches.open(CACHE);
+          await c.put('./index.html', res.clone());
+        } catch (_) {}             /* 缓存空间不足时仍返回成功的网络响应 */
+      }
+      return res;
+    }).catch(() => null);
+    event.waitUntil(update);      /* 缓存命中后仍保证后台更新执行完成 */
     event.respondWith(
-      caches.match('./index.html').then(cached => {
-        const fromNetwork = fetch(req)
-          .then(res => {
-            if (res && res.ok) {
-              const copy = res.clone();
-              caches.open(CACHE).then(c => c.put('./index.html', copy)).catch(() => {});
-            }
-            return res;
-          })
-          .catch(() => null);
-        if (cached) return cached;              /* 有缓存就秒开，不等网络 */
-        return fromNetwork.then(res => res || offlinePage());
+      caches.open(CACHE).then(c => c.match('./index.html')).then(cached => {
+        if (cached) return cached;
+        return update.then(res => res || offlinePage());
       })
     );
     return;
