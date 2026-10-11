@@ -1,8 +1,8 @@
 {
   "format": 1,
   "version": "v82",
-  "buildId": "v82-b86fde5b84f0",
-  "inputHash": "b86fde5b84f0659961861abaeacf66b6af78f514d235f4c2c2fade0e150bbe1e",
+  "buildId": "v82-3933edec6897",
+  "inputHash": "3933edec68975f5dc88dd3df683f54585dc5cfbcd94eb1f33f2b683288cf98ae",
   "inputs": [
     {
       "path": ".nvmrc",
@@ -211,8 +211,8 @@
     },
     {
       "path": "每日工作台/构建/_注入-离线数据层.js",
-      "sha256": "bca17f91b0879d076a09a78fa154d2c9d10a270545f94584fa4e2f2bd6a760ea",
-      "bytes": 185872
+      "sha256": "1a58c71c7b51b4fd1bc2ace39a666d9e84ddd90d6143c99ec824e96d6e8e60f1",
+      "bytes": 186801
     },
     {
       "path": "每日工作台/构建/aurora-dawn.webp",
@@ -261,8 +261,8 @@
     },
     {
       "path": "每日工作台/构建/离线版-补丁.js",
-      "sha256": "6e667f20ddbd8087e172e8b1304946f9b1f322ed518e471de82ea8830688b28a",
-      "bytes": 69823
+      "sha256": "acef8f7e22c406cea29fd95630e57b625328bb2075cd3ecb4a7bb960f46873f4",
+      "bytes": 72161
     },
     {
       "path": "每日工作台/每日工作台-离线版.html",
@@ -323,8 +323,8 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "314ec594476516bb55a18f0d0fe464b42da4edcd080a686678c1f557a1639acd",
-      "bytes": 790335
+      "sha256": "1ce3bbd8df09b16f22f40dd25b5e248f426b09f5fb6eaade0caaf9d913065f75",
+      "bytes": 791494
     },
     {
       "path": "manifest.json",
@@ -333,7 +333,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "e3e3758fe6ab1fa116c96e49db876ac0431c5843da54e12a2feb88bc3987df34",
+      "sha256": "8fd921d2f501069c4adeae6c111aacabcf662a71f7cf73be129e021bc2773fea",
       "bytes": 5132
     },
     {
@@ -365,7 +365,7 @@
   "validated": true,
   "validation": {
     "node": "v24.19.0",
-    "at": "2026-10-11T07:43:22.572Z",
+    "at": "2026-10-11T09:35:28.804Z",
     "checks": [
       {
         "name": "验证离线版.js",
