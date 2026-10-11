@@ -1,0 +1,417 @@
+{
+  "format": 1,
+  "version": "v82",
+  "buildId": "v82-c9f790da8688",
+  "inputHash": "c9f790da8688a385f54cf334354971ec307e1efa372f6045acb972f7d5eaa279",
+  "inputs": [
+    {
+      "path": ".nvmrc",
+      "sha256": "7e8a2fa94951112b894a3dbe3d05efef5e9263741fa49125f0a70f40fedab4cc",
+      "bytes": 8
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "163368d55f48976beb0b85769520c28c2d8f094b34ea4c9ff45fe1e0e00b9167",
+      "bytes": 362
+    },
+    {
+      "path": "package.json",
+      "sha256": "4a5c3025a333cefbdfe0ca2455b2b4b929f3521cacbf12d01dd9a739bd6dd55f",
+      "bytes": 835
+    },
+    {
+      "path": "上传到仓库.bat",
+      "sha256": "cd26c59019885b6a78c12a5b3351a52a52088f212f64d28c0349a3d18094f11e",
+      "bytes": 173
+    },
+    {
+      "path": "工具/lib/GitHub.js",
+      "sha256": "d545be077ead7c1f72edb37b9aa88b6d2c5c53da45b9169a2bf1ba827f2cbb37",
+      "bytes": 1708
+    },
+    {
+      "path": "工具/lib/原子发布.js",
+      "sha256": "b4a48ca1c05732cb52f660616c2fece22f7f8add8f25cdee8addcac6e326246a",
+      "bytes": 2742
+    },
+    {
+      "path": "工具/lib/发布集.js",
+      "sha256": "dedcb381f638e6466a731594d959e8601682cf9d3f8854f57efdca091b7e7469",
+      "bytes": 6761
+    },
+    {
+      "path": "工具/lib/同步测试桩.js",
+      "sha256": "764fd3d8bc8b65e2b371ed35b77189aa6b69f0d4f6d8a6b8d933ccfba9110373",
+      "bytes": 2058
+    },
+    {
+      "path": "工具/lib/构建锁.js",
+      "sha256": "3d303944d32d51412c195c865bcf60e32d556020e635d409fdd026ed21456ed0",
+      "bytes": 980
+    },
+    {
+      "path": "工具/lib/浏览器.js",
+      "sha256": "e5353ce922ff040ba0b8a8ed42f10975556b42caf8ef4740225dd84c3b18c0f2",
+      "bytes": 474
+    },
+    {
+      "path": "工具/lib/运行验证.js",
+      "sha256": "bbf2909eb13f6c8bf70c19558b6792dcebbcd87836500a313f18aa2e6df1dc46",
+      "bytes": 2147
+    },
+    {
+      "path": "工具/lib/项目.js",
+      "sha256": "147faf3c555195cb86295d8796ae69449c8532efebe88698ba7781f5d0f6c238",
+      "bytes": 560
+    },
+    {
+      "path": "工具/上传到仓库.js",
+      "sha256": "b1ea1713f9db335c73d6cbf9fa2c4441cfb2e3339abb1ac4c18fe959d74d45f1",
+      "bytes": 2030
+    },
+    {
+      "path": "工具/入口迁移模板.html",
+      "sha256": "882eda595c90ce55751bf224ce95c23058ce6311f8d48a98643a03a9c8b9f3f0",
+      "bytes": 3868
+    },
+    {
+      "path": "工具/发布验收.js",
+      "sha256": "5d77232decd16ae8ca9bf74d3215936484817367461e86b4a71fc82941b4e878",
+      "bytes": 2476
+    },
+    {
+      "path": "工具/回查上传.js",
+      "sha256": "8c4bdf3e922b46c0e020b1a0119d248ac7a3ddecfe427d6c98dd4d1dc60d8a6b",
+      "bytes": 1637
+    },
+    {
+      "path": "工具/备份版本.js",
+      "sha256": "0a86ee56a1332c1847195de10317791ffad7f95eaa48f004db016d04912a0596",
+      "bytes": 2478
+    },
+    {
+      "path": "工具/恢复版本.js",
+      "sha256": "4cbf9b26833f3c2f302fa16ac96461c313074be01216264dad36857b295700a8",
+      "bytes": 3005
+    },
+    {
+      "path": "工具/检查冗余.js",
+      "sha256": "a970e4195493fb643f6e46f6af4b1fbc7ecce0e14ad9fbfd84898e217a55731e",
+      "bytes": 10712
+    },
+    {
+      "path": "工具/生成图标.js",
+      "sha256": "f1643e7d84289529066208580b8818f1e293666e805e982563fc8a985b5e6f0a",
+      "bytes": 5693
+    },
+    {
+      "path": "工具/生成离线版.js",
+      "sha256": "306a213d15ce9f0619c44a5fd929edf8726f882cfb45a6a4e9f0b21f89bde13a",
+      "bytes": 19323
+    },
+    {
+      "path": "工具/运行.cmd",
+      "sha256": "3c8d355b1471d42cfe1a7ef3ec2f9c61a6305ca2828cdcc34a6aeccb64803dd4",
+      "bytes": 550
+    },
+    {
+      "path": "工具/逆向重建源.js",
+      "sha256": "8d029a168731bf29b4dc8da124745c245477b9c7927949e2d1f5eddc0e8c9b9f",
+      "bytes": 242
+    },
+    {
+      "path": "工具/预览.js",
+      "sha256": "6e08f790f51969fb85af6b0732191b640aa759403d634da912fafd8c98d2bb91",
+      "bytes": 1852
+    },
+    {
+      "path": "工具/验证任务导航.js",
+      "sha256": "b1f48a392a381e5feb9258bef94bf9f4ef6bdcebf1db400b7ae51971c64c271d",
+      "bytes": 5965
+    },
+    {
+      "path": "工具/验证全面核查.js",
+      "sha256": "a7076fe9fd3c46cc0604446f8facc06741fd3f414397b3dba992e49addba3d15",
+      "bytes": 21618
+    },
+    {
+      "path": "工具/验证发布事务.js",
+      "sha256": "aad15f03966a4c813a31c8f7cda31445802798e4c3d832956d38e4128781685d",
+      "bytes": 4946
+    },
+    {
+      "path": "工具/验证完整备份.js",
+      "sha256": "a0481f2b07e865eb9b1251d8d73634bf94f82838d0a8842c5759535f579b9c59",
+      "bytes": 6686
+    },
+    {
+      "path": "工具/验证整改.js",
+      "sha256": "89f9cd4fd0e96a9fa9c29edfbc6a6afd2074f048139268bc887092f14e0fa7ca",
+      "bytes": 6634
+    },
+    {
+      "path": "工具/验证版本恢复.js",
+      "sha256": "87e0ce9c760477ad0f4cb5e581f3b6417c2910ffe0b6854bf32ae398ff4d1d9a",
+      "bytes": 3537
+    },
+    {
+      "path": "工具/验证生产浏览器.js",
+      "sha256": "1029833862d4e2b9ab248c1dec23d1189b0b425ddee4b25782ca7c99fced6a87",
+      "bytes": 13163
+    },
+    {
+      "path": "工具/验证离线版.js",
+      "sha256": "87f0bea064433cd08f48e5389721c7b5252cb611edb344aa4b2b374386a854a8",
+      "bytes": 140863
+    },
+    {
+      "path": "工具/验证离线版浏览器.js",
+      "sha256": "dc053c5318f4872f15ae27e116499f241e9f25e05f78bd7c4ce2917ba0eaf7a4",
+      "bytes": 3336
+    },
+    {
+      "path": "工具/验证离线缓存.js",
+      "sha256": "2b7f851a6ab2699bde2cee8d4e6a4c3c8cb02e7efa7e09b0f95825bd129f3a95",
+      "bytes": 7028
+    },
+    {
+      "path": "工具/验证稳定性.js",
+      "sha256": "65ae7d440c7822769d874c5f4133ef498872ad9ac5f93828c42f97a8c3b37c7c",
+      "bytes": 16880
+    },
+    {
+      "path": "工具/验证线上.js",
+      "sha256": "d043ccddfaeabd7fe0cc15a3a1d4a2d0f96ac138015e2101b437fa522a05dff7",
+      "bytes": 2455
+    },
+    {
+      "path": "工具/验证视觉交互.js",
+      "sha256": "2f647bcf46ed8fa197e32d18106734c63d69f72dd4c535b35663f87844cc90f5",
+      "bytes": 18083
+    },
+    {
+      "path": "工具/验证部署.js",
+      "sha256": "5ad9902885c204959c1dca17da8e6ca600227c8c6bb1c61011b27a3440733015",
+      "bytes": 2151
+    },
+    {
+      "path": "工具/验证项目.js",
+      "sha256": "50b335c403c8f627301d465614f37d578dcb27af28aba6310d76f212d89d8c44",
+      "bytes": 998
+    },
+    {
+      "path": "每日工作台/_表结构.json",
+      "sha256": "6605d63a1aa981639cf6f182313f78de1dd61269ee9c48a72baf9e7b9a78dd43",
+      "bytes": 13286
+    },
+    {
+      "path": "每日工作台/构建/_注入-样式.css",
+      "sha256": "45abb7fe74321071a8c0abe5128d84aa089892f29cac2fdb9bb8fb2d34b713af",
+      "bytes": 58084
+    },
+    {
+      "path": "每日工作台/构建/_注入-离线数据层.js",
+      "sha256": "9e54d1bde95a7fa07c4879e61a22a26ed8528d4dfb58cb945a87520ad67cc751",
+      "bytes": 183093
+    },
+    {
+      "path": "每日工作台/构建/aurora-dawn.webp",
+      "sha256": "8eff1af6175f8af80af8d5f0c3d1468c1f24670815323515afb248ac8f9de516",
+      "bytes": 67164
+    },
+    {
+      "path": "每日工作台/构建/模块/一致性协议.js",
+      "sha256": "c2f113a68d53172bc3200d09e1b6a3658e4ed43ddbb06eb5ee75ae44b8794250",
+      "bytes": 5522
+    },
+    {
+      "path": "每日工作台/构建/模块/事务存储.js",
+      "sha256": "e1eb785ca289a5819fb9bbc2319673c094f0f2dcdc220164648412cd472c9145",
+      "bytes": 8128
+    },
+    {
+      "path": "每日工作台/构建/模块/云端分片.js",
+      "sha256": "6aa809c07575200fddc01cc36ed69a5f47daf6df9bfc3be89e599918fca82de7",
+      "bytes": 7684
+    },
+    {
+      "path": "每日工作台/构建/模块/可靠性界面.js",
+      "sha256": "d61eb339247d318230c4d5d75053b28449dd019e6e5d3680ae333c09b6f4336a",
+      "bytes": 5738
+    },
+    {
+      "path": "每日工作台/构建/模块/完整备份.js",
+      "sha256": "f10bb3aa3fedafe2f6dc3afdafc1d1fe048697efffa2b8568698e2892276b24b",
+      "bytes": 9692
+    },
+    {
+      "path": "每日工作台/构建/模块/并发存储.js",
+      "sha256": "6262df04962a70f9c2b85584aebe45dd6dd7692b3790c770767fca384a33fd5b",
+      "bytes": 1014
+    },
+    {
+      "path": "每日工作台/构建/模块/数据迁移.js",
+      "sha256": "e06a9725d73c02df8146fb9f5ee21f45ea4bb56659384135ee944604c900ad24",
+      "bytes": 1159
+    },
+    {
+      "path": "每日工作台/构建/模块/环境.js",
+      "sha256": "649f60e991002f92a04aac1ce7434a5d17aeea3137d1c4be74ce9418853cb155",
+      "bytes": 2219
+    },
+    {
+      "path": "每日工作台/构建/离线版-补丁.js",
+      "sha256": "ccd2102dcab26271ff5b650c183b50ad02bca2f5459f19f6d7957d7e9f162f8a",
+      "bytes": 57536
+    },
+    {
+      "path": "每日工作台/每日工作台-离线版.html",
+      "sha256": "882eda595c90ce55751bf224ce95c23058ce6311f8d48a98643a03a9c8b9f3f0",
+      "bytes": 3868
+    },
+    {
+      "path": "每日工作台/每日工作台.html",
+      "sha256": "882eda595c90ce55751bf224ce95c23058ce6311f8d48a98643a03a9c8b9f3f0",
+      "bytes": 3868
+    },
+    {
+      "path": "每日工作台/源码/PWA/icons/apple-touch-icon.png",
+      "sha256": "472753761690e58b8304893cdac1fc801c71e8d4bb69fb9f686e46fb8c19e7fe",
+      "bytes": 2622
+    },
+    {
+      "path": "每日工作台/源码/PWA/icons/favicon-32.png",
+      "sha256": "b997412b145501cbef25f5fb6c33065ec8e159e889e706b076c49637d39b4324",
+      "bytes": 719
+    },
+    {
+      "path": "每日工作台/源码/PWA/icons/icon-192.png",
+      "sha256": "ebe302f40bf8e4e14fb5b0be93e0d0fc35072956792e56bc0ab9f08b6f97164b",
+      "bytes": 3408
+    },
+    {
+      "path": "每日工作台/源码/PWA/icons/icon-512.png",
+      "sha256": "122a9db08d5dc669dbf2d0ff9530578f4498ced5f64ac83bc7519ec507f8ab91",
+      "bytes": 11651
+    },
+    {
+      "path": "每日工作台/源码/PWA/icons/icon-maskable-512.png",
+      "sha256": "d61297c7bcb0c125ff2efee4ebbb0c06676195a119e5cdbbefa421c7ff4d4b30",
+      "bytes": 9979
+    },
+    {
+      "path": "每日工作台/源码/PWA/manifest.json",
+      "sha256": "283dc011cd294e2bc69a71c60bd1c10da72882f811b12219923063ad99bcf591",
+      "bytes": 1085
+    },
+    {
+      "path": "每日工作台/源码/PWA/sw.js",
+      "sha256": "87ca838a8c98db4f06c5a5ed82e24d940acf3c969f084b4eeafc349c1e385399",
+      "bytes": 5118
+    },
+    {
+      "path": "每日工作台/源码/每日工作台.html.txt",
+      "sha256": "e9f8ea4243c45aa174b9378468fcdea4b39d162a60abd300611c119fce3c2885",
+      "bytes": 417617
+    },
+    {
+      "path": "项目配置.json",
+      "sha256": "a189b3e679456d97270bf20a37808ef358d36db0338dfa0d0ed7f1cd80c4375d",
+      "bytes": 563
+    }
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "475c8924c6a8ac8aa04170e851310a5411f305c7117c1a25250d0d2d283ae79f",
+      "bytes": 783431
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "283dc011cd294e2bc69a71c60bd1c10da72882f811b12219923063ad99bcf591",
+      "bytes": 1085
+    },
+    {
+      "path": "sw.js",
+      "sha256": "4892cdc6db2cf21a572619fd4b9c4e8288e99a1b535141576ac869bc47c9d20c",
+      "bytes": 5132
+    },
+    {
+      "path": "icons/icon-192.png",
+      "sha256": "ebe302f40bf8e4e14fb5b0be93e0d0fc35072956792e56bc0ab9f08b6f97164b",
+      "bytes": 3408
+    },
+    {
+      "path": "icons/icon-512.png",
+      "sha256": "122a9db08d5dc669dbf2d0ff9530578f4498ced5f64ac83bc7519ec507f8ab91",
+      "bytes": 11651
+    },
+    {
+      "path": "icons/icon-maskable-512.png",
+      "sha256": "d61297c7bcb0c125ff2efee4ebbb0c06676195a119e5cdbbefa421c7ff4d4b30",
+      "bytes": 9979
+    },
+    {
+      "path": "icons/apple-touch-icon.png",
+      "sha256": "472753761690e58b8304893cdac1fc801c71e8d4bb69fb9f686e46fb8c19e7fe",
+      "bytes": 2622
+    },
+    {
+      "path": "icons/favicon-32.png",
+      "sha256": "b997412b145501cbef25f5fb6c33065ec8e159e889e706b076c49637d39b4324",
+      "bytes": 719
+    }
+  ],
+  "validated": true,
+  "validation": {
+    "node": "v24.19.0",
+    "at": "2026-10-11T05:56:11.517Z",
+    "checks": [
+      {
+        "name": "验证离线版.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证离线缓存.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证整改.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证部署.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证发布事务.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证完整备份.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证版本恢复.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "验证稳定性.js",
+        "passed": true,
+        "exitCode": 0
+      },
+      {
+        "name": "检查冗余.js",
+        "passed": true,
+        "exitCode": 0
+      }
+    ]
+  }
+}

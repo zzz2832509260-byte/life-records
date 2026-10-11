@@ -9,10 +9,12 @@
  *   1. 跨域一律不碰（api.github.com / gitee.com 这些同步接口绝不能缓存）；
  *   2. 页面本体走「缓存优先 + 后台更新」，因为从国内访问 github.io 常首次超时。
  *
- * 改了 daily-desk 里的东西要发布时：把 VERSION 加一。
+ * VERSION 是构建占位值，由生成器按项目版本与输入哈希自动替换。
  */
-const VERSION = 'desk-v81';
-const CACHE = 'daily-desk-' + VERSION;
+const VERSION = 'desk-v82-c9f790da8688';
+/* 不沿用旧版宽泛前缀，避免历史 SW 的清理逻辑删掉新版缓存。 */
+const PREFIX = 'wb-daily-desk:' + encodeURIComponent(new URL('./', self.location).pathname) + ':';
+const CACHE = PREFIX + VERSION;
 
 const ASSETS = [
   './',
@@ -46,15 +48,26 @@ function offlinePage() {
     { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );
 }
+async function sameBuild(response) {
+  if (!response || !response.ok) return false;
+  const html = await response.clone().text();
+  const match = /window\.__WB_BUILD_ID__="([^"]+)"/.exec(html);
+  return !!match && 'desk-' + match[1] === VERSION;
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(['./index.html']).then(() => Promise.all(
+      .then(c => c.addAll(['./index.html']).then(async () => {
+        if (!await sameBuild(await c.match('./index.html'))) throw new Error('页面与缓存构建编号不一致');
+        return Promise.all(
         ASSETS.filter(a => a !== './index.html').map(a => c.add(a).catch(() => {}))
-      )))                         /* 页面必须成功缓存；可选图标失败不影响离线页 */
-      .then(() => self.skipWaiting())
+      ); }))
   );
+});
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'GET_VERSION' && event.source) event.source.postMessage({type: 'VERSION', version: VERSION});
+  if (event.data && event.data.type === 'ACTIVATE' && event.data.version === VERSION) event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', event => {
@@ -62,7 +75,7 @@ self.addEventListener('activate', event => {
     caches.keys()
       .then(keys => Promise.all(
         /* 只清自己这一套前缀，绝不能顺手把根目录那个应用的缓存删了 */
-        keys.filter(k => k.indexOf('daily-desk-') === 0 && k !== CACHE)
+        keys.filter(k => k.indexOf(PREFIX) === 0 && k !== CACHE)
             .map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
@@ -82,7 +95,7 @@ self.addEventListener('fetch', event => {
 
   if (req.mode === 'navigate') {
     const update = fetch(req).then(async res => {
-      if (res && res.ok) {
+      if (await sameBuild(res)) {
         try {
           const c = await caches.open(CACHE);
           await c.put('./index.html', res.clone());
@@ -92,7 +105,7 @@ self.addEventListener('fetch', event => {
     }).catch(() => null);
     event.waitUntil(update);      /* 缓存命中后仍保证后台更新执行完成 */
     event.respondWith(
-      caches.open(CACHE).then(c => c.match('./index.html')).then(cached => {
+      caches.open(CACHE).then(c => c.match('./index.html')).catch(() => null).then(cached => {
         if (cached) return cached;
         return update.then(res => res || offlinePage());
       })
@@ -101,7 +114,7 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    caches.match(req).then(hit => {
+    caches.open(CACHE).then(c => c.match(req)).catch(() => null).then(hit => {
       if (hit) return hit;
       return fetch(req).then(res => {
         if (res && res.ok && res.type === 'basic') {
